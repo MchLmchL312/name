@@ -51,7 +51,7 @@
         .controls {
             display: grid;
             gap: 1.5rem;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             margin-bottom: 2rem;
         }
 
@@ -116,39 +116,51 @@
             cursor: pointer;
         }
 
-        .mix-grid {
-            display: grid;
+        .slider-row {
+            display: flex;
+            align-items: center;
             gap: 0.75rem;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            margin-top: 0.75rem;
         }
 
-        .mix-card {
-            border-radius: 12px;
-            overflow: hidden;
+        .slider-row input[type="range"] {
+            width: 100%;
+            accent-color: #333;
+        }
+
+        .ratio-label {
+            font-weight: 700;
+            min-width: 70px;
+            text-align: right;
+        }
+
+        .result-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+
+        .result-card {
+            border-radius: 14px;
             border: 1px solid #e2e2e2;
+            overflow: hidden;
             background: #fff;
         }
 
-        .mix-color {
-            height: 90px;
+        .result-color {
+            height: 140px;
         }
 
-        .mix-label {
-            padding: 0.6rem 0.8rem 0.8rem;
-            font-size: 0.9rem;
+        .result-info {
+            padding: 0.9rem 1rem 1.1rem;
+            font-size: 0.95rem;
             display: flex;
             flex-direction: column;
-            gap: 0.35rem;
+            gap: 0.4rem;
         }
 
-        .mix-label span {
-            font-weight: 600;
-        }
-
-        @media (min-width: 760px) {
-            .mix-color {
-                height: 110px;
-            }
+        .result-info span {
+            font-weight: 700;
         }
     </style>
 </head>
@@ -159,8 +171,8 @@
     <p class="subtitle">kies twee kleuren en zie de tussenstappen</p>
 
     <p class="intro">
-        Selecteer twee kleuren (bijvoorbeeld paars en geel) en bekijk direct de mengverhoudingen. Elke kaart laat zien
-        hoeveel procent van kleur A en kleur B in de mix zit, inclusief het gemengde resultaat.
+        Selecteer twee kleuren (bijvoorbeeld paars en geel) en schuif de slider om de mengverhouding te bepalen.
+        Het resultaat en de grijswaarde van die mix worden direct zichtbaar.
     </p>
 
     <div class="controls">
@@ -185,8 +197,13 @@
         </div>
 
         <div class="control-card">
-            <h2>Snelle voorbeelden</h2>
-            <p>Klik om direct een combinatie te laden.</p>
+            <h2>Mengverhouding</h2>
+            <label for="ratio">Slider: links kleur A · rechts kleur B</label>
+            <div class="slider-row">
+                <input type="range" id="ratio" min="0" max="100" value="50" />
+                <div class="ratio-label" id="ratioLabel">50%</div>
+            </div>
+            <p id="ratioText">50% kleur A · 50% kleur B</p>
             <div class="preset-list">
                 <button class="preset-button" data-a="#7b2cbf" data-b="#f4d35e">Paars + Geel</button>
                 <button class="preset-button" data-a="#ff595e" data-b="#1982c4">Rood + Blauw</button>
@@ -196,19 +213,38 @@
         </div>
     </div>
 
-    <div class="mix-grid" id="mixGrid"></div>
+    <div class="result-grid">
+        <div class="result-card">
+            <div class="result-color" id="mixResult"></div>
+            <div class="result-info">
+                <span>Gemengde kleur</span>
+                <div id="mixHex">#000000</div>
+            </div>
+        </div>
+        <div class="result-card">
+            <div class="result-color" id="grayResult"></div>
+            <div class="result-info">
+                <span>Grijswaarde</span>
+                <div id="grayHex">#000000</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     const colorAInput = document.getElementById('colorA');
     const colorBInput = document.getElementById('colorB');
+    const ratioInput = document.getElementById('ratio');
+    const ratioLabel = document.getElementById('ratioLabel');
+    const ratioText = document.getElementById('ratioText');
     const swatchA = document.getElementById('swatchA');
     const swatchB = document.getElementById('swatchB');
     const infoA = document.getElementById('infoA');
     const infoB = document.getElementById('infoB');
-    const mixGrid = document.getElementById('mixGrid');
-
-    const mixSteps = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    const mixResult = document.getElementById('mixResult');
+    const mixHex = document.getElementById('mixHex');
+    const grayResult = document.getElementById('grayResult');
+    const grayHex = document.getElementById('grayHex');
 
     const hexToRgb = (hex) => {
         const normalized = hex.replace('#', '');
@@ -239,6 +275,12 @@
         return rgbToHex(mixed);
     };
 
+    const toGrayscale = (hex) => {
+        const { r, g, b } = hexToRgb(hex);
+        const luminance = Math.round(0.2126 * r + 0.7152 * g + 0.0722 * b);
+        return rgbToHex({ r: luminance, g: luminance, b: luminance });
+    };
+
     const updateSwatches = () => {
         swatchA.style.backgroundColor = colorAInput.value;
         swatchB.style.backgroundColor = colorBInput.value;
@@ -246,36 +288,25 @@
         infoB.textContent = colorBInput.value.toUpperCase();
     };
 
-    const renderMixes = () => {
-        mixGrid.innerHTML = '';
-        mixSteps.forEach((step) => {
-            const ratioA = step / 100;
-            const ratioB = 100 - step;
-            const mixedColor = mixColors(colorAInput.value, colorBInput.value, ratioA);
+    const renderMix = () => {
+        const ratioB = Number(ratioInput.value);
+        const ratioA = 100 - ratioB;
+        const mixedColor = mixColors(colorAInput.value, colorBInput.value, ratioA / 100);
+        const grayscale = toGrayscale(mixedColor);
 
-            const card = document.createElement('div');
-            card.className = 'mix-card';
+        ratioLabel.textContent = `${ratioB}%`;
+        ratioText.textContent = `${ratioA}% kleur A · ${ratioB}% kleur B`;
 
-            const colorBlock = document.createElement('div');
-            colorBlock.className = 'mix-color';
-            colorBlock.style.backgroundColor = mixedColor;
+        mixResult.style.backgroundColor = mixedColor;
+        mixHex.textContent = mixedColor.toUpperCase();
 
-            const label = document.createElement('div');
-            label.className = 'mix-label';
-            label.innerHTML = `
-                <span>${step}% kleur A · ${ratioB}% kleur B</span>
-                <div>${mixedColor.toUpperCase()}</div>
-            `;
-
-            card.appendChild(colorBlock);
-            card.appendChild(label);
-            mixGrid.appendChild(card);
-        });
+        grayResult.style.backgroundColor = grayscale;
+        grayHex.textContent = grayscale.toUpperCase();
     };
 
     const updateAll = () => {
         updateSwatches();
-        renderMixes();
+        renderMix();
     };
 
     document.querySelectorAll('.preset-button').forEach((button) => {
@@ -288,6 +319,7 @@
 
     colorAInput.addEventListener('input', updateAll);
     colorBInput.addEventListener('input', updateAll);
+    ratioInput.addEventListener('input', updateAll);
 
     updateAll();
 </script>
