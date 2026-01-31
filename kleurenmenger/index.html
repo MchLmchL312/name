@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Keuzeboom – Creativiteit bij het maken van een schilderij</title>
+    <title>Kleurenmenger – Mengverhoudingen van twee kleuren</title>
     <style>
         * {
             box-sizing: border-box;
@@ -17,21 +17,21 @@
         }
 
         .page {
-            max-width: 960px;
+            max-width: 980px;
             margin: 0 auto;
             background: #ffffff;
             padding: 2.5rem 2rem 2rem;
-            border-radius: 14px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            border-radius: 16px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
         }
 
         h1 {
             font-size: 2.2rem;
-            margin: 0 0 0.75rem 0;
+            margin: 0 0 0.5rem 0;
         }
 
         .subtitle {
-            margin: 0 0 1.8rem 0;
+            margin: 0 0 1.6rem 0;
             font-size: 0.95rem;
             text-transform: uppercase;
             letter-spacing: 0.12em;
@@ -48,159 +48,333 @@
             border-radius: 6px;
         }
 
-        .tree {
-            margin-top: 1rem;
+        .controls {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            margin-bottom: 2rem;
         }
 
-        .node {
-            border: 1.5px solid #000;
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
+        .control-card {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            border: 1.5px solid #e2e2e2;
             background: #fcfcfc;
         }
 
-        .node h2 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.2rem;
+        .control-card h2 {
+            margin: 0 0 0.75rem 0;
+            font-size: 1.1rem;
         }
 
-        .node ol {
-            margin: 0.25rem 0 0;
-            padding-left: 1.5rem;
+        .control-card label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
 
-        .node li {
-            margin: 0.15rem 0;
-        }
-
-        .level {
-            margin-top: 1.5rem;
-            border-left: 2px solid #000;
-            padding-left: 1.5rem;
-        }
-
-        details {
-            margin-bottom: 1rem;
-            padding: 0.6rem 0.8rem 0.6rem 0;
-        }
-
-        details > summary {
-            font-weight: 700;
+        .control-card input[type="color"] {
+            width: 100%;
+            height: 44px;
+            border: none;
+            background: transparent;
             cursor: pointer;
-            list-style: none;
-            display: inline-flex;
+        }
+
+        .swatch-preview {
+            display: flex;
             align-items: center;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .swatch {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+        }
+
+        .swatch-info {
+            font-size: 0.9rem;
+            color: #444;
+        }
+
+        .preset-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .preset-button {
+            border: 1px solid #ccc;
+            background: #fff;
+            padding: 0.4rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.9rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .toggle-row input {
+            width: 18px;
+            height: 18px;
+            accent-color: #333;
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .slider-row input[type="range"] {
+            width: 100%;
+            accent-color: #333;
+        }
+
+        .ratio-label {
+            font-weight: 700;
+            min-width: 70px;
+            text-align: right;
+        }
+
+        .result-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+
+        .result-card {
+            border-radius: 14px;
+            border: 1px solid #e2e2e2;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .result-color {
+            height: 140px;
+        }
+
+        .result-info {
+            padding: 0.9rem 1rem 1.1rem;
+            font-size: 0.95rem;
+            display: flex;
+            flex-direction: column;
             gap: 0.4rem;
         }
 
-        details > summary::-webkit-details-marker {
-            display: none;
-        }
-
-        /* Rode driehoekjes */
-        details > summary::before {
-            content: "▶";
-            font-size: 0.8rem;
-            transform: translateY(1px);
-            color: #c00;
-        }
-
-        details[open] > summary::before {
-            content: "▼";
-            color: #c00;
-        }
-
-        details ul {
-            margin: 0.5rem 0 0.25rem;
-            padding-left: 1.3rem;
-        }
-
-        details p {
-            margin: 0.65rem 0 0.2rem;
-            font-weight: 600;
-        }
-
-        @media (min-width: 720px) {
-            .node-row {
-                display: flex;
-                gap: 1.5rem;
-            }
-            .node-row .node {
-                flex: 1;
-            }
+        .result-info span {
+            font-weight: 700;
         }
     </style>
 </head>
 <body>
 
 <div class="page">
-    <h1>Keuzeboom: Creativiteit bij het maken van een schilderij</h1>
-    <p class="subtitle">over beeld, beeldmiddelen en materiaal</p>
+    <h1>Kleurenmenger: bekijk mengverhoudingen</h1>
+    <p class="subtitle">kies twee kleuren en zie de tussenstappen</p>
 
     <p class="intro">
-        Wat is creativiteit?
-Creativiteit is het vermogen om twee bestaande ideeën of beelden te combineren tot iets nieuws, en om beeld en materiaal op een originele manier te manipuleren.
+        Selecteer twee kleuren (bijvoorbeeld paars en geel) en schuif de slider om de mengverhouding te bepalen.
+        Het resultaat en de grijswaarde van die mix worden direct zichtbaar.
     </p>
 
-    <div class="tree">
-
-        <div class="node-row">
-            <div class="node">
-                <h2>Uitgangspunt schilderij</h2>
-                <ol>
-                    <li><strong>Waarneming</strong> (directe observatie)</li>
-                    <li><strong>Foto</strong></li>
-                    <li><strong>Fantasie</strong></li>
-                </ol>
-            </div>
-
-            <div class="node">
-                <h2>Waar ligt de creativiteit?</h2>
-                <ol>
-                    <li><strong>Als beeld</strong> (inhoudelijk)</li>
-                    <li><strong>Via beeldmiddelen</strong> (formeel)</li>
-                    <li><strong>Technisch</strong> (materiaal)</li>
-                </ol>
+    <div class="controls">
+        <div class="control-card">
+            <h2>Kleur A</h2>
+            <label for="colorA">Kies kleur A</label>
+            <input type="color" id="colorA" value="#7b2cbf" />
+            <div class="swatch-preview">
+                <div class="swatch" id="swatchA"></div>
+                <div class="swatch-info" id="infoA"></div>
             </div>
         </div>
 
-        <div class="level">
+        <div class="control-card">
+            <h2>Kleur B</h2>
+            <label for="colorB">Kies kleur B</label>
+            <input type="color" id="colorB" value="#f4d35e" />
+            <div class="swatch-preview">
+                <div class="swatch" id="swatchB"></div>
+                <div class="swatch-info" id="infoB"></div>
+            </div>
+        </div>
 
-            <details>
-                <summary>1) Als beeld (inhoudelijk)</summary>
-                <ul>
-                    <li>Onderwerpkeuze</li>
-                    <li>Beelden combineren; nieuwe betekenis ontstaat</li>
-                </ul>
-                <p>Historische verschuiving</p>
-                <ul>
-                    <li><strong>Vroeger:</strong> tekening naar waarneming; verschillende studies werden samengevoegd tot complexe compositie.</li>
-                    <li><strong>Nu:</strong> foto vervangt tekening; sneller werken met foto’s, collage.</li>
-                </ul>
-            </details>
+        <div class="control-card">
+            <h2>Mengverhouding</h2>
+            <label for="ratio">Slider: links kleur A · rechts kleur B</label>
+            <div class="slider-row">
+                <input type="range" id="ratio" min="0" max="100" value="50" />
+                <div class="ratio-label" id="ratioLabel">50%</div>
+            </div>
+            <p id="ratioText">50% kleur A · 50% kleur B</p>
+            <label class="toggle-row">
+                <input type="checkbox" id="grayscaleToggle" />
+                Zwart-wit slider (50% = grijs)
+            </label>
+            <div class="preset-list">
+                <button class="preset-button" data-a="#f4d35e" data-b="#7b2cbf">Geel + Paars</button>
+                <button class="preset-button" data-a="#ff595e" data-b="#8ac926">Rood + Groen</button>
+                <button class="preset-button" data-a="#1982c4" data-b="#ff9f1c">Blauw + Oranje</button>
+                <button class="preset-button" data-a="#ffca3a" data-b="#ff595e">Oker + Rood</button>
+            </div>
+        </div>
+    </div>
 
-            <details>
-                <summary>2) Via beeldmiddelen (formeel)</summary>
-                <ul>
-                    <li><strong>Lijn:</strong> variatie en expressie</li>
-                    <li><strong>Vorm:</strong> vereenvoudigen of vervormen</li>
-                    <li><strong>Toon:</strong> plat – ruimtelijk (licht/donker), contrast vergroten of juist dempen</li>
-                    <li><strong>Kleur:</strong> vereffenen (monochroom) of kleuren verhevigen</li>
-                </ul>
-            </details>
-
-            <details>
-                <summary>3) Technisch (materiaal)</summary>
-                <ul>
-                    <li>Materiaalkeuze, betekenis van het materiaal</li>
-                    <li>Werkwijze, opbouw</li>
-                </ul>
-            </details>
-
+    <div class="result-grid">
+        <div class="result-card">
+            <div class="result-color" id="mixResult"></div>
+            <div class="result-info">
+                <span>Gemengde kleur</span>
+                <div id="mixHex">#000000</div>
+            </div>
+        </div>
+        <div class="result-card">
+            <div class="result-color" id="grayResult"></div>
+            <div class="result-info">
+                <span>Grijswaarde</span>
+                <div id="grayHex">#000000</div>
+            </div>
         </div>
     </div>
 </div>
 
+<script>
+    const colorAInput = document.getElementById('colorA');
+    const colorBInput = document.getElementById('colorB');
+    const ratioInput = document.getElementById('ratio');
+    const ratioLabel = document.getElementById('ratioLabel');
+    const ratioText = document.getElementById('ratioText');
+    const grayscaleToggle = document.getElementById('grayscaleToggle');
+    const swatchA = document.getElementById('swatchA');
+    const swatchB = document.getElementById('swatchB');
+    const infoA = document.getElementById('infoA');
+    const infoB = document.getElementById('infoB');
+    const mixResult = document.getElementById('mixResult');
+    const mixHex = document.getElementById('mixHex');
+    const grayResult = document.getElementById('grayResult');
+    const grayHex = document.getElementById('grayHex');
+    let storedColors = null;
+
+    const hexToRgb = (hex) => {
+        const normalized = hex.replace('#', '');
+        const bigint = parseInt(normalized, 16);
+        return {
+            r: (bigint >> 16) & 255,
+            g: (bigint >> 8) & 255,
+            b: bigint & 255,
+        };
+    };
+
+    const rgbToHex = ({ r, g, b }) => {
+        const toHex = (value) => value.toString(16).padStart(2, '0');
+        return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    };
+
+    const mixColors = (colorA, colorB, ratioA) => {
+        const rgbA = hexToRgb(colorA);
+        const rgbB = hexToRgb(colorB);
+        const ratioB = 1 - ratioA;
+
+        const mixed = {
+            r: Math.round(rgbA.r * ratioA + rgbB.r * ratioB),
+            g: Math.round(rgbA.g * ratioA + rgbB.g * ratioB),
+            b: Math.round(rgbA.b * ratioA + rgbB.b * ratioB),
+        };
+
+        return rgbToHex(mixed);
+    };
+
+    const toGrayscale = (hex) => {
+        const { r, g, b } = hexToRgb(hex);
+        const luminance = Math.round(0.2126 * r + 0.7152 * g + 0.0722 * b);
+        return rgbToHex({ r: luminance, g: luminance, b: luminance });
+    };
+
+    const updateSwatches = () => {
+        swatchA.style.backgroundColor = colorAInput.value;
+        swatchB.style.backgroundColor = colorBInput.value;
+        infoA.textContent = colorAInput.value.toUpperCase();
+        infoB.textContent = colorBInput.value.toUpperCase();
+    };
+
+    const renderMix = () => {
+        const ratioB = Number(ratioInput.value);
+        const ratioA = 100 - ratioB;
+        const mixedColor = mixColors(colorAInput.value, colorBInput.value, ratioA / 100);
+        const grayscale = toGrayscale(mixedColor);
+
+        ratioLabel.textContent = `${ratioB}%`;
+        ratioText.textContent = `${ratioA}% kleur A · ${ratioB}% kleur B`;
+
+        mixResult.style.backgroundColor = mixedColor;
+        mixHex.textContent = mixedColor.toUpperCase();
+
+        grayResult.style.backgroundColor = grayscale;
+        grayHex.textContent = grayscale.toUpperCase();
+    };
+
+    const updateAll = () => {
+        updateSwatches();
+        renderMix();
+    };
+
+    const applyGrayscaleMode = () => {
+        if (grayscaleToggle.checked) {
+            storedColors = {
+                a: colorAInput.value,
+                b: colorBInput.value,
+                ratio: ratioInput.value,
+            };
+            colorAInput.value = '#000000';
+            colorBInput.value = '#ffffff';
+            ratioInput.value = '50';
+            colorAInput.disabled = true;
+            colorBInput.disabled = true;
+            updateAll();
+        } else {
+            colorAInput.disabled = false;
+            colorBInput.disabled = false;
+            if (storedColors) {
+                colorAInput.value = storedColors.a;
+                colorBInput.value = storedColors.b;
+                ratioInput.value = storedColors.ratio;
+                storedColors = null;
+            }
+            updateAll();
+        }
+    };
+
+    document.querySelectorAll('.preset-button').forEach((button) => {
+        button.addEventListener('click', () => {
+            if (grayscaleToggle.checked) {
+                grayscaleToggle.checked = false;
+                applyGrayscaleMode();
+            }
+            colorAInput.value = button.dataset.a;
+            colorBInput.value = button.dataset.b;
+            updateAll();
+        });
+    });
+
+    colorAInput.addEventListener('input', updateAll);
+    colorBInput.addEventListener('input', updateAll);
+    ratioInput.addEventListener('input', updateAll);
+    grayscaleToggle.addEventListener('change', applyGrayscaleMode);
+
+    updateAll();
+</script>
 </body>
 </html>
