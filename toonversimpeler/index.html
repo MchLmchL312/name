@@ -3,63 +3,89 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Toonversimpelaar (Schereloog / Squinting Tool)</title>
+<title>Toonvereenvoudiger (Squinting Tool)</title>
 <style>
-  :root { --bg:#0b0d10; --fg:#e8ecf1; --muted:#9aa3ad; --card:#131820; --accent:#6aa1ff; }
+  :root { --bg:#0b0d10; --fg:#e8ecf1; --muted:#9aa3ad; --card:#131820; --accent:#6aa1ff; --line:#263045; }
   html,body{height:100%;margin:0;font-family:sans-serif;background:var(--bg);color:var(--fg);}
-  .wrap{max-width:1100px;margin:0 auto;padding:24px;}
+  .wrap{max-width:1200px;margin:0 auto;padding:24px;}
   .panel{background:var(--card);border-radius:12px;padding:16px;margin:12px 0;}
   .drop{border:2px dashed #2d3a52;border-radius:16px;padding:18px;text-align:center;color:#c8d2de;cursor:pointer}
-  canvas{background:#0e131b;border:1px solid #263045;border-radius:12px;max-width:100%}
-  .btn{background:var(--accent);color:white;border:0;border-radius:12px;padding:8px 12px;cursor:pointer;margin-top:10px}
+  .btn{background:var(--accent);color:white;border:0;border-radius:12px;padding:8px 12px;cursor:pointer}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
   .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
   .label{color:#9fb2c9}
   #error{color:#ffbdbd;margin-top:8px;display:none}
   ol,ul{margin:0.25rem 0 0.75rem 1.25rem}
   h2{margin:0 0 0.5rem 0;font-size:1.1rem;color:#d7e2ef}
-  .muted{color:#9aa3ad}
+  .muted{color:var(--muted)}
+  /* Canvases next to each other */
+  .canvasGrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start;overflow-x:auto}
+  .canvasBox{min-width:0}
+  .canvasTitle{margin:0 0 8px 0;color:#c8d2de;font-size:0.95rem}
+  canvas{background:#0e131b;border:1px solid var(--line);border-radius:12px;width:100%;height:auto;display:block}
+  /* Progress */
+  #progWrap{display:none}
+  progress{width:240px;height:12px}
+  .progText{color:#c8d2de;min-width:130px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Toonversimpelaar (Schereloog / Squinting Tool)</h1>
+  <h1>Toonvereenvoudiger (Squinting Tool)</h1>
 
   <div class="panel">
-    <p class="label"><strong>Wat het doet:</strong> versimpelt een foto tot een gladde grijswaardenkaart — <em>zoals wanneer je je ogen tot spleetjes knijpt</em> — om toonwaarden bij het schilderen beter te zien.</p>
-    <h2>Gebruik</h2>
+    <p class="label"><strong>Wat dit doet:</strong> vereenvoudigt een foto tot een gladgemaakte grijswaardenkaart van toonwaarden — <em>zoals wanneer je je ogen tot spleetjes knijpt</em> — om je te helpen bij schilderen op toon.</p>
+    <h2>Zo gebruik je het</h2>
     <ol>
-      <li>Open dit bestand in <strong>Firefox of Chrome</strong> (die zijn het meest betrouwbaar voor lokale bestanden).</li>
-      <li><strong>Sleep &amp; zet neer</strong> een foto op het vak hieronder, of <strong>klik</strong> om een bestand te kiezen.</li>
-      <li>De tool zet automatisch om naar grijswaarden, brengt de tonen naar een veilig bereik (zodat schaduwen niet dichtlopen en hooglichten niet uitbijten) en past een mediane smoothing toe.</li>
-      <li>Klik op <strong>PNG opslaan</strong> om je versimpelde resultaat te downloaden.</li>
+      <li>Open dit bestand in <strong>Firefox of Chrome</strong> (die werken het betrouwbaarst met lokale bestanden).</li>
+      <li><strong>Sleep</strong> een foto naar het vak hieronder, of <strong>klik</strong> om een bestand te kiezen.</li>
+      <li>De tool zet om naar grijswaarden, zet toonwaarden in een veilige range (zodat schaduwen niet dichtlopen en hooglichten niet uitbijten) en verzacht daarna het beeld.</li>
+      <li>Klik op <strong>Opslaan als PNG</strong> om je vereenvoudigde resultaat te downloaden.</li>
     </ol>
     <h2>Tips</h2>
     <ul>
-      <li>Beste resultaat met beelden van ongeveer <strong>1500–3000 px</strong> aan de lange zijde (ongeveer 1–5 MB).</li>
-      <li>Heel grote beelden laden ook prima — de app schaalt ze stilletjes omlaag voor snelheid en stabiliteit.</li>
+      <li>Beste resultaten bij foto’s van ongeveer <strong>1500–3000 px</strong> aan de lange zijde (ongeveer 1–5 MB).</li>
+      <li>Als verwerken traag voelt, kies <strong>Zwak</strong> of gebruik een kleinere foto.</li>
     </ul>
   </div>
 
   <div id="drop" class="panel drop">
-    <strong>Zet foto hier neer</strong><br>of klik om te kiezen<br>
+    <strong>Sleep foto hierheen</strong><br>of klik om te kiezen<br>
     <input id="file" type="file" accept="image/jpeg,image/png,image/webp,image/*" style="display:none" />
   </div>
 
   <div class="panel row">
-    <button id="save" class="btn" disabled>PNG opslaan</button>
-    <label class="label">Versimpeling:
+    <button id="save" class="btn" disabled>Opslaan als PNG</button>
+
+    <label class="label">Vereenvoudiging:
       <select id="strength">
         <option value="weak">Zwak</option>
         <option value="normal" selected>Normaal</option>
         <option value="strong">Sterk</option>
       </select>
     </label>
+
     <span class="label" id="info"></span>
   </div>
+
+  <div id="progWrap" class="panel row" aria-live="polite">
+    <span class="label">Bezig…</span>
+    <progress id="prog" value="0" max="1"></progress>
+    <span id="progText" class="progText">0%</span>
+  </div>
+
   <div id="error" class="panel"></div>
 
-  <canvas id="orig"></canvas>
-  <canvas id="out"></canvas>
+  <div class="canvasGrid">
+    <div class="canvasBox">
+      <p class="canvasTitle">Origineel</p>
+      <canvas id="orig"></canvas>
+    </div>
+    <div class="canvasBox">
+      <p class="canvasTitle">Vereenvoudigd</p>
+      <canvas id="out"></canvas>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -67,6 +93,12 @@ const drop=document.getElementById('drop'), file=document.getElementById('file')
 const orig=document.getElementById('orig'), out=document.getElementById('out');
 const save=document.getElementById('save'), info=document.getElementById('info'), err=document.getElementById('error');
 const strength=document.getElementById('strength');
+
+const progWrap=document.getElementById('progWrap');
+const prog=document.getElementById('prog');
+const progText=document.getElementById('progText');
+
+let busy = false;
 
 drop.addEventListener('click', ()=>file.click());
 drop.addEventListener('dragover', e=>{e.preventDefault(); drop.style.background='#222';});
@@ -81,20 +113,58 @@ file.addEventListener('change', e=>{ const f=e.target.files[0]; if(f) handleFile
 
 save.addEventListener('click', ()=>{
   const link=document.createElement('a');
-  link.download='Tone-Simplifier-Squinting.png';
+  link.download='Toonvereenvoudiger.png';
   link.href=out.toDataURL('image/png');
   link.click();
 });
 
+function showProgress(){
+  progWrap.style.display = 'flex';
+}
+function hideProgress(){
+  progWrap.style.display = 'none';
+}
+function setProgress(p, label){
+  const clamped = Math.max(0, Math.min(1, p));
+  prog.value = clamped;
+  const pct = Math.round(clamped * 100);
+  progText.textContent = label ? `${pct}% — ${label}` : `${pct}%`;
+}
+
+function showError(msg){ err.textContent = msg; err.style.display = 'block'; }
+function hideError(){ err.style.display = 'none'; }
+
+function yieldToUI(){
+  return new Promise(resolve => requestAnimationFrame(()=>resolve()));
+}
+
 async function handleFile(f){
-  hideError(); info.textContent='';
+  if (busy) return;
+  busy = true;
+
+  hideError();
+  info.textContent='';
+  save.disabled = true;
+  strength.disabled = true;
+
+  showProgress();
+  setProgress(0.02, 'Foto laden');
+
   try{
     const {bmp, note} = await decodeWithDownscaleOnly(f);
-    render(bmp, f, note);
+    setProgress(0.08, 'Voorbeeld voorbereiden');
+    await render(bmp, f, note);
+    setProgress(1.0, 'Klaar');
     save.disabled = false;
+    // leave it visible for a moment so it doesn't feel like it "blinked"
+    setTimeout(()=>{ if(!busy) hideProgress(); }, 650);
   }catch(e){
     console.error(e);
-    showError('Kon dat bestand niet laden. Probeer een JPG of PNG, of open het in Firefox/Chrome.');
+    showError('Kon dit bestand niet laden. Probeer een JPG of PNG, of open in Firefox/Chrome.');
+    hideProgress();
+  }finally{
+    busy = false;
+    strength.disabled = false;
   }
 }
 
@@ -107,7 +177,7 @@ function decodeWithDownscaleOnly(file){
       const long = Math.max(img.naturalWidth, img.naturalHeight);
       let targetLong = long;
       let why = 'originele grootte behouden';
-      if (long > MAX_WORK){ targetLong = MAX_WORK; why = `omlaag geschaald tot ~${MAX_WORK}px`; }
+      if (long > MAX_WORK){ targetLong = MAX_WORK; why = `verkleind naar ~${MAX_WORK}px`; }
       const s = targetLong / long;
       const w = Math.max(1, Math.round(img.naturalWidth * s));
       const h = Math.max(1, Math.round(img.naturalHeight * s));
@@ -126,7 +196,7 @@ function decodeWithDownscaleOnly(file){
   });
 }
 
-function render(bmp, file, note){
+async function render(bmp, file, note){
   const maxPreview=1600;
   const longWork = Math.max(bmp.width,bmp.height);
   const s=Math.min(1, maxPreview/longWork);
@@ -135,9 +205,20 @@ function render(bmp, file, note){
   orig.width=w; orig.height=h;
   const ctx=orig.getContext('2d', { willReadFrequently:true });
   ctx.drawImage(bmp,0,0,w,h);
+
+  setProgress(0.12, 'Naar grijswaarden');
+  await yieldToUI();
+
   const src=ctx.getImageData(0,0,w,h).data;
   const g=new Uint8ClampedArray(w*h);
-  for(let i=0,j=0;i<src.length;i+=4,j++) g[j]=0.2126*src[i]+0.7152*src[i+1]+0.0722*src[i+2];
+
+  // Build grayscale (fast, but we still yield once afterwards for responsiveness)
+  for(let i=0,j=0;i<src.length;i+=4,j++){
+    g[j]=0.2126*src[i]+0.7152*src[i+1]+0.0722*src[i+2];
+  }
+
+  setProgress(0.16, 'Toonwaarden schalen');
+  await yieldToUI();
 
   const {lo,hi} = percentileEnds(g, 0.01, 0.99);
   const mapped = mapToRange(g, lo, hi, 20, 235);
@@ -170,21 +251,40 @@ function render(bmp, file, note){
     }
   }
 
-  const medianed = medianFilter(mapped, w, h, k);
-  const finalImg = gaussianSoften(medianed, w, h, sigma);
+  // Median filter is the slow part: do it async with progress
+  setProgress(0.20, 'Mediaanfilter');
+  await yieldToUI();
 
-  out.width=w; out.height=h; const octx=out.getContext('2d'), img=octx.createImageData(w,h);
-  for(let i=0,j=0;i<finalImg.length;i++,j+=4){ img.data[j]=img.data[j+1]=img.data[j+2]=finalImg[i]; img.data[j+3]=255; }
+  const medianed = await medianFilterAsync(mapped, w, h, k, (p)=>{
+    // 20%..80% of total
+    setProgress(0.20 + 0.60*p, 'Mediaanfilter');
+  });
+
+  // Gaussian soften: also chunked
+  setProgress(0.82, 'Verzachten');
+  await yieldToUI();
+
+  const finalImg = await gaussianSoftenAsync(medianed, w, h, sigma, (p)=>{
+    // 82%..98% of total
+    setProgress(0.82 + 0.16*p, 'Verzachten');
+  });
+
+  setProgress(0.99, 'Resultaat tekenen');
+  await yieldToUI();
+
+  out.width=w; out.height=h;
+  const octx=out.getContext('2d'), img=octx.createImageData(w,h);
+  for(let i=0,j=0;i<finalImg.length;i++,j+=4){
+    img.data[j]=img.data[j+1]=img.data[j+2]=finalImg[i];
+    img.data[j+3]=255;
+  }
   octx.putImageData(img,0,0);
 
   const mb = Math.round(file.size/1024/1024);
   const level = strength ? strength.value : 'normal';
   const levelLabel = level === 'weak' ? 'Zwak' : level === 'strong' ? 'Sterk' : 'Normaal';
-  info.textContent = `Geladen: ${mb}MB • Werkformaat: ${bmp.width}×${bmp.height} (${note}) • Voorvertoning: ${w}×${h} • Mediaan ~ ${k}×${k} • Sterkte: ${levelLabel}`;
+  info.textContent = `Geladen: ${mb}MB • Werkformaat: ${bmp.width}×${bmp.height} (${note}) • Voorbeeld: ${w}×${h} • Mediaan ~ ${k}×${k} • Sterkte: ${levelLabel}`;
 }
-
-function showError(msg){ err.textContent = msg; err.style.display = 'block'; }
-function hideError(){ err.style.display = 'none'; }
 
 function percentileEnds(gray, plo, phi){
   const hist=new Uint32Array(256); for(const v of gray) hist[v]++;
@@ -197,48 +297,80 @@ function percentileEnds(gray, plo, phi){
 function mapToRange(gray, lo, hi, tLo, tHi){
   const out=new Uint8ClampedArray(gray.length);
   const scale=(tHi - tLo) / Math.max(1,(hi - lo));
-  for(let i=0;i<gray.length;i++){ let v=(gray[i]-lo)*scale + tLo; out[i]=v<0?0:v>255?255:v; }
+  for(let i=0;i<gray.length;i++){
+    let v=(gray[i]-lo)*scale + tLo;
+    out[i]=v<0?0:v>255?255:v;
+  }
   return out;
 }
 
-function medianFilter(gray,w,h,k){
-  if(k<3) return gray; const r=(k-1)/2, out=new Uint8ClampedArray(w*h), win=new Uint8Array(k*k);
-  for(let y=0;y<h;y++){for(let x=0;x<w;x++){let idx=0;
-    for(let yy=y-r;yy<=y+r;yy++){const y2=Math.min(h-1,Math.max(0,yy)),row=y2*w;
-      for(let xx=x-r;xx<=x+r;xx++){const x2=Math.min(w-1,Math.max(0,xx)); win[idx++]=gray[row+x2];}}
-    win.subarray(0,idx).sort(); out[y*w+x]=win[(idx/2)|0]; }} return out;
+async function medianFilterAsync(gray,w,h,k,onProgress){
+  if(k<3) return gray;
+  const r=(k-1)/2, out=new Uint8ClampedArray(w*h), win=new Uint8Array(k*k);
+  const yieldEvery = 6; // rows
+  for(let y=0;y<h;y++){
+    for(let x=0;x<w;x++){
+      let idx=0;
+      for(let yy=y-r;yy<=y+r;yy++){
+        const y2=Math.min(h-1,Math.max(0,yy)),row=y2*w;
+        for(let xx=x-r;xx<=x+r;xx++){
+          const x2=Math.min(w-1,Math.max(0,xx));
+          win[idx++]=gray[row+x2];
+        }
+      }
+      win.subarray(0,idx).sort();
+      out[y*w+x]=win[(idx/2)|0];
+    }
+    if(onProgress) onProgress((y+1)/h);
+    if(y % yieldEvery === 0) await yieldToUI();
+  }
+  return out;
 }
 
-function gaussianSoften(gray,w,h,sigma){
+async function gaussianSoftenAsync(gray,w,h,sigma,onProgress){
   if(sigma<=0) return gray;
   const radius=Math.max(1, Math.round(sigma*3));
   const size=radius*2+1, kernel=new Float32Array(size);
   const s2=2*sigma*sigma; let sum=0;
-  for(let i=-radius, j=0; i<=radius; i++, j++){ const v=Math.exp(-(i*i)/s2); kernel[j]=v; sum+=v; }
+  for(let i=-radius, j=0; i<=radius; i++, j++){
+    const v=Math.exp(-(i*i)/s2);
+    kernel[j]=v; sum+=v;
+  }
   for(let i=0;i<size;i++) kernel[i]/=sum;
 
   const temp=new Float32Array(w*h), out=new Uint8ClampedArray(w*h);
+
+  const yieldEvery = 8;
+
+  // Horizontal pass
   for(let y=0;y<h;y++){
     const row=y*w;
     for(let x=0;x<w;x++){
       let acc=0;
-      for(let k=-radius;k<=radius;k++){
-        const xx=Math.min(w-1, Math.max(0, x+k));
-        acc += gray[row+xx]*kernel[k+radius];
+      for(let kk=-radius;kk<=radius;kk++){
+        const xx=Math.min(w-1, Math.max(0, x+kk));
+        acc += gray[row+xx]*kernel[kk+radius];
       }
       temp[row+x]=acc;
     }
+    if (onProgress) onProgress(0.5 * ((y+1)/h));
+    if (y % yieldEvery === 0) await yieldToUI();
   }
+
+  // Vertical pass
   for(let x=0;x<w;x++){
     for(let y=0;y<h;y++){
       let acc=0;
-      for(let k=-radius;k<=radius;k++){
-        const yy=Math.min(h-1, Math.max(0, y+k));
-        acc += temp[yy*w+x]*kernel[k+radius];
+      for(let kk=-radius;kk<=radius;kk++){
+        const yy=Math.min(h-1, Math.max(0, y+kk));
+        acc += temp[yy*w+x]*kernel[kk+radius];
       }
       out[y*w+x]=acc;
     }
+    if (onProgress) onProgress(0.5 + 0.5 * ((x+1)/w));
+    if (x % yieldEvery === 0) await yieldToUI();
   }
+
   return out;
 }
 </script>
