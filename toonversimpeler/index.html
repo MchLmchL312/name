@@ -34,19 +34,13 @@
   <h1>Toonvereenvoudiger (Squinting Tool)</h1>
 
   <div class="panel">
-    <p class="label"><strong>Wat dit doet:</strong> vereenvoudigt een foto tot een gladgemaakte grijswaardenkaart van toonwaarden — <em>zoals wanneer je je ogen tot spleetjes knijpt</em> — om je te helpen bij schilderen op toon.</p>
+    <p class="label"><strong>Wat dit doet:</strong> vereenvoudigt een foto tot een gladgemaakte grijswaardenkaart van toonwaarden — <em>zoals wanneer je door je wimpers kijkt</em> — om je te helpen bij schilderen op toon.</p>
     <h2>Zo gebruik je het</h2>
     <ol>
       <li>Open dit bestand in <strong>Firefox of Chrome</strong> (die werken het betrouwbaarst met lokale bestanden).</li>
       <li><strong>Sleep</strong> een foto naar het vak hieronder, of <strong>klik</strong> om een bestand te kiezen.</li>
       <li>De tool zet om naar grijswaarden, zet toonwaarden in een veilige range (zodat schaduwen niet dichtlopen en hooglichten niet uitbijten) en verzacht daarna het beeld.</li>
-      <li>Klik op <strong>Opslaan als PNG</strong> om je vereenvoudigde resultaat te downloaden.</li>
-    </ol>
-    <h2>Tips</h2>
-    <ul>
-      <li>Beste resultaten bij foto’s van ongeveer <strong>1500–3000 px</strong> aan de lange zijde (ongeveer 1–5 MB).</li>
-      <li>Als verwerken traag voelt, kies <strong>Zwak</strong> of gebruik een kleinere foto.</li>
-    </ul>
+
   </div>
 
   <div id="drop" class="panel drop">
@@ -63,6 +57,11 @@
         <option value="normal" selected>Normaal</option>
         <option value="strong">Sterk</option>
       </select>
+    </label>
+
+    <label class="label">
+      <input id="keepColor" type="checkbox" style="vertical-align:middle; margin-right:6px" />
+      In kleur verwerken
     </label>
 
     <span class="label" id="info"></span>
@@ -93,12 +92,14 @@ const drop=document.getElementById('drop'), file=document.getElementById('file')
 const orig=document.getElementById('orig'), out=document.getElementById('out');
 const save=document.getElementById('save'), info=document.getElementById('info'), err=document.getElementById('error');
 const strength=document.getElementById('strength');
+const keepColor=document.getElementById('keepColor');
 
 const progWrap=document.getElementById('progWrap');
 const prog=document.getElementById('prog');
 const progText=document.getElementById('progText');
 
 let busy = false;
+let last = null;
 
 drop.addEventListener('click', ()=>file.click());
 drop.addEventListener('dragover', e=>{e.preventDefault(); drop.style.background='#222';});
@@ -110,6 +111,39 @@ drop.addEventListener('drop', e=>{
   if(f) handleFile(f);
 });
 file.addEventListener('change', e=>{ const f=e.target.files[0]; if(f) handleFile(f); });
+
+
+strength.addEventListener('change', ()=>{ rerunIfLoaded(); });
+if (keepColor) keepColor.addEventListener('change', ()=>{ rerunIfLoaded(); });
+
+async function rerunIfLoaded(){
+  if (!last || busy) return;
+  busy = true;
+
+  hideError();
+  save.disabled = true;
+  strength.disabled = true;
+  if (keepColor) keepColor.disabled = true;
+
+  showProgress();
+  setProgress(0.05, 'Opnieuw verwerken');
+
+  try{
+    await render(last.bmp, last.file, last.note);
+    setProgress(1.0, 'Klaar');
+    save.disabled = false;
+    setTimeout(()=>{ if(!busy) hideProgress(); }, 650);
+  }catch(e){
+    console.error(e);
+    showError('Er ging iets mis bij het verwerken. Probeer eventueel een kleinere foto.');
+    hideProgress();
+  }finally{
+    busy = false;
+    strength.disabled = false;
+    if (keepColor) keepColor.disabled = false;
+  }
+}
+
 
 save.addEventListener('click', ()=>{
   const link=document.createElement('a');
@@ -146,12 +180,14 @@ async function handleFile(f){
   info.textContent='';
   save.disabled = true;
   strength.disabled = true;
+  if (keepColor) keepColor.disabled = true;
 
   showProgress();
   setProgress(0.02, 'Foto laden');
 
   try{
     const {bmp, note} = await decodeWithDownscaleOnly(f);
+    last = { bmp, file: f, note };
     setProgress(0.08, 'Voorbeeld voorbereiden');
     await render(bmp, f, note);
     setProgress(1.0, 'Klaar');
@@ -165,6 +201,7 @@ async function handleFile(f){
   }finally{
     busy = false;
     strength.disabled = false;
+    if (keepColor) keepColor.disabled = false;
   }
 }
 
@@ -272,18 +309,41 @@ async function render(bmp, file, note){
   setProgress(0.99, 'Resultaat tekenen');
   await yieldToUI();
 
-  out.width=w; out.height=h;
+    out.width=w; out.height=h;
   const octx=out.getContext('2d'), img=octx.createImageData(w,h);
-  for(let i=0,j=0;i<finalImg.length;i++,j+=4){
-    img.data[j]=img.data[j+1]=img.data[j+2]=finalImg[i];
-    img.data[j+3]=255;
+
+  const useColor = keepColor && keepColor.checked;
+
+  if (!useColor){
+    for(let i=0,j=0;i<finalImg.length;i++,j+=4){
+      img.data[j]=img.data[j+1]=img.data[j+2]=finalImg[i];
+      img.data[j+3]=255;
+    }
+  } else {
+    // Kleur behouden: originele RGB blijven, maar we passen de (gesmoothe) toonwaarde toe
+    // via factor = L_final / L_orig (per pixel).
+    for(let i=0,j=0;i<finalImg.length;i++,j+=4){
+      const L0 = g[i]; // originele luminantie (0..255)
+      const Lf = finalImg[i]; // gesmoothe luminantie (0..255)
+      const factor = Lf / Math.max(1, L0);
+
+      const r = Math.max(0, Math.min(255, Math.round(src[j]   * factor)));
+      const gg= Math.max(0, Math.min(255, Math.round(src[j+1] * factor)));
+      const b = Math.max(0, Math.min(255, Math.round(src[j+2] * factor)));
+
+      img.data[j]   = r;
+      img.data[j+1] = gg;
+      img.data[j+2] = b;
+      img.data[j+3] = 255;
+    }
   }
+
   octx.putImageData(img,0,0);
 
-  const mb = Math.round(file.size/1024/1024);
+const mb = Math.round(file.size/1024/1024);
   const level = strength ? strength.value : 'normal';
   const levelLabel = level === 'weak' ? 'Zwak' : level === 'strong' ? 'Sterk' : 'Normaal';
-  info.textContent = `Geladen: ${mb}MB • Werkformaat: ${bmp.width}×${bmp.height} (${note}) • Voorbeeld: ${w}×${h} • Mediaan ~ ${k}×${k} • Sterkte: ${levelLabel}`;
+  info.textContent = `Geladen: ${mb}MB • Werkformaat: ${bmp.width}×${bmp.height} (${note}) • Voorbeeld: ${w}×${h} • Mediaan ~ ${k}×${k} • Sterkte: ${levelLabel} • Modus: ${(keepColor && keepColor.checked) ? 'Kleur' : 'Grijs'}`;
 }
 
 function percentileEnds(gray, plo, phi){
