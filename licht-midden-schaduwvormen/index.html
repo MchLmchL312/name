@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Licht- en schaduwvormen</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            color-scheme: light;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 100%;
+            background: #2a2a2a;
+            border-right: 1px solid #3a3a3a;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #3a3a3a;
+            background: #222;
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .subtitle {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .controls {
+            padding: 16px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #aaa;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            font-size: 0.9rem;
+            padding: 10px 14px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: #333;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        input[type="file"]::file-selector-button {
+            background: #007aff;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #444;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #007aff;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #007aff;
+            cursor: pointer;
+            border: none;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #333;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .toggle-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 8px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .toggle:hover {
+            background: #3a3a3a;
+        }
+
+        .toggle input[type="checkbox"] {
+            margin: 0;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .toggle-label {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slider-container input[type="range"] {
+            flex: 1;
+        }
+
+        .value-display {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+            color: #007aff;
+            font-size: 0.95rem;
+        }
+
+        button {
+            width: 100%;
+            background: #007aff;
+            color: #fff;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            touch-action: manipulation;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:active {
+            opacity: 0.7;
+        }
+
+        button:disabled {
+            background: #444;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 16px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            background: #1a1a1a;
+        }
+
+        .canvas-container {
+            flex: 1;
+            background: #2a2a2a;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .canvas-header {
+            padding: 12px 16px;
+            background: #222;
+            border-bottom: 1px solid #3a3a3a;
+            font-size: 0.85rem;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .canvas-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            min-height: 0;
+        }
+
+        canvas {
+            max-width: 100%;
+            max-height: 100%;
+            min-width: 100px;
+            min-height: 100px;
+            display: block;
+            border-radius: 8px;
+            object-fit: contain;
+            background: #1a1a1a;
+        }
+
+        /* Desktop layout */
+        @media (min-width: 768px) {
+            .app-container {
+                flex-direction: row;
+            }
+
+            .sidebar {
+                width: 320px;
+                max-width: 320px;
+                flex-shrink: 0;
+            }
+
+            .main-content {
+                flex-direction: row;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1>Licht & Schaduw</h1>
+                <p class="subtitle">Foto's naar vlakke vormen</p>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label class="control-label">📷 Afbeelding</label>
+                    <input type="file" id="fileInput" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp" />
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Modus</label>
+                    <select id="modeSelect">
+                        <option value="two">Schaduw - licht</option>
+                        <option value="three">Schaduw - middentoon - licht</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Omlijning</label>
+                    <div class="toggle-group">
+                        <label class="toggle">
+                            <input type="checkbox" id="outlineShadow" checked />
+                            <span class="toggle-label">Schaduwvorm</span>
+                        </label>
+                        <label class="toggle">
+                            <input type="checkbox" id="outlineMid" checked />
+                            <span class="toggle-label">Middentoon</span>
+                        </label>
+                        <label class="toggle">
+                            <input type="checkbox" id="outlineLight" checked />
+                            <span class="toggle-label">Lichtvorm</span>
+                        </label>
+                        <label class="toggle">
+                            <input type="checkbox" id="simplifyShapes" checked />
+                            <span class="toggle-label">Vereenvoudig vormen</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Vervaging</label>
+                    <div class="slider-container">
+                        <input type="range" id="blurAmount" min="0" max="6" value="2" />
+                        <span class="value-display" id="blurValue">2</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Drempel</label>
+                    <div class="slider-container">
+                        <input type="range" id="threshold" min="0" max="255" value="140" />
+                        <span class="value-display" id="thresholdValue">140</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <button id="downloadBtn" disabled>📥 Download resultaat</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="main-content">
+            <div class="canvas-container">
+                <div class="canvas-header">Origineel</div>
+                <div class="canvas-wrapper">
+                    <canvas id="originalCanvas"></canvas>
+                </div>
+            </div>
+
+            <div class="canvas-container">
+                <div class="canvas-header">Verwerkt (gemiddelde kleuren)</div>
+                <div class="canvas-wrapper">
+                    <canvas id="processedCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById("fileInput");
+        const thresholdSlider = document.getElementById("threshold");
+        const thresholdValue = document.getElementById("thresholdValue");
+        const downloadBtn = document.getElementById("downloadBtn");
+        const modeSelect = document.getElementById("modeSelect");
+        const outlineShadow = document.getElementById("outlineShadow");
+        const outlineMid = document.getElementById("outlineMid");
+        const outlineLight = document.getElementById("outlineLight");
+        const simplifyShapes = document.getElementById("simplifyShapes");
+        const blurAmount = document.getElementById("blurAmount");
+        const blurValue = document.getElementById("blurValue");
+        const originalCanvas = document.getElementById("originalCanvas");
+        const processedCanvas = document.getElementById("processedCanvas");
+        const originalCtx = originalCanvas.getContext("2d", { willReadFrequently: true });
+        const processedCtx = processedCanvas.getContext("2d", { willReadFrequently: true });
+
+        let originalImageData = null;
+
+        function setCanvasSize(canvas, width, height) {
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        function drawImageToCanvas(image, canvas, ctx) {
+            // Safari fix: use window dimensions instead of container dimensions
+            const isMobile = window.innerWidth < 768;
+            let maxWidth, maxHeight;
+
+            if (isMobile) {
+                // Mobile: full width, half height
+                maxWidth = window.innerWidth - 64;
+                maxHeight = (window.innerHeight - 200) / 2;
+            } else {
+                // Desktop: half width (sidebar takes 320px), full height minus header
+                maxWidth = (window.innerWidth - 320 - 64) / 2;
+                maxHeight = window.innerHeight - 120;
+            }
+
+            const scale = Math.min(maxWidth / image.width, maxHeight / image.height, 1);
+            const width = Math.round(image.width * scale);
+            const height = Math.round(image.height * scale);
+            setCanvasSize(canvas, width, height);
+            ctx.clearRect(0, 0, width, height);
+            ctx.drawImage(image, 0, 0, width, height);
+        }
+
+        function computeTwoTone() {
+            if (!originalImageData) {
+                return;
+            }
+            const threshold = Number(thresholdSlider.value);
+            const mode = modeSelect.value;
+            thresholdValue.textContent = threshold;
+            const outlineShadowEnabled = outlineShadow.checked;
+            const outlineMidEnabled = outlineMid.checked;
+            const outlineLightEnabled = outlineLight.checked;
+            const simplifyEnabled = simplifyShapes.checked;
+            const blurRadius = Number(blurAmount.value);
+            blurValue.textContent = blurRadius;
+
+            const { width, height, data } = originalImageData;
+            const luminance = new Float32Array(width * height);
+            let lightSum = [0, 0, 0];
+            let shadowSum = [0, 0, 0];
+            let midSum = [0, 0, 0];
+            let lightCount = 0;
+            let shadowCount = 0;
+            let midCount = 0;
+            const midtoneRange = 30;
+            const midLow = Math.max(0, threshold - midtoneRange / 2);
+            const midHigh = Math.min(255, threshold + midtoneRange / 2);
+
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                const idx = i / 4;
+                luminance[idx] = lum;
+                if (mode === "three" && lum >= midLow && lum < midHigh) {
+                    midSum[0] += r;
+                    midSum[1] += g;
+                    midSum[2] += b;
+                    midCount += 1;
+                } else if (lum >= threshold) {
+                    lightSum[0] += r;
+                    lightSum[1] += g;
+                    lightSum[2] += b;
+                    lightCount += 1;
+                } else {
+                    shadowSum[0] += r;
+                    shadowSum[1] += g;
+                    shadowSum[2] += b;
+                    shadowCount += 1;
+                }
+            }
+
+            const blurredLuminance = applyBoxBlur(luminance, width, height, blurRadius);
+
+            if (lightCount === 0 || shadowCount === 0) {
+                const avg = [
+                    (lightSum[0] + shadowSum[0]) / (lightCount + shadowCount),
+                    (lightSum[1] + shadowSum[1]) / (lightCount + shadowCount),
+                    (lightSum[2] + shadowSum[2]) / (lightCount + shadowCount),
+                ];
+                lightSum = avg;
+                shadowSum = avg;
+                lightCount = shadowCount = 1;
+            }
+
+            const lightAvg = lightSum.map((value) => value / lightCount);
+            const shadowAvg = shadowSum.map((value) => value / shadowCount);
+            const midAvg =
+                midCount > 0 ? midSum.map((value) => value / midCount) : null;
+            const output = new ImageData(width, height);
+            const classMap = new Uint8Array(width * height);
+
+            for (let i = 0; i < output.data.length; i += 4) {
+                const idx = i / 4;
+                const lum = blurredLuminance[idx];
+                let color = shadowAvg;
+                let region = 0;
+                if (mode === "three" && midAvg && lum >= midLow && lum < midHigh) {
+                    color = midAvg;
+                    region = 1;
+                } else if (lum >= threshold) {
+                    color = lightAvg;
+                    region = 2;
+                }
+                classMap[idx] = region;
+                output.data[i] = color[0];
+                output.data[i + 1] = color[1];
+                output.data[i + 2] = color[2];
+                output.data[i + 3] = 255;
+            }
+
+            const outlineMap = classMap.slice();
+            if (simplifyEnabled) {
+                keepLargestComponent(outlineMap, width, height, 0);
+                keepLargestComponent(outlineMap, width, height, 1);
+                keepLargestComponent(outlineMap, width, height, 2);
+            }
+
+            const outlineColor = [0, 0, 0];
+            for (let y = 1; y < height - 1; y += 1) {
+                for (let x = 1; x < width - 1; x += 1) {
+                    const idx = y * width + x;
+                    const region = outlineMap[idx];
+                    if (
+                        region === 255 ||
+                        (region === 0 && !outlineShadowEnabled) ||
+                        (region === 1 && !outlineMidEnabled) ||
+                        (region === 2 && !outlineLightEnabled)
+                    ) {
+                        continue;
+                    }
+                    const neighborsDifferent =
+                        outlineMap[idx - 1] !== region ||
+                        outlineMap[idx + 1] !== region ||
+                        outlineMap[idx - width] !== region ||
+                        outlineMap[idx + width] !== region;
+                    if (neighborsDifferent) {
+                        const outIdx = idx * 4;
+                        output.data[outIdx] = outlineColor[0];
+                        output.data[outIdx + 1] = outlineColor[1];
+                        output.data[outIdx + 2] = outlineColor[2];
+                    }
+                }
+            }
+
+            setCanvasSize(processedCanvas, width, height);
+            processedCtx.putImageData(output, 0, 0);
+            downloadBtn.disabled = false;
+        }
+
+        // Initialize canvases with minimum size for iOS
+        setCanvasSize(originalCanvas, 200, 200);
+        setCanvasSize(processedCanvas, 200, 200);
+
+        fileInput.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                console.log("No file selected");
+                return;
+            }
+
+            console.log("File selected:", file.name, file.type, file.size);
+
+            // iOS Safari fix: use FileReader for better compatibility
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    console.log("Image loaded:", img.width, "x", img.height);
+                    try {
+                        drawImageToCanvas(img, originalCanvas, originalCtx);
+                        originalImageData = originalCtx.getImageData(
+                            0,
+                            0,
+                            originalCanvas.width,
+                            originalCanvas.height
+                        );
+                        console.log("Canvas data retrieved:", originalImageData.width, "x", originalImageData.height);
+                        computeTwoTone();
+                    } catch (err) {
+                        console.error("Error processing image:", err);
+                        alert("Fout bij verwerken van afbeelding: " + err.message);
+                    }
+                };
+                img.onerror = (err) => {
+                    console.error("Image load error:", err);
+                    alert("Fout bij laden van afbeelding");
+                };
+                img.src = e.target.result;
+            };
+            reader.onerror = (err) => {
+                console.error("FileReader error:", err);
+                alert("Fout bij lezen van bestand");
+            };
+            reader.readAsDataURL(file);
+        });
+
+        thresholdSlider.addEventListener("input", computeTwoTone);
+        modeSelect.addEventListener("change", computeTwoTone);
+        outlineShadow.addEventListener("change", computeTwoTone);
+        outlineMid.addEventListener("change", computeTwoTone);
+        outlineLight.addEventListener("change", computeTwoTone);
+        simplifyShapes.addEventListener("change", computeTwoTone);
+        blurAmount.addEventListener("input", computeTwoTone);
+
+        downloadBtn.addEventListener("click", () => {
+            const link = document.createElement("a");
+            link.download = "licht-schaduw.png";
+            link.href = processedCanvas.toDataURL("image/png");
+            link.click();
+        });
+
+        function applyBoxBlur(source, width, height, radius) {
+            if (radius <= 0) {
+                return source;
+            }
+            const temp = new Float32Array(source.length);
+            const result = new Float32Array(source.length);
+
+            for (let y = 0; y < height; y += 1) {
+                for (let x = 0; x < width; x += 1) {
+                    let sum = 0;
+                    let count = 0;
+                    for (let k = -radius; k <= radius; k += 1) {
+                        const xi = x + k;
+                        if (xi < 0 || xi >= width) {
+                            continue;
+                        }
+                        sum += source[y * width + xi];
+                        count += 1;
+                    }
+                    temp[y * width + x] = sum / count;
+                }
+            }
+
+            for (let x = 0; x < width; x += 1) {
+                for (let y = 0; y < height; y += 1) {
+                    let sum = 0;
+                    let count = 0;
+                    for (let k = -radius; k <= radius; k += 1) {
+                        const yi = y + k;
+                        if (yi < 0 || yi >= height) {
+                            continue;
+                        }
+                        sum += temp[yi * width + x];
+                        count += 1;
+                    }
+                    result[y * width + x] = sum / count;
+                }
+            }
+            return result;
+        }
+
+        function keepLargestComponent(map, width, height, target) {
+            const visited = new Uint8Array(map.length);
+            let largest = [];
+            for (let i = 0; i < map.length; i += 1) {
+                if (map[i] !== target || visited[i]) {
+                    continue;
+                }
+                const queue = [i];
+                const component = [];
+                visited[i] = 1;
+                while (queue.length > 0) {
+                    const idx = queue.pop();
+                    component.push(idx);
+                    const x = idx % width;
+                    const y = Math.floor(idx / width);
+                    const neighbors = [
+                        idx - 1,
+                        idx + 1,
+                        idx - width,
+                        idx + width,
+                    ];
+                    for (const n of neighbors) {
+                        if (n < 0 || n >= map.length) {
+                            continue;
+                        }
+                        const nx = n % width;
+                        const ny = Math.floor(n / width);
+                        if (Math.abs(nx - x) + Math.abs(ny - y) !== 1) {
+                            continue;
+                        }
+                        if (map[n] === target && !visited[n]) {
+                            visited[n] = 1;
+                            queue.push(n);
+                        }
+                    }
+                }
+                if (component.length > largest.length) {
+                    largest = component;
+                }
+            }
+            if (largest.length === 0) {
+                return;
+            }
+            const keepMask = new Uint8Array(map.length);
+            for (const idx of largest) {
+                keepMask[idx] = 1;
+            }
+            for (let i = 0; i < map.length; i += 1) {
+                if (map[i] === target && !keepMask[i]) {
+                    map[i] = 255;
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
