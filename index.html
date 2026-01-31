@@ -116,6 +116,22 @@
             cursor: pointer;
         }
 
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.9rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .toggle-row input {
+            width: 18px;
+            height: 18px;
+            accent-color: #333;
+        }
+
         .slider-row {
             display: flex;
             align-items: center;
@@ -204,6 +220,10 @@
                 <div class="ratio-label" id="ratioLabel">50%</div>
             </div>
             <p id="ratioText">50% kleur A · 50% kleur B</p>
+            <label class="toggle-row">
+                <input type="checkbox" id="grayscaleToggle" />
+                Zwart-wit slider (50% = grijs)
+            </label>
             <div class="preset-list">
                 <button class="preset-button" data-a="#f4d35e" data-b="#7b2cbf">Geel + Paars</button>
                 <button class="preset-button" data-a="#ff595e" data-b="#8ac926">Rood + Groen</button>
@@ -237,6 +257,7 @@
     const ratioInput = document.getElementById('ratio');
     const ratioLabel = document.getElementById('ratioLabel');
     const ratioText = document.getElementById('ratioText');
+    const grayscaleToggle = document.getElementById('grayscaleToggle');
     const swatchA = document.getElementById('swatchA');
     const swatchB = document.getElementById('swatchB');
     const infoA = document.getElementById('infoA');
@@ -245,6 +266,7 @@
     const mixHex = document.getElementById('mixHex');
     const grayResult = document.getElementById('grayResult');
     const grayHex = document.getElementById('grayHex');
+    let storedColors = null;
 
     const hexToRgb = (hex) => {
         const normalized = hex.replace('#', '');
@@ -309,8 +331,38 @@
         renderMix();
     };
 
+    const applyGrayscaleMode = () => {
+        if (grayscaleToggle.checked) {
+            storedColors = {
+                a: colorAInput.value,
+                b: colorBInput.value,
+                ratio: ratioInput.value,
+            };
+            colorAInput.value = '#000000';
+            colorBInput.value = '#ffffff';
+            ratioInput.value = '50';
+            colorAInput.disabled = true;
+            colorBInput.disabled = true;
+            updateAll();
+        } else {
+            colorAInput.disabled = false;
+            colorBInput.disabled = false;
+            if (storedColors) {
+                colorAInput.value = storedColors.a;
+                colorBInput.value = storedColors.b;
+                ratioInput.value = storedColors.ratio;
+                storedColors = null;
+            }
+            updateAll();
+        }
+    };
+
     document.querySelectorAll('.preset-button').forEach((button) => {
         button.addEventListener('click', () => {
+            if (grayscaleToggle.checked) {
+                grayscaleToggle.checked = false;
+                applyGrayscaleMode();
+            }
             colorAInput.value = button.dataset.a;
             colorBInput.value = button.dataset.b;
             updateAll();
@@ -320,6 +372,7 @@
     colorAInput.addEventListener('input', updateAll);
     colorBInput.addEventListener('input', updateAll);
     ratioInput.addEventListener('input', updateAll);
+    grayscaleToggle.addEventListener('change', applyGrayscaleMode);
 
     updateAll();
 </script>
