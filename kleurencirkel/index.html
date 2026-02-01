@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kleurencirkel Pro</title>
+    <style>
+        :root {
+            --bg: #0b0d10;
+            --fg: #e8ecf1;
+            --card: #131820;
+            --border: #263045;
+            --accent: #6aa1ff;
+            --muted: #64748b;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 24px;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 40px;
+            max-width: 1000px;
+            width: 100%;
+            align-items: start;
+        }
+
+        /* Wheel Section */
+        .wheel-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .wheel-wrap {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: var(--card);
+            /* Placeholder */
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .segment {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0 0;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+            /* Clip-path approach for cleaner segments? simpler strictly CSS approach: */
+            /* We'll stick to the previous absolute positioning div logic but refine it */
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            box-sizing: border-box;
+            border: 2px solid var(--bg);
+        }
+
+        .segment:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .segment.active {
+            z-index: 20;
+            transform: scale(1.1);
+            filter: brightness(1.2);
+            border-color: white;
+        }
+
+        .segment.dimmed {
+            opacity: 0.3;
+            filter: grayscale(0.5);
+        }
+
+        /* Controls Section */
+        .controls {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid transparent;
+            color: var(--fg);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        button.selected {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Palette Display */
+        .palette-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .palette-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .palette-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .swatch {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .color-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hex-code {
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        .color-name {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        @media (max-width: 800px) {
+            .app-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .wheel-container {
+                margin-bottom: 20px;
+                max-width: 350px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Kleurencirkel Pro</h1>
+
+    <div class="app-grid">
+        <div class="wheel-area">
+            <div class="wheel-container">
+                <div class="wheel-wrap" id="wheel"></div>
+            </div>
+            <p style="text-align:center; color: var(--muted); font-size: 0.9rem; margin-top:20px;">
+                Klik op een kleursegment om de basiskleur te wijzigen.
+            </p>
+        </div>
+
+        <div class="controls">
+            <div>
+                <div class="section-title">Harmonie</div>
+                <div class="btn-grid" id="schemeBtns">
+                    <button data-s="mono" class="selected">Monochroom</button>
+                    <button data-s="ana">Analoog</button>
+                    <button data-s="comp">Complementair</button>
+                    <button data-s="triad">Triadisch</button>
+                    <button data-s="split">Split-Compl.</button>
+                    <button data-s="tetra">Vierkant</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="section-title">Actief Palet <span
+                        style="font-size:0.7em; font-weight:normal; opacity:0.7">(Klik om te kopiëren)</span></div>
+                <div class="palette-list" id="palette">
+                    <!-- filled by js -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const COLORS = [
+            { n: 'Rood', h: '#FF0000' },
+            { n: 'Rood-Oranje', h: '#FF5722' },
+            { n: 'Oranje', h: '#FF9800' },
+            { n: 'Geel-Oranje', h: '#FFC107' },
+            { n: 'Geel', h: '#FFEB3B' },
+            { n: 'Geel-Groen', h: '#CDDC39' },
+            { n: 'Groen', h: '#4CAF50' },
+            { n: 'Blauw-Groen', h: '#009688' },
+            { n: 'Blauw', h: '#2196F3' },
+            { n: 'Blauw-Violet', h: '#3F51B5' },
+            { n: 'Violet', h: '#673AB7' },
+            { n: 'Rood-Violet', h: '#9C27B0' }
+        ];
+
+        let state = {
+            base: 0,
+            scheme: 'mono'
+        };
+
+        const wheel = document.getElementById('wheel');
+        const palette = document.getElementById('palette');
+        const schemeBtns = document.querySelectorAll('#schemeBtns button');
+
+        function init() {
+            renderWheel();
+            update();
+
+            schemeBtns.forEach(b => {
+                b.addEventListener('click', () => {
+                    schemeBtns.forEach(btn => btn.classList.remove('selected'));
+                    b.classList.add('selected');
+                    state.scheme = b.dataset.s;
+                    update();
+                });
+            });
+        }
+
+        function renderWheel() {
+            const n = COLORS.length;
+            // Logic to draw segments using CSS transforms
+            // We'll create wedges. 360/12 = 30deg.
+            // Skew method or conic-gradient is cleaner? 
+            // Let's use individual rotated divs with clip-path/conic trickery or standard "pizza slice" generic css.
+            // Simpler: Just position circles? No, user wants a wheel.
+            // Let's use rotated rectangles masked or conic-gradient segments. 
+            // Actually, placing items in a circle is easier and cleaner than CSS wedges for hit testing.
+            // Let's do "Donut" style with gaps.
+
+            wheel.innerHTML = '';
+            const radius = 50; // %
+
+            // We actually want proper wedges.
+            // Let's use Conic Gradient for background visual, and invisible buttons? 
+            // No, we want distinct interaction. 
+            // Let's try the rotation + skew method for the visual segment.
+
+            COLORS.forEach((c, i) => {
+                const el = document.createElement('div');
+                el.className = 'segment';
+                // Math for position
+                const angle = (i * 30) - 90; // start at top
+
+                // "Sector" visual style using SVG might be easier, but let's try pure simple blocks arranged in circle for "modern dot" look 
+                // OR proper wedges. 
+                // Let's go with "Dot Ring" style if "Modern" allows? 
+                // User asked for "Kleurencirkel" (Wheel). 
+                // Let's do a CSS Conic approach for shapes.
+                // Actually, let's stick to the previous code's logic of positioning small circles/squares, but lets make them large enough to touch.
+                // OR: SVG. SVG is best for this.
+
+            });
+
+            // RESTART: SVG Rendering for the wheel
+            const ns = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(ns, "svg");
+            svg.setAttribute("viewBox", "-110 -110 220 220");
+            svg.style.width = "100%";
+            svg.style.height = "100%";
+            svg.style.transform = "rotate(-90deg)"; // Start at 12 o'clock
+
+            COLORS.forEach((c, i) => {
+                // Sector path
+                // 12 segments = 30 deg each.
+                const startA = (i * 30) * Math.PI / 180;
+                const endA = ((i + 1) * 30) * Math.PI / 180;
+                const r1 = 40; const r2 = 100; // Inner/Outer radius
+
+                // Calculate points
+                const x1 = r2 * Math.cos(startA); const y1 = r2 * Math.sin(startA);
+                const x2 = r2 * Math.cos(endA); const y2 = r2 * Math.sin(endA);
+                const x3 = r1 * Math.cos(endA); const y3 = r1 * Math.sin(endA);
+                const x4 = r1 * Math.cos(startA); const y4 = r1 * Math.sin(startA);
+
+                const pathData = `M ${x1} ${y1} A ${r2} ${r2} 0 0 1 ${x2} ${y2} L ${x3} ${y3} A ${r1} ${r1} 0 0 0 ${x4} ${y4} Z`;
+
+                const path = document.createElementNS(ns, "path");
+                path.setAttribute("d", pathData);
+                path.setAttribute("fill", c.h);
+                path.setAttribute("stroke", "var(--bg)");
+                path.setAttribute("stroke-width", "2");
+                path.style.cursor = "pointer";
+                path.id = `seg-${i}`;
+
+                path.addEventListener('click', () => {
+                    state.base = i;
+                    update();
+                });
+
+                svg.appendChild(path);
+            });
+
+            wheel.appendChild(svg);
+        }
+
+        function update() {
+            const n = COLORS.length;
+            let indices = [];
+
+            // Base is always included?
+            // Logic for schemes:
+            const b = state.base;
+
+            switch (state.scheme) {
+                case 'mono': indices = [b]; break;
+                case 'comp': indices = [b, (b + 6) % n]; break;
+                case 'ana': indices = [(b - 1 + n) % n, b, (b + 1) % n]; break;
+                case 'triad': indices = [b, (b + 4) % n, (b + 8) % n]; break;
+                case 'split': indices = [b, (b + 5) % n, (b + 7) % n]; break;
+                case 'tetra': indices = [b, (b + 3) % n, (b + 6) % n, (b + 9) % n]; break;
+            }
+
+            // Update Wheel UI
+            COLORS.forEach((_, i) => {
+                const seg = document.getElementById(`seg-${i}`);
+                // Reset
+                seg.setAttribute("stroke", "var(--bg)");
+                seg.setAttribute("stroke-width", "2");
+                seg.style.opacity = "0.3";
+
+                if (indices.includes(i)) {
+                    seg.style.opacity = "1";
+                    if (i === b) {
+                        seg.setAttribute("stroke", "white");
+                        seg.setAttribute("stroke-width", "4");
+                    }
+                }
+            });
+
+            // Update Palette UI
+            palette.innerHTML = '';
+            indices.forEach(idx => {
+                const c = COLORS[idx];
+                const item = document.createElement('div');
+                item.className = 'palette-item';
+                item.innerHTML = `
+                <div class="swatch" style="background:${c.h}"></div>
+                <div class="color-info">
+                    <span class="hex-code">${c.h}</span>
+                    <span class="color-name">${c.n} ${idx === b ? '(Basis)' : ''}</span>
+                </div>
+            `;
+                item.addEventListener('click', () => {
+                    navigator.clipboard.writeText(c.h);
+                    // quick visual feedback could go here
+                    const hexEl = item.querySelector('.hex-code');
+                    const orig = hexEl.textContent;
+                    hexEl.textContent = 'Gekopieerd!';
+                    setTimeout(() => hexEl.textContent = orig, 1000);
+                });
+                palette.appendChild(item);
+            });
+        }
+
+        init();
+
+    </script>
+</body>
+
+</html>
