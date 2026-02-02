@@ -22,83 +22,19 @@
       ul {
         padding-left: 1.25rem;
       }
-
-      .status {
-        margin-top: 1rem;
-        font-size: 0.95rem;
-        color: #666;
-      }
-
-      .error {
-        color: #b00020;
-      }
     </style>
   </head>
   <body>
     <h1>Mappen in deze map</h1>
     <p>Klik op een map om ernaartoe te navigeren.</p>
 
-    <ul id="folder-list"></ul>
-    <p id="status" class="status">Bezig met scannen…</p>
-
-    <script>
-      const folderList = document.getElementById("folder-list");
-      const status = document.getElementById("status");
-
-      const normalizeName = (href) => decodeURIComponent(href.replace(/\/$/, ""));
-
-      const renderFolders = (folders) => {
-        if (folders.length === 0) {
-          status.textContent = "Geen mappen gevonden.";
-          return;
-        }
-
-        status.textContent = "";
-        folders
-          .sort((a, b) => a.localeCompare(b, "nl", { sensitivity: "base" }))
-          .forEach((href) => {
-            const item = document.createElement("li");
-            const link = document.createElement("a");
-            link.href = href;
-            link.textContent = normalizeName(href);
-            item.appendChild(link);
-            folderList.appendChild(item);
-          });
-      };
-
-      const showError = (message) => {
-        status.textContent = message;
-        status.classList.add("error");
-      };
-
-      fetch("./", { method: "GET" })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Kan mapoverzicht niet laden.");
-          }
-          return response.text();
-        })
-        .then((html) => {
-          const doc = new DOMParser().parseFromString(html, "text/html");
-          const links = Array.from(doc.querySelectorAll("a"));
-          const folders = links
-            .map((link) => link.getAttribute("href"))
-            .filter((href) => href && href.endsWith("/") && href !== "../");
-
-          if (folders.length === 0) {
-            showError(
-              "Geen mappen gevonden. Controleer of je webserver directory listing toestaat."
-            );
-            return;
-          }
-
-          renderFolders(folders);
-        })
-        .catch(() => {
-          showError(
-            "Kon de mapinhoud niet lezen. Gebruik een webserver met directory listing, of pas dit bestand aan met een vaste lijst."
-          );
-        });
-    </script>
+    <ul>
+      <li><a href="keuzeboom/">keuzeboom</a></li>
+      <li><a href="kleur-impressie/">kleur-impressie</a></li>
+      <li><a href="kleurencirkel/">kleurencirkel</a></li>
+      <li><a href="kleurenmenger/">kleurenmenger</a></li>
+      <li><a href="licht-midden-schaduwvormen/">licht-midden-schaduwvormen</a></li>
+      <li><a href="toonversimpeler/">toonversimpeler</a></li>
+    </ul>
   </body>
 </html>
