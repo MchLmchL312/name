@@ -105,6 +105,25 @@
         font-size: 1.4rem;
       }
 
+      .mode-switch {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .mode-switch button {
+        background: #edf0ff;
+        color: var(--ink);
+        box-shadow: none;
+        border: 1px solid transparent;
+      }
+
+      .mode-switch button.active {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+
       .value-card .legend {
         font-size: 0.92rem;
         color: var(--muted);
@@ -187,7 +206,7 @@
     <div class="container">
       <header>
         <h1>Toonwaarde picker</h1>
-        <p class="subtitle">Modus 1: toonwaarde — beweeg over de afbeelding om de grijswaarde en categorie te zien.</p>
+        <p class="subtitle">Beweeg over de afbeelding om toonwaarde of warm/koud te bepalen.</p>
       </header>
 
       <div class="layout">
@@ -202,10 +221,14 @@
             <button id="bwToggle" type="button">Toon in zwart-wit</button>
           </div>
 
+          <div class="mode-switch" role="group" aria-label="Modus kiezen">
+            <button id="modeTone" type="button" class="active">Modus 1: toonwaarde</button>
+            <button id="modeTemp" type="button">Modus 2: warm/koud</button>
+          </div>
+
           <div class="value-card">
-            <div class="legend">Grijswaarde-indeling</div>
+            <div class="legend" id="modeLabel">Grijswaarde-indeling</div>
             <strong id="valueLabel">Beweeg over de afbeelding om te starten.</strong>
-            <div class="legend">0-20 = zwart • 20-40 = schaduw • 40-60 = middentoon • 60-80 = licht • 80-100 = hooglicht</div>
           </div>
         </div>
 
@@ -223,14 +246,18 @@
       const fileInput = document.getElementById("fileInput");
       const sampleBtn = document.getElementById("sampleBtn");
       const bwToggle = document.getElementById("bwToggle");
+      const modeTone = document.getElementById("modeTone");
+      const modeTemp = document.getElementById("modeTemp");
       const canvas = document.getElementById("imageCanvas");
       const ctx = canvas.getContext("2d");
       const valueLabel = document.getElementById("valueLabel");
+      const modeLabel = document.getElementById("modeLabel");
       const pickerDot = document.getElementById("pickerDot");
       const canvasWrapper = document.getElementById("canvasWrapper");
       const originalCanvas = document.createElement("canvas");
       const originalCtx = originalCanvas.getContext("2d");
       let isBW = false;
+      let mode = "tone";
 
       const ranges = [
         { max: 20, label: "Zwart" },
@@ -244,6 +271,48 @@
         const rounded = Math.round(grayPercent);
         const range = ranges.find(item => rounded <= item.max) || ranges[ranges.length - 1];
         valueLabel.textContent = range.label;
+      }
+
+      function updateTemperatureLabel(r, g, b) {
+        const { hue, saturation } = rgbToHsl(r, g, b);
+        const isWarm = hue <= 60 || hue >= 300;
+        if (saturation < 0.12) {
+          valueLabel.textContent = "Neutraal";
+        } else {
+          valueLabel.textContent = isWarm ? "Warm" : "Koud";
+        }
+      }
+
+      function rgbToHsl(r, g, b) {
+        const rNorm = r / 255;
+        const gNorm = g / 255;
+        const bNorm = b / 255;
+        const max = Math.max(rNorm, gNorm, bNorm);
+        const min = Math.min(rNorm, gNorm, bNorm);
+        const delta = max - min;
+        let hue = 0;
+        let saturation = 0;
+
+        if (delta !== 0) {
+          if (max === rNorm) {
+            hue = ((gNorm - bNorm) / delta) % 6;
+          } else if (max === gNorm) {
+            hue = (bNorm - rNorm) / delta + 2;
+          } else {
+            hue = (rNorm - gNorm) / delta + 4;
+          }
+          hue *= 60;
+          if (hue < 0) {
+            hue += 360;
+          }
+        }
+
+        const lightness = (max + min) / 2;
+        if (delta !== 0) {
+          saturation = delta / (1 - Math.abs(2 * lightness - 1));
+        }
+
+        return { hue, saturation, lightness };
       }
 
       function drawSample() {
@@ -312,12 +381,6 @@
         ctx.putImageData(imageData, 0, 0);
       }
 
-      function getGrayFromPixel(x, y) {
-        const [r, g, b] = ctx.getImageData(x, y, 1, 1).data;
-        const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-        return (luminance / 255) * 100;
-      }
-
       function handleMove(event) {
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
@@ -330,13 +393,22 @@
           return;
         }
 
-        const gray = getGrayFromPixel(x, y);
-        updateLabel(gray);
+        const [r, g, b] = ctx.getImageData(x, y, 1, 1).data;
+        const gray = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 * 100;
+        if (mode === "tone") {
+          updateLabel(gray);
+        } else {
+          updateTemperatureLabel(r, g, b);
+        }
 
         pickerDot.style.opacity = "1";
         pickerDot.style.left = `${event.clientX - rect.left + 18}px`;
         pickerDot.style.top = `${event.clientY - rect.top + 18}px`;
-        pickerDot.style.background = `rgba(${gray / 100 * 255}, ${gray / 100 * 255}, ${gray / 100 * 255}, 0.5)`;
+        if (mode === "tone") {
+          pickerDot.style.background = `rgba(${gray / 100 * 255}, ${gray / 100 * 255}, ${gray / 100 * 255}, 0.5)`;
+        } else {
+          pickerDot.style.background = `rgba(${r}, ${g}, ${b}, 0.5)`;
+        }
       }
 
       canvasWrapper.addEventListener("mousemove", handleMove);
@@ -360,6 +432,22 @@
         isBW = !isBW;
         bwToggle.textContent = isBW ? "Toon in kleur" : "Toon in zwart-wit";
         renderCanvas();
+      });
+
+      modeTone.addEventListener("click", () => {
+        mode = "tone";
+        modeTone.classList.add("active");
+        modeTemp.classList.remove("active");
+        modeLabel.textContent = "Grijswaarde-indeling";
+        valueLabel.textContent = "Beweeg over de afbeelding om te starten.";
+      });
+
+      modeTemp.addEventListener("click", () => {
+        mode = "temp";
+        modeTemp.classList.add("active");
+        modeTone.classList.remove("active");
+        modeLabel.textContent = "Kleurtemperatuur";
+        valueLabel.textContent = "Beweeg over de afbeelding om te starten.";
       });
 
       originalCanvas.width = canvas.width;
