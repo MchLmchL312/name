@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Toonwaarde picker</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        --bg: #f6f6f8;
+        --card: #ffffff;
+        --ink: #1f2430;
+        --muted: #5f6b7a;
+        --accent: #6d5dfc;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        padding: 32px 20px 48px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        min-height: 100vh;
+      }
+
+      header {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      h1 {
+        margin: 0;
+        font-weight: 600;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      label {
+        background: var(--card);
+        border: 1px solid #e0e6ef;
+        padding: 10px 14px;
+        border-radius: 12px;
+        cursor: pointer;
+        display: inline-flex;
+        gap: 10px;
+        align-items: center;
+        box-shadow: 0 6px 16px rgba(18, 23, 38, 0.08);
+      }
+
+      label span {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      button {
+        border: none;
+        padding: 10px 16px;
+        border-radius: 12px;
+        background: var(--accent);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 6px 16px rgba(109, 93, 252, 0.35);
+      }
+
+      .value-card {
+        background: var(--card);
+        border: 1px solid #e0e6ef;
+        border-radius: 16px;
+        padding: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        box-shadow: 0 10px 24px rgba(18, 23, 38, 0.08);
+      }
+
+      .value-card strong {
+        font-size: 1.4rem;
+      }
+
+      .mode-switch {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .mode-switch button {
+        background: #edf0ff;
+        color: var(--ink);
+        box-shadow: none;
+        border: 1px solid transparent;
+      }
+
+      .mode-switch button.active {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+
+      .value-card .legend {
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+        gap: 24px;
+        align-items: start;
+      }
+
+      .panel {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .canvas-wrapper {
+        background: var(--card);
+        border: 1px solid #e0e6ef;
+        border-radius: 20px;
+        padding: 18px;
+        position: relative;
+        box-shadow: 0 16px 32px rgba(18, 23, 38, 0.08);
+        min-height: 420px;
+      }
+
+      canvas {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 16px;
+      }
+
+      .picker-dot {
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        border: 2px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 0 0 2px rgba(18, 23, 38, 0.8);
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: opacity 0.1s ease;
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-top: 8px;
+      }
+
+      @media (max-width: 720px) {
+        body {
+          padding: 24px 16px;
+        }
+
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        button {
+          width: 100%;
+        }
+
+        label {
+          justify-content: space-between;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Toonwaarde picker</h1>
+        <p class="subtitle">Beweeg over de afbeelding om toonwaarde of warm/koud te bepalen.</p>
+      </header>
+
+      <div class="layout">
+        <div class="panel">
+          <div class="controls">
+            <label>
+              <strong>Afbeelding kiezen</strong>
+              <span>PNG/JPG</span>
+              <input id="fileInput" type="file" accept="image/*" />
+            </label>
+            <button id="sampleBtn" type="button">Voorbeeld laden</button>
+            <button id="bwToggle" type="button">Toon in zwart-wit</button>
+          </div>
+
+          <div class="mode-switch" role="group" aria-label="Modus kiezen">
+            <button id="modeTone" type="button" class="active">Modus 1: toonwaarde</button>
+            <button id="modeTemp" type="button">Modus 2: warm/koud</button>
+          </div>
+
+          <div class="value-card">
+            <div class="legend" id="modeLabel">Grijswaarde-indeling</div>
+            <strong id="valueLabel">Beweeg over de afbeelding om te starten.</strong>
+          </div>
+        </div>
+
+        <div>
+          <div class="canvas-wrapper" id="canvasWrapper">
+            <canvas id="imageCanvas" width="960" height="540"></canvas>
+            <div class="picker-dot" id="pickerDot"></div>
+          </div>
+          <p class="hint">Tip: zoom in via je browser voor preciezer prikken.</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const fileInput = document.getElementById("fileInput");
+      const sampleBtn = document.getElementById("sampleBtn");
+      const bwToggle = document.getElementById("bwToggle");
+      const modeTone = document.getElementById("modeTone");
+      const modeTemp = document.getElementById("modeTemp");
+      const canvas = document.getElementById("imageCanvas");
+      const ctx = canvas.getContext("2d");
+      const valueLabel = document.getElementById("valueLabel");
+      const modeLabel = document.getElementById("modeLabel");
+      const pickerDot = document.getElementById("pickerDot");
+      const canvasWrapper = document.getElementById("canvasWrapper");
+      const originalCanvas = document.createElement("canvas");
+      const originalCtx = originalCanvas.getContext("2d");
+      let isBW = false;
+      let mode = "tone";
+
+      const ranges = [
+        { max: 20, label: "Zwart" },
+        { max: 40, label: "Schaduw" },
+        { max: 60, label: "Middentoon" },
+        { max: 80, label: "Licht" },
+        { max: 100, label: "Hooglicht" }
+      ];
+
+      function updateLabel(grayPercent) {
+        const rounded = Math.round(grayPercent);
+        const range = ranges.find(item => rounded <= item.max) || ranges[ranges.length - 1];
+        valueLabel.textContent = range.label;
+      }
+
+      function updateTemperatureLabel(r, g, b) {
+        const { hue, saturation } = rgbToHsl(r, g, b);
+        const isWarm = hue <= 60 || hue >= 300;
+        if (saturation < 0.12) {
+          valueLabel.textContent = "Neutraal";
+        } else {
+          valueLabel.textContent = isWarm ? "Warm" : "Koud";
+        }
+      }
+
+      function rgbToHsl(r, g, b) {
+        const rNorm = r / 255;
+        const gNorm = g / 255;
+        const bNorm = b / 255;
+        const max = Math.max(rNorm, gNorm, bNorm);
+        const min = Math.min(rNorm, gNorm, bNorm);
+        const delta = max - min;
+        let hue = 0;
+        let saturation = 0;
+
+        if (delta !== 0) {
+          if (max === rNorm) {
+            hue = ((gNorm - bNorm) / delta) % 6;
+          } else if (max === gNorm) {
+            hue = (bNorm - rNorm) / delta + 2;
+          } else {
+            hue = (rNorm - gNorm) / delta + 4;
+          }
+          hue *= 60;
+          if (hue < 0) {
+            hue += 360;
+          }
+        }
+
+        const lightness = (max + min) / 2;
+        if (delta !== 0) {
+          saturation = delta / (1 - Math.abs(2 * lightness - 1));
+        }
+
+        return { hue, saturation, lightness };
+      }
+
+      function drawSample() {
+        const { width, height } = originalCanvas;
+        const gradient = originalCtx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, "#ff5f6d");
+        gradient.addColorStop(0.5, "#ffc371");
+        gradient.addColorStop(1, "#24c6dc");
+        originalCtx.fillStyle = gradient;
+        originalCtx.fillRect(0, 0, width, height);
+
+        originalCtx.fillStyle = "rgba(255,255,255,0.65)";
+        originalCtx.fillRect(width * 0.08, height * 0.12, width * 0.25, height * 0.35);
+        originalCtx.fillStyle = "rgba(0,0,0,0.4)";
+        originalCtx.fillRect(width * 0.55, height * 0.2, width * 0.35, height * 0.25);
+
+        originalCtx.beginPath();
+        originalCtx.fillStyle = "#2c2c2c";
+        originalCtx.arc(width * 0.3, height * 0.75, height * 0.12, 0, Math.PI * 2);
+        originalCtx.fill();
+
+        originalCtx.beginPath();
+        originalCtx.fillStyle = "#fefefe";
+        originalCtx.arc(width * 0.75, height * 0.7, height * 0.16, 0, Math.PI * 2);
+        originalCtx.fill();
+        renderCanvas();
+      }
+
+      function loadImage(file) {
+        const reader = new FileReader();
+        reader.onload = event => {
+          const img = new Image();
+          img.onload = () => {
+            const aspect = img.width / img.height;
+            const canvasAspect = canvas.width / canvas.height;
+            if (aspect > canvasAspect) {
+              canvas.height = Math.round(canvas.width / aspect);
+            } else {
+              canvas.width = Math.round(canvas.height * aspect);
+            }
+            originalCanvas.width = canvas.width;
+            originalCanvas.height = canvas.height;
+            originalCtx.clearRect(0, 0, canvas.width, canvas.height);
+            originalCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            renderCanvas();
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function renderCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (!isBW) {
+          ctx.drawImage(originalCanvas, 0, 0, canvas.width, canvas.height);
+          return;
+        }
+        const imageData = originalCtx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          const luminance = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+          data[i] = luminance;
+          data[i + 1] = luminance;
+          data[i + 2] = luminance;
+        }
+        ctx.putImageData(imageData, 0, 0);
+      }
+
+      function handleMove(event) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const x = Math.floor((event.clientX - rect.left) * scaleX);
+        const y = Math.floor((event.clientY - rect.top) * scaleY);
+
+        if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
+          pickerDot.style.opacity = "0";
+          return;
+        }
+
+        const [r, g, b] = ctx.getImageData(x, y, 1, 1).data;
+        const gray = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 * 100;
+        if (mode === "tone") {
+          updateLabel(gray);
+        } else {
+          updateTemperatureLabel(r, g, b);
+        }
+
+        pickerDot.style.opacity = "1";
+        pickerDot.style.left = `${event.clientX - rect.left + 18}px`;
+        pickerDot.style.top = `${event.clientY - rect.top + 18}px`;
+        if (mode === "tone") {
+          pickerDot.style.background = `rgba(${gray / 100 * 255}, ${gray / 100 * 255}, ${gray / 100 * 255}, 0.5)`;
+        } else {
+          pickerDot.style.background = `rgba(${r}, ${g}, ${b}, 0.5)`;
+        }
+      }
+
+      canvasWrapper.addEventListener("mousemove", handleMove);
+      canvasWrapper.addEventListener("mouseleave", () => {
+        pickerDot.style.opacity = "0";
+        valueLabel.textContent = "Beweeg over de afbeelding om te starten.";
+      });
+
+      fileInput.addEventListener("change", event => {
+        const [file] = event.target.files;
+        if (file) {
+          loadImage(file);
+        }
+      });
+
+      sampleBtn.addEventListener("click", () => {
+        drawSample();
+      });
+
+      bwToggle.addEventListener("click", () => {
+        isBW = !isBW;
+        bwToggle.textContent = isBW ? "Toon in kleur" : "Toon in zwart-wit";
+        renderCanvas();
+      });
+
+      modeTone.addEventListener("click", () => {
+        mode = "tone";
+        modeTone.classList.add("active");
+        modeTemp.classList.remove("active");
+        modeLabel.textContent = "Grijswaarde-indeling";
+        valueLabel.textContent = "Beweeg over de afbeelding om te starten.";
+      });
+
+      modeTemp.addEventListener("click", () => {
+        mode = "temp";
+        modeTemp.classList.add("active");
+        modeTone.classList.remove("active");
+        modeLabel.textContent = "Kleurtemperatuur";
+        valueLabel.textContent = "Beweeg over de afbeelding om te starten.";
+      });
+
+      originalCanvas.width = canvas.width;
+      originalCanvas.height = canvas.height;
+      drawSample();
+    </script>
+  </body>
+</html>
