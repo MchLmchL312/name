@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Toonwaarde picker</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        --bg: #f6f6f8;
+        --card: #ffffff;
+        --ink: #1f2430;
+        --muted: #5f6b7a;
+        --accent: #6d5dfc;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        padding: 32px 20px 48px;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      header {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      h1 {
+        margin: 0;
+        font-weight: 600;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      label {
+        background: var(--card);
+        border: 1px solid #e0e6ef;
+        padding: 10px 14px;
+        border-radius: 12px;
+        cursor: pointer;
+        display: inline-flex;
+        gap: 10px;
+        align-items: center;
+        box-shadow: 0 6px 16px rgba(18, 23, 38, 0.08);
+      }
+
+      label span {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      button {
+        border: none;
+        padding: 10px 16px;
+        border-radius: 12px;
+        background: var(--accent);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 6px 16px rgba(109, 93, 252, 0.35);
+      }
+
+      .value-card {
+        background: var(--card);
+        border: 1px solid #e0e6ef;
+        border-radius: 16px;
+        padding: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        box-shadow: 0 10px 24px rgba(18, 23, 38, 0.08);
+      }
+
+      .value-card strong {
+        font-size: 1.4rem;
+      }
+
+      .value-card .legend {
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      .canvas-wrapper {
+        background: var(--card);
+        border: 1px solid #e0e6ef;
+        border-radius: 20px;
+        padding: 18px;
+        position: relative;
+        box-shadow: 0 16px 32px rgba(18, 23, 38, 0.08);
+      }
+
+      canvas {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 16px;
+      }
+
+      .picker-dot {
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        border: 2px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 0 0 2px rgba(18, 23, 38, 0.8);
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: opacity 0.1s ease;
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-top: 8px;
+      }
+
+      @media (max-width: 720px) {
+        body {
+          padding: 24px 16px;
+        }
+
+        .controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        button {
+          width: 100%;
+        }
+
+        label {
+          justify-content: space-between;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Toonwaarde picker</h1>
+        <p class="subtitle">Modus 1: toonwaarde — beweeg over de afbeelding om de grijswaarde en categorie te zien.</p>
+      </header>
+
+      <div class="controls">
+        <label>
+          <strong>Afbeelding kiezen</strong>
+          <span>PNG/JPG</span>
+          <input id="fileInput" type="file" accept="image/*" />
+        </label>
+        <button id="sampleBtn" type="button">Voorbeeld laden</button>
+      </div>
+
+      <div class="value-card">
+        <div class="legend">Grijswaarde-indeling</div>
+        <strong id="valueLabel">Beweeg over de afbeelding om te starten.</strong>
+        <div class="legend">0-10 = zwart • 10-30 = schaduw • 30-70 = middentoon • 70-90 = licht • 90-100 = hooglicht</div>
+      </div>
+
+      <div class="canvas-wrapper" id="canvasWrapper">
+        <canvas id="imageCanvas" width="960" height="540"></canvas>
+        <div class="picker-dot" id="pickerDot"></div>
+      </div>
+      <p class="hint">Tip: zoom in via je browser voor preciezer prikken.</p>
+    </div>
+
+    <script>
+      const fileInput = document.getElementById("fileInput");
+      const sampleBtn = document.getElementById("sampleBtn");
+      const canvas = document.getElementById("imageCanvas");
+      const ctx = canvas.getContext("2d");
+      const valueLabel = document.getElementById("valueLabel");
+      const pickerDot = document.getElementById("pickerDot");
+      const canvasWrapper = document.getElementById("canvasWrapper");
+
+      const ranges = [
+        { max: 10, label: "Zwart" },
+        { max: 30, label: "Schaduw" },
+        { max: 70, label: "Middentoon" },
+        { max: 90, label: "Licht" },
+        { max: 100, label: "Hooglicht" }
+      ];
+
+      function updateLabel(grayPercent) {
+        const rounded = Math.round(grayPercent);
+        const range = ranges.find(item => rounded <= item.max) || ranges[ranges.length - 1];
+        valueLabel.textContent = `Grijswaarde ${rounded} • ${range.label}`;
+      }
+
+      function drawSample() {
+        const { width, height } = canvas;
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, "#ff5f6d");
+        gradient.addColorStop(0.5, "#ffc371");
+        gradient.addColorStop(1, "#24c6dc");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.fillStyle = "rgba(255,255,255,0.65)";
+        ctx.fillRect(width * 0.08, height * 0.12, width * 0.25, height * 0.35);
+        ctx.fillStyle = "rgba(0,0,0,0.4)";
+        ctx.fillRect(width * 0.55, height * 0.2, width * 0.35, height * 0.25);
+
+        ctx.beginPath();
+        ctx.fillStyle = "#2c2c2c";
+        ctx.arc(width * 0.3, height * 0.75, height * 0.12, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.fillStyle = "#fefefe";
+        ctx.arc(width * 0.75, height * 0.7, height * 0.16, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function loadImage(file) {
+        const reader = new FileReader();
+        reader.onload = event => {
+          const img = new Image();
+          img.onload = () => {
+            const aspect = img.width / img.height;
+            const canvasAspect = canvas.width / canvas.height;
+            if (aspect > canvasAspect) {
+              canvas.height = Math.round(canvas.width / aspect);
+            } else {
+              canvas.width = Math.round(canvas.height * aspect);
+            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function getGrayFromPixel(x, y) {
+        const [r, g, b] = ctx.getImageData(x, y, 1, 1).data;
+        const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        return (luminance / 255) * 100;
+      }
+
+      function handleMove(event) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const x = Math.floor((event.clientX - rect.left) * scaleX);
+        const y = Math.floor((event.clientY - rect.top) * scaleY);
+
+        if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
+          pickerDot.style.opacity = "0";
+          return;
+        }
+
+        const gray = getGrayFromPixel(x, y);
+        updateLabel(gray);
+
+        pickerDot.style.opacity = "1";
+        pickerDot.style.left = `${event.clientX - rect.left + 18}px`;
+        pickerDot.style.top = `${event.clientY - rect.top + 18}px`;
+        pickerDot.style.background = `rgba(${gray / 100 * 255}, ${gray / 100 * 255}, ${gray / 100 * 255}, 0.5)`;
+      }
+
+      canvasWrapper.addEventListener("mousemove", handleMove);
+      canvasWrapper.addEventListener("mouseleave", () => {
+        pickerDot.style.opacity = "0";
+        valueLabel.textContent = "Beweeg over de afbeelding om te starten.";
+      });
+
+      fileInput.addEventListener("change", event => {
+        const [file] = event.target.files;
+        if (file) {
+          loadImage(file);
+        }
+      });
+
+      sampleBtn.addEventListener("click", () => {
+        drawSample();
+      });
+
+      drawSample();
+    </script>
+  </body>
+</html>
