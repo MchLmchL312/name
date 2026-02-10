@@ -7,13 +7,14 @@
   <title>Toonwaarde picker</title>
   <style>
     :root {
-      color-scheme: light;
+      color-scheme: dark;
       font-family: "Segoe UI", system-ui, sans-serif;
-      --bg: #f6f6f8;
-      --card: #ffffff;
-      --ink: #1f2430;
-      --muted: #5f6b7a;
-      --accent: #6d5dfc;
+      --bg: #000000;
+      --card: #161b22;
+      --card-border: #30363d;
+      --ink: #f0f6fc;
+      --muted: #8b949e;
+      --accent: #58a6ff;
     }
 
     * {
@@ -61,14 +62,20 @@
 
     label {
       background: var(--card);
-      border: 1px solid #e0e6ef;
+      border: 1px solid var(--card-border);
       padding: 10px 14px;
       border-radius: 12px;
       cursor: pointer;
       display: inline-flex;
       gap: 10px;
       align-items: center;
-      box-shadow: 0 6px 16px rgba(18, 23, 38, 0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s;
+    }
+
+    label:hover {
+      border-color: var(--accent);
+      background: #1c2128;
     }
 
     label span {
@@ -93,14 +100,14 @@
 
     .value-card {
       background: var(--card);
-      border: 1px solid #e0e6ef;
+      border: 1px solid var(--card-border);
       border-radius: 16px;
       padding: 16px 20px;
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: 16px;
-      box-shadow: 0 10px 24px rgba(18, 23, 38, 0.08);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
     }
 
     .value-info {
@@ -114,8 +121,8 @@
       width: 120px;
       height: 120px;
       border-radius: 12px;
-      border: 2px solid #e0e6ef;
-      background: #eee;
+      border: 2px solid var(--card-border);
+      background: #0d1117;
       flex-shrink: 0;
       transition: background-color 0.1s ease;
     }
@@ -131,16 +138,25 @@
     }
 
     .mode-switch button {
-      background: #edf0ff;
+      background: #21262d;
       color: var(--ink);
       box-shadow: none;
-      border: 1px solid transparent;
+      border: 1px solid var(--card-border);
+      transition: all 0.2s;
     }
 
-    .mode-switch button.active {
-      background: var(--accent);
+    #modeTone.active {
+      background: #f78166;
       color: white;
-      border-color: var(--accent);
+      border-color: #ff7b72;
+      box-shadow: 0 0 15px rgba(247, 129, 102, 0.4);
+    }
+
+    #modeTemp.active {
+      background: #f78166;
+      color: white;
+      border-color: #ff7b72;
+      box-shadow: 0 0 15px rgba(247, 129, 102, 0.4);
     }
 
     .value-card .legend {
@@ -167,10 +183,10 @@
       flex-direction: column;
       gap: 4px;
       font-size: 0.85rem;
-      background: #f0f2f5;
+      background: #161b22;
       padding: 12px;
       border-radius: 12px;
-      border: 1px solid #e0e6ef;
+      border: 1px solid var(--card-border);
     }
 
     .legend-item {
@@ -187,15 +203,16 @@
     }
 
     .canvas-wrapper {
-      background: var(--card);
-      border: 1px solid #e0e6ef;
+      background: #0d1117;
+      border: 1px solid var(--card-border);
       border-radius: 20px;
-      padding: 18px;
+      padding: 12px;
       position: relative;
-      box-shadow: 0 16px 32px rgba(18, 23, 38, 0.08);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
     }
 
     canvas {
