@@ -222,6 +222,21 @@
       height: auto;
       display: block;
       border-radius: 16px;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    #pickerDot {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border: 2px solid white;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px black, 0 0 8px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      display: none;
+      z-index: 10;
     }
 
     @media (max-width: 720px) {
@@ -253,7 +268,6 @@
   <div class="container">
     <header>
       <h1>Toonwaarde picker</h1>
-      <p class="subtitle">Beweeg over de afbeelding om toonwaarde of warm/koud te bepalen.</p>
     </header>
 
     <div class="layout">
@@ -303,6 +317,7 @@
       <div>
         <div class="canvas-wrapper" id="canvasWrapper">
           <canvas id="imageCanvas" width="960" height="540"></canvas>
+          <div id="pickerDot"></div>
         </div>
       </div>
     </div>
@@ -321,8 +336,9 @@
     const colorPreview = document.getElementById("colorPreview");
     const valueLegend = document.getElementById("valueLegend");
     const canvasWrapper = document.getElementById("canvasWrapper");
+    const pickerDot = document.getElementById("pickerDot");
     const originalCanvas = document.createElement("canvas");
-    const originalCtx = originalCanvas.getContext("2d");
+    const originalCtx = originalCanvas.getContext("2d", { willReadFrequently: true });
     let isBW = false;
     let mode = "tone";
 
@@ -460,35 +476,59 @@
     }
 
     function handleMove(event) {
+      if (!originalCanvas.width) return;
+
       const rect = canvas.getBoundingClientRect();
+      let clientX, clientY;
+
+      if (event.touches && event.touches.length > 0) {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+      } else {
+        clientX = event.clientX;
+        clientY = event.clientY;
+      }
+
       const scaleX = canvas.width / rect.width;
       const scaleY = canvas.height / rect.height;
-      const x = Math.floor((event.clientX - rect.left) * scaleX);
-      const y = Math.floor((event.clientY - rect.top) * scaleY);
+      const x = Math.floor((clientX - rect.left) * scaleX);
+      const y = Math.floor((clientY - rect.top) * scaleY);
 
       if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
         return;
       }
 
-      const [r, g, b] = ctx.getImageData(x, y, 1, 1).data;
+      // Move picker dot
+      pickerDot.style.display = "block";
+      pickerDot.style.left = `${clientX - rect.left + canvas.offsetLeft}px`;
+      pickerDot.style.top = `${clientY - rect.top + canvas.offsetTop}px`;
+
+      const [r, g, b] = originalCtx.getImageData(x, y, 1, 1).data;
       const gray = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 * 100;
-      if (mode === "tone") {
-        updateLabel(gray);
-      } else {
-        updateTemperatureLabel(r, g, b);
-      }
 
       if (mode === "tone") {
+        updateLabel(gray);
         colorPreview.style.backgroundColor = `rgb(${gray / 100 * 255}, ${gray / 100 * 255}, ${gray / 100 * 255})`;
       } else {
+        updateTemperatureLabel(r, g, b);
         colorPreview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
       }
     }
 
     canvasWrapper.addEventListener("mousemove", handleMove);
+    canvasWrapper.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      handleMove(e);
+    }, { passive: false });
+    canvasWrapper.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+      handleMove(e);
+    }, { passive: false });
+
     canvasWrapper.addEventListener("mouseleave", () => {
       valueLabel.textContent = "Beweeg over de afbeelding om te starten.";
       colorPreview.style.backgroundColor = "#eee";
+      pickerDot.style.display = "none";
     });
 
     fileInput.addEventListener("change", event => {
