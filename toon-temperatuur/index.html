@@ -410,29 +410,31 @@
     }
 
     function drawSample() {
-      const { width, height } = originalCanvas;
-      const gradient = originalCtx.createLinearGradient(0, 0, width, height);
-      gradient.addColorStop(0, "#ff5f6d");
-      gradient.addColorStop(0.5, "#ffc371");
-      gradient.addColorStop(1, "#24c6dc");
-      originalCtx.fillStyle = gradient;
-      originalCtx.fillRect(0, 0, width, height);
+      const img = new Image();
+      img.onload = () => {
+        const aspect = img.width / img.height;
+        const defaultWidth = 960;
+        const defaultHeight = 540;
 
-      originalCtx.fillStyle = "rgba(255,255,255,0.65)";
-      originalCtx.fillRect(width * 0.08, height * 0.12, width * 0.25, height * 0.35);
-      originalCtx.fillStyle = "rgba(0,0,0,0.4)";
-      originalCtx.fillRect(width * 0.55, height * 0.2, width * 0.35, height * 0.25);
+        // Scale canvas to fit original aspect ratio
+        if (aspect > defaultWidth / defaultHeight) {
+          canvas.width = defaultWidth;
+          canvas.height = Math.round(defaultWidth / aspect);
+        } else {
+          canvas.height = defaultHeight;
+          canvas.width = Math.round(defaultHeight * aspect);
+        }
 
-      originalCtx.beginPath();
-      originalCtx.fillStyle = "#2c2c2c";
-      originalCtx.arc(width * 0.3, height * 0.75, height * 0.12, 0, Math.PI * 2);
-      originalCtx.fill();
-
-      originalCtx.beginPath();
-      originalCtx.fillStyle = "#fefefe";
-      originalCtx.arc(width * 0.75, height * 0.7, height * 0.16, 0, Math.PI * 2);
-      originalCtx.fill();
-      renderCanvas();
+        originalCanvas.width = canvas.width;
+        originalCanvas.height = canvas.height;
+        originalCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        renderCanvas();
+      };
+      img.onerror = () => {
+        console.error("Niet gelukt om parel.jpg te laden. Mogelijk browserrestrictie.");
+        valueLabel.textContent = "Grijswaarde-indeling / Kon parel.jpg niet laden (beveiliging). Kies aub een afbeelding via de knop.";
+      };
+      img.src = "parel.jpg";
     }
 
     function loadImage(file) {
@@ -464,15 +466,21 @@
         ctx.drawImage(originalCanvas, 0, 0, canvas.width, canvas.height);
         return;
       }
-      const imageData = originalCtx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-      for (let i = 0; i < data.length; i += 4) {
-        const luminance = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
-        data[i] = luminance;
-        data[i + 1] = luminance;
-        data[i + 2] = luminance;
+      try {
+        const imageData = originalCtx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          const luminance = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+          data[i] = luminance;
+          data[i + 1] = luminance;
+          data[i + 2] = luminance;
+        }
+        ctx.putImageData(imageData, 0, 0);
+      } catch (e) {
+        console.error("Grijswaarde berekening mislukt:", e);
+        ctx.drawImage(originalCanvas, 0, 0, canvas.width, canvas.height);
+        valueLabel.textContent = "Beveiliging: zwart-wit modus werkt niet met dit voorbeeld.";
       }
-      ctx.putImageData(imageData, 0, 0);
     }
 
     function handleMove(event) {
@@ -503,15 +511,20 @@
       pickerDot.style.left = `${clientX - rect.left + canvas.offsetLeft}px`;
       pickerDot.style.top = `${clientY - rect.top + canvas.offsetTop}px`;
 
-      const [r, g, b] = originalCtx.getImageData(x, y, 1, 1).data;
-      const gray = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 * 100;
+      try {
+        const [r, g, b] = originalCtx.getImageData(x, y, 1, 1).data;
+        const gray = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 * 100;
 
-      if (mode === "tone") {
-        updateLabel(gray);
-        colorPreview.style.backgroundColor = `rgb(${gray / 100 * 255}, ${gray / 100 * 255}, ${gray / 100 * 255})`;
-      } else {
-        updateTemperatureLabel(r, g, b);
-        colorPreview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        if (mode === "tone") {
+          updateLabel(gray);
+          colorPreview.style.backgroundColor = `rgb(${gray / 100 * 255}, ${gray / 100 * 255}, ${gray / 100 * 255})`;
+        } else {
+          updateTemperatureLabel(r, g, b);
+          colorPreview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        }
+      } catch (e) {
+        console.error("Kon kleur niet ophalen (CORS/Beveiliging):", e);
+        valueLabel.textContent = "Fout: kan pixeldata niet lezen bij dit bestand.";
       }
     }
 
