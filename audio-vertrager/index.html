@@ -7,7 +7,13 @@
     <style>
       :root {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        color-scheme: light dark;
+        color-scheme: dark;
+        --bg: #0f1117;
+        --panel: #1a1f2b;
+        --line: #31394d;
+        --text: #e7ecf6;
+        --muted: #b3bfd4;
+        --accent: #74a8ff;
       }
 
       body {
@@ -16,21 +22,31 @@
         display: grid;
         place-items: center;
         padding: 1rem;
+        background: radial-gradient(circle at top, #151a24, var(--bg));
+        color: var(--text);
       }
 
       .card {
         width: min(100%, 560px);
-        border: 1px solid #6b7280;
+        border: 1px solid var(--line);
         border-radius: 12px;
         padding: 1rem;
+        background: var(--panel);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
       }
 
       .row {
         margin-top: 1rem;
       }
 
+      input[type="file"],
       input[type="range"] {
         width: 100%;
+        margin-top: 0.35rem;
+      }
+
+      input[type="range"] {
+        accent-color: var(--accent);
       }
 
       .value {
@@ -38,7 +54,8 @@
       }
 
       .hint {
-        opacity: 0.8;
+        opacity: 0.9;
+        color: var(--muted);
       }
     </style>
   </head>
@@ -46,7 +63,7 @@
     <main class="card">
       <h1>MP3 speler met snelheids-slider</h1>
 
-      <label>
+      <label for="audioFile">
         Kies een audiofile (mp3):
         <input id="audioFile" type="file" accept="audio/mpeg,.mp3,audio/*" />
       </label>
@@ -57,7 +74,7 @@
 
       <div class="row">
         <label for="speed">Afspeelsnelheid: <span id="speedValue" class="value">1.00x</span></label>
-        <input id="speed" type="range" min="0.5" max="1" step="0.01" value="1" />
+        <input id="speed" type="range" min="0.01" max="1" step="0.01" value="1" />
       </div>
 
       <p class="hint">De toonhoogte blijft gelijk (pitch correction staat aan).</p>
