@@ -14,6 +14,7 @@
         --text: #e7ecf6;
         --muted: #b3bfd4;
         --accent: #74a8ff;
+        --error: #ff9d9d;
       }
 
       body {
@@ -57,6 +58,30 @@
         opacity: 0.9;
         color: var(--muted);
       }
+
+      .btn {
+        margin-top: 0.7rem;
+        border: 1px solid var(--line);
+        background: #20283a;
+        color: var(--text);
+        border-radius: 8px;
+        padding: 0.55rem 0.75rem;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background: #27324a;
+      }
+
+      .status {
+        margin-top: 0.75rem;
+        color: var(--muted);
+        min-height: 1.2rem;
+      }
+
+      .status.error {
+        color: var(--error);
+      }
     </style>
   </head>
   <body>
@@ -67,9 +92,10 @@
         Kies een audiofile (mp3):
         <input id="audioFile" type="file" accept="audio/mpeg,.mp3,audio/*" />
       </label>
+      <button id="exampleBtn" type="button" class="btn">Voorbeeld openen (Enea Leone)</button>
 
       <div class="row">
-        <audio id="player" controls></audio>
+        <audio id="player" controls preload="metadata"></audio>
       </div>
 
       <div class="row">
@@ -78,6 +104,7 @@
       </div>
 
       <p class="hint">De toonhoogte blijft gelijk (pitch correction staat aan).</p>
+      <p id="status" class="status" aria-live="polite"></p>
     </main>
 
     <script>
@@ -85,12 +112,20 @@
       const player = document.getElementById('player');
       const speedSlider = document.getElementById('speed');
       const speedValue = document.getElementById('speedValue');
+      const exampleBtn = document.getElementById('exampleBtn');
+      const status = document.getElementById('status');
 
       let objectUrl = null;
+      const exampleFile = 'Enea Leone - [2014] (Sor - Complete Studies for Guitar) - 104 - Op 6 - No 7, Allegro.mp3';
 
       player.preservesPitch = true;
       player.mozPreservesPitch = true;
       player.webkitPreservesPitch = true;
+
+      function setStatus(message, isError = false) {
+        status.textContent = message;
+        status.classList.toggle('error', isError);
+      }
 
       fileInput.addEventListener('change', () => {
         const file = fileInput.files?.[0];
@@ -102,12 +137,30 @@
         player.src = objectUrl;
         player.playbackRate = Number(speedSlider.value);
         player.load();
+        setStatus(`Gekozen bestand geladen: ${file.name}`);
       });
 
       speedSlider.addEventListener('input', () => {
         const rate = Number(speedSlider.value);
         player.playbackRate = rate;
         speedValue.textContent = `${rate.toFixed(2)}x`;
+      });
+
+      exampleBtn.addEventListener('click', () => {
+        if (objectUrl) {
+          URL.revokeObjectURL(objectUrl);
+          objectUrl = null;
+        }
+
+        fileInput.value = '';
+        player.src = new URL(exampleFile, window.location.href).href;
+        player.playbackRate = Number(speedSlider.value);
+        player.load();
+        setStatus('Voorbeeldbestand geladen.');
+      });
+
+      player.addEventListener('error', () => {
+        setStatus('Kon het audiobestand niet laden. Controleer of de voorbeeld-MP3 in dezelfde map staat.', true);
       });
 
       window.addEventListener('beforeunload', () => {
