@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MP3 afspelen met lagere snelheid</title>
+    <style>
+      :root {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color-scheme: light dark;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 1rem;
+      }
+
+      .card {
+        width: min(100%, 560px);
+        border: 1px solid #6b7280;
+        border-radius: 12px;
+        padding: 1rem;
+      }
+
+      .row {
+        margin-top: 1rem;
+      }
+
+      input[type="range"] {
+        width: 100%;
+      }
+
+      .value {
+        font-weight: 700;
+      }
+
+      .hint {
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>MP3 speler met snelheids-slider</h1>
+
+      <label>
+        Kies een audiofile (mp3):
+        <input id="audioFile" type="file" accept="audio/mpeg,.mp3,audio/*" />
+      </label>
+
+      <div class="row">
+        <audio id="player" controls></audio>
+      </div>
+
+      <div class="row">
+        <label for="speed">Afspeelsnelheid: <span id="speedValue" class="value">1.00x</span></label>
+        <input id="speed" type="range" min="0.5" max="1" step="0.01" value="1" />
+      </div>
+
+      <p class="hint">De toonhoogte blijft gelijk (pitch correction staat aan).</p>
+    </main>
+
+    <script>
+      const fileInput = document.getElementById('audioFile');
+      const player = document.getElementById('player');
+      const speedSlider = document.getElementById('speed');
+      const speedValue = document.getElementById('speedValue');
+
+      let objectUrl = null;
+
+      player.preservesPitch = true;
+      player.mozPreservesPitch = true;
+      player.webkitPreservesPitch = true;
+
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files?.[0];
+        if (!file) return;
+
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        objectUrl = URL.createObjectURL(file);
+
+        player.src = objectUrl;
+        player.playbackRate = Number(speedSlider.value);
+        player.load();
+      });
+
+      speedSlider.addEventListener('input', () => {
+        const rate = Number(speedSlider.value);
+        player.playbackRate = rate;
+        speedValue.textContent = `${rate.toFixed(2)}x`;
+      });
+
+      window.addEventListener('beforeunload', () => {
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+      });
+    </script>
+  </body>
+</html>
