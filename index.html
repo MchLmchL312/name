@@ -1,1 +1,130 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mapnavigatie</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
 
+      body {
+        margin: 2rem;
+        line-height: 1.5;
+      }
+
+      h1 {
+        margin-bottom: 0.5rem;
+      }
+
+      ul {
+        padding-left: 1.25rem;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .auth-box {
+        max-width: 420px;
+        padding: 1rem;
+        border: 1px solid #999;
+        border-radius: 8px;
+      }
+
+      .auth-row {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+
+      input[type="password"] {
+        flex: 1;
+        padding: 0.5rem;
+      }
+
+      button {
+        padding: 0.5rem 0.9rem;
+        cursor: pointer;
+      }
+
+      .error {
+        color: #b00020;
+        margin-top: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="auth" class="auth-box">
+      <h1>Beveiligde mapnavigatie</h1>
+      <p>Voer het wachtwoord in om de mappen te zien.</p>
+      <div class="auth-row">
+        <input id="password" type="password" placeholder="Wachtwoord" autocomplete="current-password" />
+        <button id="unlock" type="button">Ontgrendel</button>
+      </div>
+      <p id="error" class="error hidden">Onjuist wachtwoord.</p>
+    </div>
+
+    <main id="content" class="hidden">
+      <h1>Mappen in deze map</h1>
+      <p>Klik op een map om ernaartoe te navigeren.</p>
+
+      <ul>
+        <li><a href="keuzeboom/">keuzeboom</a></li>
+        <li><a href="kleur-impressie/">kleur-impressie</a></li>
+        <li><a href="kleurencirkel/">kleurencirkel</a></li>
+        <li><a href="kleurenmenger/">kleurenmenger</a></li>
+        <li><a href="licht-midden-schaduwvormen/">licht-midden-schaduwvormen</a></li>
+        <li><a href="toonversimpeler/">toonversimpeler</a></li>
+        <li><a href="toon-temperatuur/">toon-temperatuur</a></li>
+        <li><a href="audio-vertrager/">audio-vertrager</a></li>
+      </ul>
+    </main>
+
+    <script>
+      const PASSWORD = "kleur321"; // Pas dit aan naar je eigen wachtwoord.
+      const SESSION_KEY = "folder-index-unlocked";
+
+      const auth = document.getElementById("auth");
+      const content = document.getElementById("content");
+      const passwordInput = document.getElementById("password");
+      const unlockButton = document.getElementById("unlock");
+      const error = document.getElementById("error");
+
+      const unlock = () => {
+        auth.classList.add("hidden");
+        content.classList.remove("hidden");
+      };
+
+      const fail = () => {
+        error.classList.remove("hidden");
+        passwordInput.focus();
+      };
+
+      const checkPassword = () => {
+        if (passwordInput.value === PASSWORD) {
+          sessionStorage.setItem(SESSION_KEY, "true");
+          unlock();
+          return;
+        }
+        fail();
+      };
+
+      if (sessionStorage.getItem(SESSION_KEY) === "true") {
+        unlock();
+      }
+
+      unlockButton.addEventListener("click", checkPassword);
+      passwordInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          checkPassword();
+        }
+      });
+      passwordInput.addEventListener("input", () => {
+        error.classList.add("hidden");
+      });
+    </script>
+  </body>
+</html>
