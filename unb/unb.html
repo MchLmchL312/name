@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PTP link</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: Arial, sans-serif;
+        background: #f6f6f8;
+      }
+
+      a {
+        font-size: 2rem;
+        text-decoration: none;
+        color: #0a58ca;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Galerij: P (1).jpg t/m P (35).jpg</h1>
+    <div id="gallery" class="gallery" aria-label="Afbeeldingen"></div>
+
+    <dialog id="lightbox" aria-label="Vergrote afbeelding">
+      <div class="lightbox-content">
+        <button id="closeButton" class="close" aria-label="Sluiten">×</button>
+        <img id="lightboxImage" alt="Vergrote afbeelding" />
+      </div>
+    </dialog>
+
+    <script>
+      const gallery = document.getElementById('gallery');
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImage = document.getElementById('lightboxImage');
+      const closeButton = document.getElementById('closeButton');
+
+      for (let i = 1; i <= 35; i += 1) {
+        const fileName = `P (${i}).jpg`;
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'thumb';
+        button.setAttribute('aria-label', `Open ${fileName}`);
+
+        const image = document.createElement('img');
+        image.src = fileName;
+        image.alt = fileName;
+        image.loading = 'lazy';
+
+        image.addEventListener('error', () => {
+          button.remove();
+        });
+
+        const label = document.createElement('span');
+        label.textContent = fileName;
+
+        button.append(image, label);
+
+        button.addEventListener('click', () => {
+          lightboxImage.src = fileName;
+          lightboxImage.alt = fileName;
+          lightbox.showModal();
+        });
+
+        gallery.append(button);
+      }
+
+      closeButton.addEventListener('click', () => lightbox.close());
+      lightbox.addEventListener('click', (event) => {
+        if (event.target === lightbox) {
+          lightbox.close();
+        }
+      });
+    </script>
+  </body>
+</html>

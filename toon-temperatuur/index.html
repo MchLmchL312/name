@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="nl">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Toonwaarde picker</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      --bg: #000000;
+      --card: #161b22;
+      --card-border: #30363d;
+      --ink: #f0f6fc;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 32px 20px 48px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    label {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s;
+    }
+
+    label:hover {
+      border-color: var(--accent);
+      background: #1c2128;
+    }
+
+    label span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    button {
+      border: none;
+      padding: 10px 16px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(109, 93, 252, 0.35);
+    }
+
+    .value-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .value-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .preview-box {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      border: 2px solid var(--card-border);
+      background: #0d1117;
+      flex-shrink: 0;
+      transition: background-color 0.1s ease;
+    }
+
+    .value-card strong {
+      font-size: 1.4rem;
+    }
+
+    .mode-switch {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mode-switch button {
+      background: #21262d;
+      color: var(--ink);
+      box-shadow: none;
+      border: 1px solid var(--card-border);
+      transition: all 0.2s;
+    }
+
+    #modeTone.active {
+      background: #f78166;
+      color: white;
+      border-color: #ff7b72;
+      box-shadow: 0 0 15px rgba(247, 129, 102, 0.4);
+    }
+
+    #modeTemp.active {
+      background: #f78166;
+      color: white;
+      border-color: #ff7b72;
+      box-shadow: 0 0 15px rgba(247, 129, 102, 0.4);
+    }
+
+    .value-card .legend {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 320px;
+    }
+
+    .legend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.85rem;
+      background: #161b22;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+    }
+
+    .legend-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1px solid #ccc;
+    }
+
+    .canvas-wrapper {
+      background: #0d1117;
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 12px;
+      position: relative;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    canvas {
+      max-width: 100%;
+      max-height: 92vh;
+      width: auto;
+      height: auto;
+      display: block;
+      border-radius: 16px;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    #pickerDot {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border: 2px solid white;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px black, 0 0 8px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      display: none;
+      z-index: 10;
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 24px 16px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      label {
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>Toonwaarde picker</h1>
+    </header>
+
+    <div class="layout">
+      <div class="panel">
+        <div class="controls">
+          <label>
+            <strong>Afbeelding kiezen</strong>
+            <span>PNG/JPG</span>
+            <input id="fileInput" type="file" accept="image/*" />
+          </label>
+          <button id="sampleBtn" type="button">Voorbeeld laden</button>
+          <button id="bwToggle" type="button">Toon in zwart-wit</button>
+        </div>
+
+        <div class="mode-switch" role="group" aria-label="Modus kiezen">
+          <button id="modeTone" type="button" class="active">Modus 1: toonwaarde</button>
+          <button id="modeTemp" type="button">Modus 2: warm/koud</button>
+        </div>
+
+        <div class="value-card">
+          <div id="colorPreview" class="preview-box"></div>
+          <div class="value-info">
+            <div class="legend" id="modeLabel">Grijswaarde-indeling</div>
+            <strong id="valueLabel">Beweeg over de afbeelding om te starten.</strong>
+          </div>
+        </div>
+
+        <div class="legend-list" id="valueLegend">
+          <div class="legend-item"><span>Zwart</span>
+            <div class="legend-color" style="background: #000"></div>
+          </div>
+          <div class="legend-item"><span>Schaduw</span>
+            <div class="legend-color" style="background: #444"></div>
+          </div>
+          <div class="legend-item"><span>Middentoon</span>
+            <div class="legend-color" style="background: #888"></div>
+          </div>
+          <div class="legend-item"><span>Licht</span>
+            <div class="legend-color" style="background: #bbb"></div>
+          </div>
+          <div class="legend-item"><span>Hooglicht</span>
+            <div class="legend-color" style="background: #fff"></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="canvas-wrapper" id="canvasWrapper">
+          <canvas id="imageCanvas" width="960" height="540"></canvas>
+          <div id="pickerDot"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const sampleBtn = document.getElementById("sampleBtn");
+    const bwToggle = document.getElementById("bwToggle");
+    const modeTone = document.getElementById("modeTone");
+    const modeTemp = document.getElementById("modeTemp");
+    const canvas = document.getElementById("imageCanvas");
+    const ctx = canvas.getContext("2d");
+    const valueLabel = document.getElementById("valueLabel");
+    const modeLabel = document.getElementById("modeLabel");
+    const colorPreview = document.getElementById("colorPreview");
+    const valueLegend = document.getElementById("valueLegend");
+    const canvasWrapper = document.getElementById("canvasWrapper");
+    const pickerDot = document.getElementById("pickerDot");
+    const originalCanvas = document.createElement("canvas");
+    const originalCtx = originalCanvas.getContext("2d", { willReadFrequently: true });
+    let isBW = false;
+    let mode = "tone";
+
+    const ranges = [
+      { max: 20, label: "Zwart" },
+      { max: 40, label: "Schaduw" },
+      { max: 60, label: "Middentoon" },
+      { max: 80, label: "Licht" },
+      { max: 100, label: "Hooglicht" }
+    ];
+
+    function getGrayCategory(grayPercent) {
+      const rounded = Math.round(grayPercent);
+      const range = ranges.find(item => rounded <= item.max) || ranges[ranges.length - 1];
+      return range.label;
+    }
+
+    function updateLabel(grayPercent) {
+      const category = getGrayCategory(grayPercent);
+      valueLabel.textContent = `${category} (${Math.round(grayPercent)}%)`;
+    }
+
+    function updateTemperatureLabel(r, g, b) {
+      const { hue, saturation, lightness } = rgbToHsl(r, g, b);
+      const gray = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 * 100;
+
+      // Revert to broader "Warm" hue range (0-60 and 300-360)
+      const isWarm = hue <= 60 || hue >= 300;
+      const grayCategory = getGrayCategory(gray);
+
+      if (saturation < 0.08) {
+        valueLabel.textContent = `Koud (Grijs) / ${grayCategory}`;
+      } else {
+        const type = isWarm ? "Warm" : "Koud";
+        valueLabel.textContent = `${type} / ${grayCategory}`;
+      }
+    }
+
+    function rgbToHsl(r, g, b) {
+      const rNorm = r / 255;
+      const gNorm = g / 255;
+      const bNorm = b / 255;
+      const max = Math.max(rNorm, gNorm, bNorm);
+      const min = Math.min(rNorm, gNorm, bNorm);
+      const delta = max - min;
+      let hue = 0;
+      let saturation = 0;
+
+      if (delta !== 0) {
+        if (max === rNorm) {
+          hue = ((gNorm - bNorm) / delta) % 6;
+        } else if (max === gNorm) {
+          hue = (bNorm - rNorm) / delta + 2;
+        } else {
+          hue = (rNorm - gNorm) / delta + 4;
+        }
+        hue *= 60;
+        if (hue < 0) {
+          hue += 360;
+        }
+      }
+
+      const lightness = (max + min) / 2;
+      if (delta !== 0) {
+        saturation = delta / (1 - Math.abs(2 * lightness - 1));
+      }
+
+      return { hue, saturation, lightness };
+    }
+
+    function drawSample() {
+      const img = new Image();
+      img.onload = () => {
+        const aspect = img.width / img.height;
+        const defaultWidth = 960;
+        const defaultHeight = 540;
+
+        // Scale canvas to fit original aspect ratio
+        if (aspect > defaultWidth / defaultHeight) {
+          canvas.width = defaultWidth;
+          canvas.height = Math.round(defaultWidth / aspect);
+        } else {
+          canvas.height = defaultHeight;
+          canvas.width = Math.round(defaultHeight * aspect);
+        }
+
+        originalCanvas.width = canvas.width;
+        originalCanvas.height = canvas.height;
+        originalCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        renderCanvas();
+      };
+      img.onerror = () => {
+        console.error("Niet gelukt om parel.jpg te laden. Mogelijk browserrestrictie.");
+        valueLabel.textContent = "Grijswaarde-indeling / Kon parel.jpg niet laden (beveiliging). Kies aub een afbeelding via de knop.";
+      };
+      img.src = "parel.jpg";
+    }
+
+    function loadImage(file) {
+      const reader = new FileReader();
+      reader.onload = event => {
+        const img = new Image();
+        img.onload = () => {
+          const aspect = img.width / img.height;
+          const canvasAspect = canvas.width / canvas.height;
+          if (aspect > canvasAspect) {
+            canvas.height = Math.round(canvas.width / aspect);
+          } else {
+            canvas.width = Math.round(canvas.height * aspect);
+          }
+          originalCanvas.width = canvas.width;
+          originalCanvas.height = canvas.height;
+          originalCtx.clearRect(0, 0, canvas.width, canvas.height);
+          originalCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          renderCanvas();
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function renderCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (!isBW) {
+        ctx.drawImage(originalCanvas, 0, 0, canvas.width, canvas.height);
+        return;
+      }
+      try {
+        const imageData = originalCtx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          const luminance = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+          data[i] = luminance;
+          data[i + 1] = luminance;
+          data[i + 2] = luminance;
+        }
+        ctx.putImageData(imageData, 0, 0);
+      } catch (e) {
+        console.error("Grijswaarde berekening mislukt:", e);
+        ctx.drawImage(originalCanvas, 0, 0, canvas.width, canvas.height);
+        valueLabel.textContent = "Beveiliging: zwart-wit modus werkt niet met dit voorbeeld.";
+      }
+    }
+
+    function handleMove(event) {
+      if (!originalCanvas.width) return;
+
+      const rect = canvas.getBoundingClientRect();
+      let clientX, clientY;
+
+      if (event.touches && event.touches.length > 0) {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+      } else {
+        clientX = event.clientX;
+        clientY = event.clientY;
+      }
+
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const x = Math.floor((clientX - rect.left) * scaleX);
+      const y = Math.floor((clientY - rect.top) * scaleY);
+
+      if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
+        return;
+      }
+
+      // Move picker dot
+      pickerDot.style.display = "block";
+      pickerDot.style.left = `${clientX - rect.left + canvas.offsetLeft}px`;
+      pickerDot.style.top = `${clientY - rect.top + canvas.offsetTop}px`;
+
+      try {
+        const [r, g, b] = originalCtx.getImageData(x, y, 1, 1).data;
+        const gray = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 * 100;
+
+        if (mode === "tone") {
+          updateLabel(gray);
+          colorPreview.style.backgroundColor = `rgb(${gray / 100 * 255}, ${gray / 100 * 255}, ${gray / 100 * 255})`;
+        } else {
+          updateTemperatureLabel(r, g, b);
+          colorPreview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        }
+      } catch (e) {
+        console.error("Kon kleur niet ophalen (CORS/Beveiliging):", e);
+        valueLabel.textContent = "Fout: kan pixeldata niet lezen bij dit bestand.";
+      }
+    }
+
+    canvasWrapper.addEventListener("mousemove", handleMove);
+    canvasWrapper.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      handleMove(e);
+    }, { passive: false });
+    canvasWrapper.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+      handleMove(e);
+    }, { passive: false });
+
+    canvasWrapper.addEventListener("mouseleave", () => {
+      valueLabel.textContent = "Beweeg over de afbeelding om te starten.";
+      colorPreview.style.backgroundColor = "#eee";
+      pickerDot.style.display = "none";
+    });
+
+    fileInput.addEventListener("change", event => {
+      const [file] = event.target.files;
+      if (file) {
+        loadImage(file);
+      }
+    });
+
+    sampleBtn.addEventListener("click", () => {
+      drawSample();
+    });
+
+    bwToggle.addEventListener("click", () => {
+      isBW = !isBW;
+      bwToggle.textContent = isBW ? "Toon in kleur" : "Toon in zwart-wit";
+      renderCanvas();
+    });
+
+    modeTone.addEventListener("click", () => {
+      mode = "tone";
+      modeTone.classList.add("active");
+      modeTemp.classList.remove("active");
+      modeLabel.textContent = "Grijswaarde-indeling";
+      valueLabel.textContent = "Beweeg over de afbeelding om te starten.";
+      valueLegend.style.display = "flex";
+    });
+
+    modeTemp.addEventListener("click", () => {
+      mode = "temp";
+      modeTemp.classList.add("active");
+      modeTone.classList.remove("active");
+      modeLabel.textContent = "Kleurtemperatuur";
+      valueLabel.textContent = "Beweeg over de afbeelding om te starten.";
+      valueLegend.style.display = "none";
+    });
+
+    originalCanvas.width = canvas.width;
+    originalCanvas.height = canvas.height;
+    drawSample();
+  </script>
+</body>
+
+</html>
