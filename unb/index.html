@@ -122,8 +122,45 @@
       const closeBtn = document.getElementById('closeBtn');
 
       const files = Array.from({ length: 35 }, (_, index) => `P (${index + 1}).jpg`);
+      const captions = [
+        'Franklin D. Roosevelt',
+        'Winston Churchill',
+        'Joseph Stalin',
+        'Karl Marx',
+        'Carl Schmitt',
+        'Onbekend',
+        'Onbekend',
+        'Onbekend',
+        'Onbekend',
+        'Onbekend',
+        'Onbekend',
+        'Onbekend',
+        'Simone de Beauvoir',
+        'Jean-Paul Sartre',
+        'Maurice Merleau-Ponty',
+        'Herbert Marcuse',
+        'Theodor W. Adorno',
+        'Jacques Derrida',
+        'Frantz Fanon',
+        'Michel Foucault',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Achille Mbembe',
+        'Patricia J. Williams',
+        'Jean Stefancic',
+        'Kimberlé Crenshaw'
+      ];
 
-      files.forEach((file) => {
+      files.forEach((file, index) => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'thumb';
@@ -134,7 +171,7 @@
         img.loading = 'lazy';
 
         const label = document.createElement('span');
-        label.textContent = file;
+        label.textContent = captions[index] || file;
 
         button.appendChild(img);
         button.appendChild(label);
