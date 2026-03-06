@@ -1,134 +1,147 @@
 <!doctype html>
 <html lang="nl">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mapnavigatie</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fotogalerij</title>
     <style>
       :root {
-        color-scheme: light dark;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color-scheme: light;
+        font-family: Arial, sans-serif;
       }
 
       body {
-        margin: 2rem;
-        line-height: 1.5;
+        margin: 0;
+        padding: 16px;
+        background: #f6f6f8;
       }
 
       h1 {
-        margin-bottom: 0.5rem;
+        margin: 0 0 16px;
+        font-size: 1.25rem;
       }
 
-      ul {
-        padding-left: 1.25rem;
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
       }
 
-      .hidden {
-        display: none;
-      }
-
-      .auth-box {
-        max-width: 420px;
-        padding: 1rem;
-        border: 1px solid #999;
+      .thumb {
+        border: 1px solid #ddd;
+        background: #fff;
         border-radius: 8px;
-      }
-
-      .auth-row {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 0.75rem;
-      }
-
-      input[type="password"] {
-        flex: 1;
-        padding: 0.5rem;
-      }
-
-      button {
-        padding: 0.5rem 0.9rem;
+        overflow: hidden;
         cursor: pointer;
+        padding: 0;
       }
 
-      .error {
-        color: #b00020;
-        margin-top: 0.5rem;
+      .thumb img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        display: block;
+      }
+
+      .thumb span {
+        display: block;
+        padding: 8px;
+        font-size: 0.8rem;
+        text-align: center;
+      }
+
+      dialog {
+        border: none;
+        border-radius: 12px;
+        padding: 0;
+        max-width: min(92vw, 1200px);
+        max-height: 92vh;
+      }
+
+      dialog::backdrop {
+        background: rgba(0, 0, 0, 0.75);
+      }
+
+      .lightbox-content {
+        position: relative;
+        background: #111;
+      }
+
+      .lightbox-content img {
+        display: block;
+        max-width: min(92vw, 1200px);
+        max-height: 86vh;
+        width: auto;
+        height: auto;
+      }
+
+      .close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        border: none;
+        border-radius: 999px;
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.9);
+        font-size: 20px;
+        cursor: pointer;
       }
     </style>
   </head>
   <body>
-    <div id="auth" class="auth-box">
-      <h1>Beveiligde mapnavigatie</h1>
-      <p>Voer het wachtwoord in om de mappen te zien.</p>
-      <div class="auth-row">
-        <input
-          id="password"
-          type="password"
-          placeholder="Wachtwoord"
-          autocomplete="current-password"
-        />
-        <button id="unlock" type="button">Ontgrendel</button>
+    <h1>Galerij: P (1).jpg t/m P (35).jpg</h1>
+    <div id="gallery" class="gallery" aria-label="Afbeeldingen"></div>
+
+    <dialog id="lightbox" aria-label="Vergrote afbeelding">
+      <div class="lightbox-content">
+        <button id="closeButton" class="close" aria-label="Sluiten">×</button>
+        <img id="lightboxImage" alt="Vergrote afbeelding" />
       </div>
-      <p id="error" class="error hidden">Onjuist wachtwoord.</p>
-    </div>
-
-    <main id="content" class="hidden">
-      <h1>Mappen in deze map</h1>
-      <p>Klik op een map om ernaartoe te navigeren.</p>
-
-      <ul>
-        <li><a href="keuzeboom/">keuzeboom</a></li>
-        <li><a href="kleur-impressie/">kleur-impressie</a></li>
-        <li><a href="kleurencirkel/">kleurencirkel</a></li>
-        <li><a href="kleurenmenger/">kleurenmenger</a></li>
-        <li><a href="licht-midden-schaduwvormen/">licht-midden-schaduwvormen</a></li>
-        <li><a href="toonversimpeler/">toonversimpeler</a></li>
-        <li><a href="toon-temperatuur/">toon-temperatuur</a></li>
-        <li><a href="audio-vertrager/">audio-vertrager</a></li>
-      </ul>
-    </main>
+    </dialog>
 
     <script>
-      const PASSWORD = "kleur321"; // Pas dit aan naar je eigen wachtwoord.
-      const SESSION_KEY = "folder-index-unlocked";
+      const gallery = document.getElementById('gallery');
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImage = document.getElementById('lightboxImage');
+      const closeButton = document.getElementById('closeButton');
 
-      const auth = document.getElementById("auth");
-      const content = document.getElementById("content");
-      const passwordInput = document.getElementById("password");
-      const unlockButton = document.getElementById("unlock");
-      const error = document.getElementById("error");
+      for (let i = 1; i <= 35; i += 1) {
+        const fileName = `P (${i}).jpg`;
 
-      const unlock = () => {
-        auth.classList.add("hidden");
-        content.classList.remove("hidden");
-      };
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'thumb';
+        button.setAttribute('aria-label', `Open ${fileName}`);
 
-      const fail = () => {
-        error.classList.remove("hidden");
-        passwordInput.focus();
-      };
+        const image = document.createElement('img');
+        image.src = fileName;
+        image.alt = fileName;
+        image.loading = 'lazy';
 
-      const checkPassword = () => {
-        if (passwordInput.value === PASSWORD) {
-          sessionStorage.setItem(SESSION_KEY, "true");
-          unlock();
-          return;
-        }
-        fail();
-      };
+        image.addEventListener('error', () => {
+          button.remove();
+        });
 
-      if (sessionStorage.getItem(SESSION_KEY) === "true") {
-        unlock();
+        const label = document.createElement('span');
+        label.textContent = fileName;
+
+        button.append(image, label);
+
+        button.addEventListener('click', () => {
+          lightboxImage.src = fileName;
+          lightboxImage.alt = fileName;
+          lightbox.showModal();
+        });
+
+        gallery.append(button);
       }
 
-      unlockButton.addEventListener("click", checkPassword);
-      passwordInput.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-          checkPassword();
+      closeButton.addEventListener('click', () => lightbox.close());
+      lightbox.addEventListener('click', (event) => {
+        if (event.target === lightbox) {
+          lightbox.close();
         }
-      });
-      passwordInput.addEventListener("input", () => {
-        error.classList.add("hidden");
       });
     </script>
   </body>
