@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fotogalerij</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        padding: 16px;
+        background: #f6f6f8;
+      }
+
+      h1 {
+        margin: 0 0 16px;
+        font-size: 1.25rem;
+      }
+
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+      }
+
+      .thumb {
+        border: 1px solid #ddd;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      .thumb img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        display: block;
+      }
+
+      .thumb span {
+        display: block;
+        padding: 8px;
+        font-size: 0.8rem;
+        text-align: center;
+      }
+
+      dialog {
+        border: none;
+        border-radius: 12px;
+        padding: 0;
+        max-width: min(92vw, 1200px);
+        max-height: 92vh;
+      }
+
+      dialog::backdrop {
+        background: rgba(0, 0, 0, 0.75);
+      }
+
+      .lightbox-content {
+        position: relative;
+        background: #111;
+      }
+
+      .lightbox-content img {
+        display: block;
+        max-width: min(92vw, 1200px);
+        max-height: 86vh;
+        width: auto;
+        height: auto;
+      }
+
+      .close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        border: none;
+        border-radius: 999px;
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.9);
+        font-size: 20px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Galerij: P (1).jpg t/m P (35).jpg</h1>
+    <div id="gallery" class="gallery" aria-label="Afbeeldingen"></div>
+
+    <dialog id="lightbox" aria-label="Vergrote afbeelding">
+      <div class="lightbox-content">
+        <button id="closeButton" class="close" aria-label="Sluiten">×</button>
+        <img id="lightboxImage" alt="Vergrote afbeelding" />
+      </div>
+    </dialog>
+
+    <script>
+      const gallery = document.getElementById('gallery');
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImage = document.getElementById('lightboxImage');
+      const closeButton = document.getElementById('closeButton');
+
+      for (let i = 1; i <= 35; i += 1) {
+        const fileName = `P (${i}).jpg`;
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'thumb';
+        button.setAttribute('aria-label', `Open ${fileName}`);
+
+        const image = document.createElement('img');
+        image.src = fileName;
+        image.alt = fileName;
+        image.loading = 'lazy';
+
+        image.addEventListener('error', () => {
+          button.remove();
+        });
+
+        const label = document.createElement('span');
+        label.textContent = fileName;
+
+        button.append(image, label);
+
+        button.addEventListener('click', () => {
+          lightboxImage.src = fileName;
+          lightboxImage.alt = fileName;
+          lightbox.showModal();
+        });
+
+        gallery.append(button);
+      }
+
+      closeButton.addEventListener('click', () => lightbox.close());
+      lightbox.addEventListener('click', (event) => {
+        if (event.target === lightbox) {
+          lightbox.close();
+        }
+      });
+    </script>
+  </body>
+</html>
