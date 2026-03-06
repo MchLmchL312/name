@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UNB galerij</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        color: #1e1e1e;
+      }
+
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      h1 {
+        margin: 0 0 16px;
+        font-size: 1.5rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 12px;
+      }
+
+      .thumb {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .thumb:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      .thumb img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        display: block;
+      }
+
+      .thumb span {
+        display: block;
+        padding: 8px 10px;
+        font-size: 0.85rem;
+      }
+
+      .lightbox {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        z-index: 1000;
+      }
+
+      .lightbox.open {
+        display: flex;
+      }
+
+      .lightbox img {
+        max-width: min(1200px, 95vw);
+        max-height: 90vh;
+        width: auto;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+        background: #111;
+      }
+
+      .close {
+        position: fixed;
+        top: 14px;
+        right: 16px;
+        border: none;
+        background: transparent;
+        color: #fff;
+        font-size: 2rem;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .hint {
+        margin: 0 0 18px;
+        color: #5c5c5c;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <h1>Galerij</h1>
+      <p class="hint">Klik op een thumbnail om de afbeelding groot te bekijken.</p>
+      <section class="grid" id="gallery" aria-label="Afbeeldingengalerij"></section>
+    </main>
+
+    <div class="lightbox" id="lightbox" aria-hidden="true">
+      <button class="close" id="closeBtn" type="button" aria-label="Sluiten">×</button>
+      <img id="lightboxImage" alt="Vergrote afbeelding" />
+    </div>
+
+    <script>
+      const gallery = document.getElementById('gallery');
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImage = document.getElementById('lightboxImage');
+      const closeBtn = document.getElementById('closeBtn');
+
+      const files = Array.from({ length: 35 }, (_, index) => `P (${index + 1}).jpg`);
+      const captions = [
+        'Franklin D. Roosevelt',
+        'Winston Churchill',
+        'Joseph Stalin',
+        'Karl Marx',
+        'Carl Schmitt',
+        'Onbekend',
+        'Onbekend',
+        'Onbekend',
+        'Onbekend',
+        'Onbekend',
+        'Onbekend',
+        'Onbekend',
+        'Simone de Beauvoir',
+        'Jean-Paul Sartre',
+        'Maurice Merleau-Ponty',
+        'Herbert Marcuse',
+        'Theodor W. Adorno',
+        'Jacques Derrida',
+        'Frantz Fanon',
+        'Michel Foucault',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Rote Armee Fraktion (RAF)',
+        'Achille Mbembe',
+        'Patricia J. Williams',
+        'Jean Stefancic',
+        'Kimberlé Crenshaw'
+      ];
+
+      files.forEach((file, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'thumb';
+
+        const img = document.createElement('img');
+        img.src = encodeURI(file);
+        img.alt = file;
+        img.loading = 'lazy';
+
+        const label = document.createElement('span');
+        label.textContent = captions[index] || file;
+
+        button.appendChild(img);
+        button.appendChild(label);
+        button.addEventListener('click', () => {
+          lightboxImage.src = encodeURI(file);
+          lightboxImage.alt = file;
+          lightbox.classList.add('open');
+          lightbox.setAttribute('aria-hidden', 'false');
+        });
+
+        gallery.appendChild(button);
+      });
+
+      const closeLightbox = () => {
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden', 'true');
+      };
+
+      closeBtn.addEventListener('click', closeLightbox);
+      lightbox.addEventListener('click', (event) => {
+        if (event.target === lightbox) {
+          closeLightbox();
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && lightbox.classList.contains('open')) {
+          closeLightbox();
+        }
+      });
+    </script>
+  </body>
+</html>
