@@ -183,8 +183,7 @@
 
       /* Info + Reacties blokken */
       .info,
-      .installatie,
-      .comments {
+      .installatie {
         margin-top: 22px;
         background: #171717;
         border: 1px solid #2e2e2e;
@@ -193,7 +192,7 @@
       }
 
       .info h2,
-      .comments h2 {
+      .installatie h2 {
         margin: 0 0 10px;
         font-size: 1.05rem;
         color: #f2f2f2;
@@ -206,7 +205,6 @@
       }
 
       
-
       .installatie img {
         width: 100%;
         height: auto;
@@ -214,103 +212,6 @@
         border-radius: 12px;
         border: 1px solid #2e2e2e;
         background: #0b0b0b;
-      }
-.comment-form {
-        display: grid;
-        gap: 8px;
-        grid-template-columns: 1fr;
-        margin-bottom: 12px;
-      }
-
-      .comment-row {
-        display: grid;
-        gap: 8px;
-        grid-template-columns: 220px 1fr auto;
-      }
-
-      .comment-row input,
-      .comment-form textarea {
-        width: 100%;
-        padding: 10px 10px;
-        border: 1px solid #3a3a3a;
-        border-radius: 10px;
-        font: inherit;
-        background: #101010;
-        color: #f2f2f2;
-        box-sizing: border-box;
-      }
-
-      .comment-row input::placeholder,
-      .comment-form textarea::placeholder {
-        color: #9a9a9a;
-      }
-
-      .comment-form textarea {
-        min-height: 86px;
-        resize: vertical;
-      }
-
-      .comment-row button {
-        padding: 10px 14px;
-        border: 1px solid #e6e6e6;
-        border-radius: 10px;
-        background: #e6e6e6;
-        color: #0f0f0f;
-        cursor: pointer;
-        font: inherit;
-        white-space: nowrap;
-      }
-
-      .comment-row button:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
-      }
-
-      .comment-meta,
-      .comment-status {
-        font-size: 0.85rem;
-        color: #b8b8b8;
-        margin: 6px 0 0;
-      }
-
-      .comment-status {
-        margin-top: 8px;
-      }
-
-      .comment-list {
-        display: grid;
-        gap: 10px;
-      }
-
-      .comment-item {
-        border: 1px solid #2e2e2e;
-        border-radius: 12px;
-        padding: 10px 12px;
-        background: #131313;
-      }
-
-      .comment-item .top {
-        display: flex;
-        align-items: baseline;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-bottom: 6px;
-      }
-
-      .comment-item .name {
-        font-weight: 700;
-        color: #f2f2f2;
-      }
-
-      .comment-item .time {
-        color: #b8b8b8;
-        font-size: 0.85rem;
-      }
-
-      .comment-item .text {
-        white-space: pre-wrap;
-        word-break: break-word;
-        color: #e0e0e0;
       }
 
       @media (max-width: 860px) {
@@ -322,12 +223,6 @@
         }
         .meta .label {
           min-width: 120px;
-        }
-      }
-
-      @media (max-width: 760px) {
-        .comment-row {
-          grid-template-columns: 1fr;
         }
       }
 
@@ -359,8 +254,7 @@
       
       <nav class="topnav" aria-label="Menu">
         <a href="#info">Info</a>
-                <a href="#installatie">Installatie</a>
-<a href="#reacties">Reacties</a>
+        <a href="#installatie">Installatie</a>
       </nav>
 <h1></h1>
       <p class="hint"></p>
@@ -381,23 +275,6 @@
         <img src="installatie.JPG" alt="Installatie" loading="lazy" />
       </section>
 
-<section class="comments" id="reacties" aria-label="Reacties">
-        <h2>Reacties</h2>
-
-        <form class="comment-form" id="commentForm" autocomplete="off">
-          <div class="comment-row">
-            <input id="commentName" type="text" maxlength="60" placeholder="Naam (optioneel)" />
-            <input id="commentTitle" type="text" maxlength="80" placeholder="Titel (optioneel)" />
-            <button id="commentBtn" type="submit">Plaats</button>
-          </div>
-
-          <textarea id="commentText" maxlength="1200" placeholder="Schrijf je reactie…"></textarea>
-          <p class="comment-meta">Max. 1200 tekens. Reacties worden live bijgewerkt.</p>
-          <p class="comment-status" id="commentStatus"></p>
-        </form>
-
-        <div class="comment-list" id="commentList"></div>
-      </section>
 </main>
 
     <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Portret informatie">
@@ -556,4 +433,3 @@
 
   </body>
 </html>
-
