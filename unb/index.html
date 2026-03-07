@@ -101,6 +101,119 @@
         margin: 0 0 18px;
         color: #5c5c5c;
       }
+    
+      /* Reactiepaneel (Firebase Realtime Database) */
+      .comments {
+        margin-top: 22px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 14px;
+      }
+
+      .comments h2 {
+        margin: 0 0 10px;
+        font-size: 1.05rem;
+      }
+
+      .comment-form {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: 1fr;
+        margin-bottom: 12px;
+      }
+
+      .comment-row {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: 220px 1fr auto;
+      }
+
+      .comment-row input,
+      .comment-form textarea {
+        width: 100%;
+        padding: 10px 10px;
+        border: 1px solid #cfcfcf;
+        border-radius: 10px;
+        font: inherit;
+        background: #fafafa;
+        color: inherit;
+        box-sizing: border-box;
+      }
+
+      .comment-form textarea {
+        min-height: 86px;
+        resize: vertical;
+      }
+
+      .comment-row button {
+        padding: 10px 14px;
+        border: 1px solid #1e1e1e;
+        border-radius: 10px;
+        background: #1e1e1e;
+        color: #fff;
+        cursor: pointer;
+        font: inherit;
+        white-space: nowrap;
+      }
+
+      .comment-row button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .comment-meta {
+        font-size: 0.85rem;
+        color: #5c5c5c;
+        margin: 6px 0 0;
+      }
+
+      .comment-status {
+        font-size: 0.85rem;
+        color: #5c5c5c;
+        margin: 8px 0 0;
+      }
+
+      .comment-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .comment-item {
+        border: 1px solid #e3e3e3;
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: #fcfcfc;
+      }
+
+      .comment-item .top {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 6px;
+      }
+
+      .comment-item .name {
+        font-weight: 700;
+      }
+
+      .comment-item .time {
+        color: #6b6b6b;
+        font-size: 0.85rem;
+      }
+
+      .comment-item .text {
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      @media (max-width: 760px) {
+        .comment-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
     </style>
   </head>
   <body>
@@ -108,6 +221,25 @@
       <h1></h1>
       <p class="hint"></p>
       <section class="grid" id="gallery" aria-label="Afbeeldingengalerij"></section>
+
+      <section class="comments" aria-label="Reacties">
+        <h2>Reacties</h2>
+
+        <form class="comment-form" id="commentForm" autocomplete="off">
+          <div class="comment-row">
+            <input id="commentName" type="text" maxlength="60" placeholder="Naam (optioneel)" />
+            <input id="commentTitle" type="text" maxlength="80" placeholder="Titel (optioneel)" />
+            <button id="commentBtn" type="submit">Plaats</button>
+          </div>
+
+          <textarea id="commentText" maxlength="1200" placeholder="Schrijf je reactie…"></textarea>
+          <p class="comment-meta">Max. 1200 tekens. Reacties worden live bijgewerkt.</p>
+          <p class="comment-status" id="commentStatus"></p>
+        </form>
+
+        <div class="comment-list" id="commentList"></div>
+      </section>
+
     </main>
 
     <div class="lightbox" id="lightbox" aria-hidden="true">
@@ -203,5 +335,145 @@
         }
       });
     </script>
+  
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        push,
+        query,
+        orderByChild,
+        limitToLast,
+        onChildAdded
+      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCAh1KI9p0mZSLGQV5pN57i3R6w4vzhd3M",
+        authDomain: "portraits-ptp.firebaseapp.com",
+        databaseURL: "https://portraits-ptp-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "portraits-ptp",
+        storageBucket: "portraits-ptp.firebasestorage.app",
+        messagingSenderId: "1028081054220",
+        appId: "1:1028081054220:web:a177271543b3d499cfb429"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+
+      const form = document.getElementById("commentForm");
+      const nameEl = document.getElementById("commentName");
+      const titleEl = document.getElementById("commentTitle");
+      const textEl = document.getElementById("commentText");
+      const btnEl = document.getElementById("commentBtn");
+      const listEl = document.getElementById("commentList");
+      const statusEl = document.getElementById("commentStatus");
+
+      const safeKey = (s) => (s || "index").replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 60) || "index";
+      const room = safeKey(location.pathname);
+      const commentsPath = `reacties/${room}`;
+
+      const fmtTime = (ms) => {
+        if (!ms) return "";
+        try {
+          return new Date(ms).toLocaleString("nl-NL");
+        } catch {
+          return "";
+        }
+      };
+
+      const setStatus = (msg) => {
+        statusEl.textContent = msg || "";
+      };
+
+      const addItem = (data) => {
+        const item = document.createElement("div");
+        item.className = "comment-item";
+
+        const top = document.createElement("div");
+        top.className = "top";
+
+        const name = document.createElement("span");
+        name.className = "name";
+        name.textContent = (data?.name || "Anoniem").trim() || "Anoniem";
+
+        const time = document.createElement("span");
+        time.className = "time";
+        time.textContent = fmtTime(data?.createdAt);
+
+        const title = document.createElement("span");
+        title.className = "time";
+        const t = (data?.title || "").trim();
+        title.textContent = t ? `— ${t}` : "";
+
+        top.appendChild(name);
+        if (time.textContent) top.appendChild(time);
+        if (title.textContent) top.appendChild(title);
+
+        const text = document.createElement("div");
+        text.className = "text";
+        text.textContent = (data?.text || "").toString();
+
+        item.appendChild(top);
+        item.appendChild(text);
+
+        listEl.appendChild(item);
+      };
+
+      // Live laden (laatste 100)
+      setStatus("Laden…");
+      const q = query(ref(db, commentsPath), orderByChild("createdAt"), limitToLast(100));
+
+      onChildAdded(
+        q,
+        (snap) => {
+          addItem(snap.val());
+          setStatus("");
+        },
+        (err) => {
+          setStatus("Lezen mislukt. Controleer je Database Rules.");
+          console.error(err);
+        }
+      );
+
+      // Plaatsen
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const text = (textEl.value || "").trim();
+        const name = (nameEl.value || "").trim();
+        const title = (titleEl.value || "").trim();
+
+        if (!text) {
+          setStatus("Typ eerst een reactie.");
+          textEl.focus();
+          return;
+        }
+
+        btnEl.disabled = true;
+        setStatus("Opslaan…");
+
+        try {
+          await push(ref(db, commentsPath), {
+            name: name || "Anoniem",
+            title: title || "",
+            text,
+            createdAt: Date.now()
+          });
+
+          textEl.value = "";
+          setStatus("");
+        } catch (err) {
+          console.error(err);
+          setStatus("Opslaan mislukt. Controleer je Database Rules.");
+        } finally {
+          btnEl.disabled = false;
+        }
+      });
+
+      // Handig om te weten waar reacties landen
+      console.log("Reacties pad:", commentsPath);
+    </script>
+
   </body>
 </html>
