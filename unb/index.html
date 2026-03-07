@@ -6,14 +6,14 @@
     <title>UNB</title>
     <style>
       :root {
-        color-scheme: light;
+        color-scheme: dark;
       }
 
       body {
         margin: 0;
         font-family: Arial, sans-serif;
-        background: #f4f4f4;
-        color: #1e1e1e;
+        background: #0f0f0f;
+        color: #f2f2f2;
       }
 
       .page {
@@ -27,6 +27,34 @@
         font-size: 1.5rem;
       }
 
+      .hint {
+        margin: 0 0 18px;
+        color: #b8b8b8;
+      }
+
+      .topnav {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        margin: 0 0 14px;
+        padding: 10px 12px;
+        background: #171717;
+        border: 1px solid #2e2e2e;
+        border-radius: 12px;
+      }
+
+      .topnav a {
+        color: #f2f2f2;
+        text-decoration: none;
+        font-weight: 700;
+        padding: 6px 10px;
+        border-radius: 10px;
+      }
+
+      .topnav a:hover {
+        background: #242424;
+      }
+
       .grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
@@ -34,19 +62,20 @@
       }
 
       .thumb {
-        background: #fff;
+        background: #171717;
         border-radius: 10px;
         overflow: hidden;
-        border: 1px solid #ddd;
+        border: 1px solid #2e2e2e;
         cursor: pointer;
         transition: transform 0.15s ease, box-shadow 0.15s ease;
         padding: 0;
         text-align: left;
+        color: inherit;
       }
 
       .thumb:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.55);
       }
 
       .thumb img {
@@ -60,6 +89,7 @@
         display: block;
         padding: 8px 10px;
         font-size: 0.85rem;
+        color: #e8e8e8;
       }
 
       .lightbox {
@@ -81,9 +111,10 @@
         width: min(1100px, 96vw);
         max-height: 92vh;
         overflow: auto;
-        background: #ffffff;
+        background: #171717;
         border-radius: 12px;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.75);
+        border: 1px solid #2e2e2e;
       }
 
       .modal-inner {
@@ -99,7 +130,7 @@
         max-height: 78vh;
         object-fit: contain;
         border-radius: 10px;
-        background: #111;
+        background: #0b0b0b;
         display: block;
         cursor: pointer;
       }
@@ -111,6 +142,7 @@
       .meta h2 {
         margin: 0 0 10px;
         font-size: 1.25rem;
+        color: #f2f2f2;
       }
 
       .meta .row {
@@ -121,16 +153,17 @@
       .meta .label {
         display: inline-block;
         min-width: 140px;
-        color: #5c5c5c;
+        color: #b8b8b8;
       }
 
       .meta .value {
         font-weight: 700;
+        color: #f2f2f2;
       }
 
       .meta .note {
         margin-top: 10px;
-        color: #4a4a4a;
+        color: #cfcfcf;
         font-size: 0.95rem;
       }
 
@@ -147,6 +180,127 @@
         padding: 6px 10px;
       }
 
+      /* Info + Reacties blokken */
+      .info,
+      .comments {
+        margin-top: 22px;
+        background: #171717;
+        border: 1px solid #2e2e2e;
+        border-radius: 12px;
+        padding: 14px;
+      }
+
+      .info h2,
+      .comments h2 {
+        margin: 0 0 10px;
+        font-size: 1.05rem;
+        color: #f2f2f2;
+      }
+
+      .info p {
+        margin: 0;
+        line-height: 1.5;
+        color: #d8d8d8;
+      }
+
+      .comment-form {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: 1fr;
+        margin-bottom: 12px;
+      }
+
+      .comment-row {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: 220px 1fr auto;
+      }
+
+      .comment-row input,
+      .comment-form textarea {
+        width: 100%;
+        padding: 10px 10px;
+        border: 1px solid #3a3a3a;
+        border-radius: 10px;
+        font: inherit;
+        background: #101010;
+        color: #f2f2f2;
+        box-sizing: border-box;
+      }
+
+      .comment-row input::placeholder,
+      .comment-form textarea::placeholder {
+        color: #9a9a9a;
+      }
+
+      .comment-form textarea {
+        min-height: 86px;
+        resize: vertical;
+      }
+
+      .comment-row button {
+        padding: 10px 14px;
+        border: 1px solid #e6e6e6;
+        border-radius: 10px;
+        background: #e6e6e6;
+        color: #0f0f0f;
+        cursor: pointer;
+        font: inherit;
+        white-space: nowrap;
+      }
+
+      .comment-row button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .comment-meta,
+      .comment-status {
+        font-size: 0.85rem;
+        color: #b8b8b8;
+        margin: 6px 0 0;
+      }
+
+      .comment-status {
+        margin-top: 8px;
+      }
+
+      .comment-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .comment-item {
+        border: 1px solid #2e2e2e;
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: #131313;
+      }
+
+      .comment-item .top {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 6px;
+      }
+
+      .comment-item .name {
+        font-weight: 700;
+        color: #f2f2f2;
+      }
+
+      .comment-item .time {
+        color: #b8b8b8;
+        font-size: 0.85rem;
+      }
+
+      .comment-item .text {
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: #e0e0e0;
+      }
+
       @media (max-width: 860px) {
         .modal-inner {
           grid-template-columns: 1fr;
@@ -156,6 +310,12 @@
         }
         .meta .label {
           min-width: 120px;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .comment-row {
+          grid-template-columns: 1fr;
         }
       }
 
@@ -180,133 +340,28 @@
           right: 8px;
         }
       }
-
-      .hint {
-        margin: 0 0 18px;
-        color: #5c5c5c;
-      }
-
-      /* Reactiepaneel (Firebase Realtime Database) */
-      .comments {
-        margin-top: 22px;
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 12px;
-        padding: 14px;
-      }
-
-      .comments h2 {
-        margin: 0 0 10px;
-        font-size: 1.05rem;
-      }
-
-      .comment-form {
-        display: grid;
-        gap: 8px;
-        grid-template-columns: 1fr;
-        margin-bottom: 12px;
-      }
-
-      .comment-row {
-        display: grid;
-        gap: 8px;
-        grid-template-columns: 220px 1fr auto;
-      }
-
-      .comment-row input,
-      .comment-form textarea {
-        width: 100%;
-        padding: 10px 10px;
-        border: 1px solid #cfcfcf;
-        border-radius: 10px;
-        font: inherit;
-        background: #fafafa;
-        color: inherit;
-        box-sizing: border-box;
-      }
-
-      .comment-form textarea {
-        min-height: 86px;
-        resize: vertical;
-      }
-
-      .comment-row button {
-        padding: 10px 14px;
-        border: 1px solid #1e1e1e;
-        border-radius: 10px;
-        background: #1e1e1e;
-        color: #fff;
-        cursor: pointer;
-        font: inherit;
-        white-space: nowrap;
-      }
-
-      .comment-row button:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
-      }
-
-      .comment-meta {
-        font-size: 0.85rem;
-        color: #5c5c5c;
-        margin: 6px 0 0;
-      }
-
-      .comment-status {
-        font-size: 0.85rem;
-        color: #5c5c5c;
-        margin: 8px 0 0;
-      }
-
-      .comment-list {
-        display: grid;
-        gap: 10px;
-      }
-
-      .comment-item {
-        border: 1px solid #e3e3e3;
-        border-radius: 12px;
-        padding: 10px 12px;
-        background: #fcfcfc;
-      }
-
-      .comment-item .top {
-        display: flex;
-        align-items: baseline;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-bottom: 6px;
-      }
-
-      .comment-item .name {
-        font-weight: 700;
-      }
-
-      .comment-item .time {
-        color: #6b6b6b;
-        font-size: 0.85rem;
-      }
-
-      .comment-item .text {
-        white-space: pre-wrap;
-        word-break: break-word;
-      }
-
-      @media (max-width: 760px) {
-        .comment-row {
-          grid-template-columns: 1fr;
-        }
-      }
     </style>
   </head>
   <body>
     <main class="page">
-      <h1></h1>
+      
+      <nav class="topnav" aria-label="Menu">
+        <a href="#info">Info</a>
+        <a href="#reacties">Reacties</a>
+      </nav>
+<h1></h1>
       <p class="hint"></p>
 
       <section class="grid" id="gallery" aria-label="Afbeeldingengalerij"></section>
 
-      <section class="comments" aria-label="Reacties">
+      <section class="info" id="info" aria-label="Info">
+        <h2>Info</h2>
+        <p>De reeks bestaat uit 35 portretten, uitgevoerd in bister en acrylinkt op bamboepapier, elk met een afmeting van 34 × 24 cm. De portretten verbeelden een opeenvolging van denkers, politici en volgers die gezamenlijk een ideeënhistorische lijn uitzetten van de naoorlogse wereld tot heden.</p>
+      </section>
+
+    
+
+      <section class="comments" id="reacties" aria-label="Reacties">
         <h2>Reacties</h2>
 
         <form class="comment-form" id="commentForm" autocomplete="off">
@@ -323,7 +378,7 @@
 
         <div class="comment-list" id="commentList"></div>
       </section>
-    </main>
+</main>
 
     <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Portret informatie">
       <button class="close" id="closeBtn" type="button" aria-label="Sluiten">×</button>
