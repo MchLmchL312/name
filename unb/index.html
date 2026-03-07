@@ -40,6 +40,8 @@
         border: 1px solid #ddd;
         cursor: pointer;
         transition: transform 0.15s ease, box-shadow 0.15s ease;
+        padding: 0;
+        text-align: left;
       }
 
       .thumb:hover {
@@ -67,7 +69,7 @@
         display: none;
         align-items: center;
         justify-content: center;
-        padding: 24px;
+        padding: 16px;
         z-index: 1000;
       }
 
@@ -75,33 +77,115 @@
         display: flex;
       }
 
-      .lightbox img {
-        max-width: min(1200px, 95vw);
-        max-height: 90vh;
-        width: auto;
-        height: auto;
-        border-radius: 8px;
+      .modal {
+        width: min(1100px, 96vw);
+        max-height: 92vh;
+        overflow: auto;
+        background: #ffffff;
+        border-radius: 12px;
         box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+      }
+
+      .modal-inner {
+        display: grid;
+        grid-template-columns: minmax(260px, 520px) 1fr;
+        gap: 14px;
+        padding: 14px;
+      }
+
+      #lightboxImage {
+        width: 100%;
+        height: auto;
+        max-height: 78vh;
+        object-fit: contain;
+        border-radius: 10px;
         background: #111;
+        display: block;
+        cursor: pointer;
+      }
+
+      .meta {
+        padding: 4px 6px;
+      }
+
+      .meta h2 {
+        margin: 0 0 10px;
+        font-size: 1.25rem;
+      }
+
+      .meta .row {
+        margin: 0 0 10px;
+        line-height: 1.35;
+      }
+
+      .meta .label {
+        display: inline-block;
+        min-width: 140px;
+        color: #5c5c5c;
+      }
+
+      .meta .value {
+        font-weight: 700;
+      }
+
+      .meta .note {
+        margin-top: 10px;
+        color: #4a4a4a;
+        font-size: 0.95rem;
       }
 
       .close {
         position: fixed;
-        top: 14px;
-        right: 16px;
+        top: 12px;
+        right: 14px;
         border: none;
         background: transparent;
         color: #fff;
         font-size: 2rem;
         line-height: 1;
         cursor: pointer;
+        padding: 6px 10px;
+      }
+
+      @media (max-width: 860px) {
+        .modal-inner {
+          grid-template-columns: 1fr;
+        }
+        #lightboxImage {
+          max-height: 55vh;
+        }
+        .meta .label {
+          min-width: 120px;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .lightbox {
+          padding: 0;
+          align-items: stretch;
+        }
+        .modal {
+          width: 100vw;
+          max-height: 100vh;
+          border-radius: 0;
+        }
+        .modal-inner {
+          padding: 12px;
+        }
+        #lightboxImage {
+          max-height: 50vh;
+        }
+        .close {
+          top: 8px;
+          right: 8px;
+        }
       }
 
       .hint {
         margin: 0 0 18px;
         color: #5c5c5c;
       }
-    
+
       /* Reactiepaneel (Firebase Realtime Database) */
       .comments {
         margin-top: 22px;
@@ -213,13 +297,13 @@
           grid-template-columns: 1fr;
         }
       }
-
     </style>
   </head>
   <body>
     <main class="page">
       <h1></h1>
       <p class="hint"></p>
+
       <section class="grid" id="gallery" aria-label="Afbeeldingengalerij"></section>
 
       <section class="comments" aria-label="Reacties">
@@ -239,12 +323,32 @@
 
         <div class="comment-list" id="commentList"></div>
       </section>
-
     </main>
 
-    <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Portret informatie">
       <button class="close" id="closeBtn" type="button" aria-label="Sluiten">×</button>
-      <img id="lightboxImage" alt="Vergrote afbeelding" />
+
+      <div class="modal" role="document">
+        <div class="modal-inner">
+          <img id="lightboxImage" alt="Vergrote afbeelding" />
+
+          <div class="meta">
+            <h2 id="metaName"></h2>
+
+            <p class="row">
+              <span class="label"> </span>
+              <span class="value" id="metaYears"></span>
+            </p>
+
+            <p class="row">
+              <span class="label">Stroming</span>
+              <span class="value" id="metaMovement"></span>
+            </p>
+
+            <p class="note" id="metaNote"></p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
@@ -253,44 +357,89 @@
       const lightboxImage = document.getElementById('lightboxImage');
       const closeBtn = document.getElementById('closeBtn');
 
+      const metaName = document.getElementById('metaName');
+      const metaYears = document.getElementById('metaYears');
+      const metaMovement = document.getElementById('metaMovement');
+      const metaNote = document.getElementById('metaNote');
+
       const files = Array.from({ length: 35 }, (_, index) => `P (${index + 1}).jpg`);
-      const captions = [
-        'Franklin D. Roosevelt',
-        'Winston Churchill',
-        'Joseph Stalin',
-        'Karl Marx',
-        'Carl Schmitt',
-        'Onbekend',
-        'Onbekend',
-        'Onbekend',
-        'Onbekend',
-        'Onbekend',
-        'Onbekend',
-        'Onbekend',
-        'Simone de Beauvoir',
-        'Jean-Paul Sartre',
-        'Maurice Merleau-Ponty',
-        'Herbert Marcuse',
-        'Theodor W. Adorno',
-        'Jacques Derrida',
-        'Frantz Fanon',
-        'Michel Foucault',
-        'Rote Armee Fraktion (RAF)',
-        'Rote Armee Fraktion (RAF)',
-        'Rote Armee Fraktion (RAF)',
-        'Rote Armee Fraktion (RAF)',
-        'Rote Armee Fraktion (RAF)',
-        'Rote Armee Fraktion (RAF)',
-        'Rote Armee Fraktion (RAF)',
-        'Rote Armee Fraktion (RAF)',
-        'Rote Armee Fraktion (RAF)',
-        'Rote Armee Fraktion (RAF)',
-        'Rote Armee Fraktion (RAF)',
-        'Achille Mbembe',
-        'Patricia J. Williams',
-        'Jean Stefancic',
-        'Kimberlé Crenshaw'
+
+      // Info per portret (1..35)
+      const meta = [
+        { name: 'Franklin D. Roosevelt', years: '1882–1945', movement: 'New Deal liberalisme / geallieerde oorlogspolitiek', note: '' },
+        { name: 'Winston Churchill', years: '1874–1965', movement: 'Conservatisme / liberal-democratische oorlogspolitiek', note: '' },
+        { name: 'Joseph Stalin', years: '1878–1953', movement: 'Sovjet-communisme (stalinisme)', note: '' },
+        { name: 'Karl Marx', years: '1818–1883', movement: 'Marxisme', note: '' },
+        { name: 'Carl Schmitt', years: '1888–1985', movement: 'Staats- en soevereiniteitsdenken / politieke theologie', note: '' },
+
+        { name: 'Onbekend', years: 'onbekend', movement: 'Holocaustslachtoffer (onbekende persoon)', note: '' },
+        { name: 'Onbekend', years: 'onbekend', movement: 'Holocaustslachtoffer (onbekende persoon)', note: '' },
+        { name: 'Onbekend', years: 'onbekend', movement: 'Holocaustslachtoffer (onbekende persoon)', note: '' },
+        { name: 'Onbekend', years: 'onbekend', movement: 'Holocaustslachtoffer (onbekende persoon)', note: '' },
+        { name: 'Onbekend', years: 'onbekend', movement: 'Holocaustslachtoffer (onbekende persoon)', note: '' },
+        { name: 'Onbekend', years: 'onbekend', movement: 'Holocaustslachtoffer (onbekende persoon)', note: '' },
+        { name: 'Onbekend', years: 'onbekend', movement: 'Holocaustslachtoffer (onbekende persoon)', note: '' },
+
+        { name: 'Simone de Beauvoir', years: '1908–1986', movement: 'Existentialisme / feministische filosofie', note: '' },
+        { name: 'Jean-Paul Sartre', years: '1905–1980', movement: 'Existentialisme / engagement', note: '' },
+        { name: 'Maurice Merleau-Ponty', years: '1908–1961', movement: 'Fenomenologie / existentiële fenomenologie', note: '' },
+        { name: 'Herbert Marcuse', years: '1898–1979', movement: 'Kritische Theorie (Frankfurter Schule) / New Left', note: '' },
+        { name: 'Theodor W. Adorno', years: '1903–1969', movement: 'Kritische Theorie (Frankfurter Schule)', note: '' },
+        { name: 'Jacques Derrida', years: '1930–2004', movement: 'Deconstructie / poststructuralisme', note: '' },
+        { name: 'Frantz Fanon', years: '1925–1961', movement: 'Antikoloniale theorie / dekolonisatie', note: '' },
+        { name: 'Michel Foucault', years: '1926–1984', movement: 'Poststructuralisme / macht-kennis analyse', note: '' },
+
+        { name: 'Rote Armee Fraktion (RAF)', years: '1970–1998', movement: 'Radicaal-links militant activisme / stadsguerrilla', note: 'Periode is oprichting–ontbinding (geen persoonsdata).' },
+        { name: 'Rote Armee Fraktion (RAF)', years: '1970–1998', movement: 'Radicaal-links militant activisme / stadsguerrilla', note: 'Periode is oprichting–ontbinding (geen persoonsdata).' },
+        { name: 'Rote Armee Fraktion (RAF)', years: '1970–1998', movement: 'Radicaal-links militant activisme / stadsguerrilla', note: 'Periode is oprichting–ontbinding (geen persoonsdata).' },
+        { name: 'Rote Armee Fraktion (RAF)', years: '1970–1998', movement: 'Radicaal-links militant activisme / stadsguerrilla', note: 'Periode is oprichting–ontbinding (geen persoonsdata).' },
+        { name: 'Rote Armee Fraktion (RAF)', years: '1970–1998', movement: 'Radicaal-links militant activisme / stadsguerrilla', note: 'Periode is oprichting–ontbinding (geen persoonsdata).' },
+        { name: 'Rote Armee Fraktion (RAF)', years: '1970–1998', movement: 'Radicaal-links militant activisme / stadsguerrilla', note: 'Periode is oprichting–ontbinding (geen persoonsdata).' },
+        { name: 'Rote Armee Fraktion (RAF)', years: '1970–1998', movement: 'Radicaal-links militant activisme / stadsguerrilla', note: 'Periode is oprichting–ontbinding (geen persoonsdata).' },
+        { name: 'Rote Armee Fraktion (RAF)', years: '1970–1998', movement: 'Radicaal-links militant activisme / stadsguerrilla', note: 'Periode is oprichting–ontbinding (geen persoonsdata).' },
+        { name: 'Rote Armee Fraktion (RAF)', years: '1970–1998', movement: 'Radicaal-links militant activisme / stadsguerrilla', note: 'Periode is oprichting–ontbinding (geen persoonsdata).' },
+        { name: 'Rote Armee Fraktion (RAF)', years: '1970–1998', movement: 'Radicaal-links militant activisme / stadsguerrilla', note: 'Periode is oprichting–ontbinding (geen persoonsdata).' },
+        { name: 'Rote Armee Fraktion (RAF)', years: '1970–1998', movement: 'Radicaal-links militant activisme / stadsguerrilla', note: 'Periode is oprichting–ontbinding (geen persoonsdata).' },
+
+        { name: 'Achille Mbembe', years: '1957–heden', movement: 'Postkoloniale theorie', note: '' },
+        { name: 'Patricia J. Williams', years: '1951–heden', movement: 'Critical Race Theory / rechtskritiek', note: '' },
+        { name: 'Jean Stefancic', years: 'onbekend', movement: 'Critical Race Theory / rechtskritiek', note: '' },
+        { name: 'Kimberlé Crenshaw', years: '1959–heden', movement: 'Critical Race Theory / intersectionaliteit', note: '' }
       ];
+
+      const captions = meta.map(m => m.name);
+
+      let currentIndex = null;
+
+      const openModal = (index) => {
+        // toggle sluiten als je opnieuw op hetzelfde klikt
+        if (lightbox.classList.contains('open') && currentIndex === index) {
+          closeLightbox();
+          return;
+        }
+
+        currentIndex = index;
+
+        const file = files[index];
+        const m = meta[index] || { name: file, years: '', movement: '', note: '' };
+
+        lightboxImage.src = encodeURI(file);
+        lightboxImage.alt = m.name || file;
+
+        metaName.textContent = m.name || '';
+        metaYears.textContent = m.years || '';
+        metaMovement.textContent = m.movement || '';
+        metaNote.textContent = m.note || '';
+
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden', 'false');
+      };
+
+      const closeLightbox = () => {
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden', 'true');
+        currentIndex = null;
+      };
 
       files.forEach((file, index) => {
         const button = document.createElement('button');
@@ -307,26 +456,19 @@
 
         button.appendChild(img);
         button.appendChild(label);
-        button.addEventListener('click', () => {
-          lightboxImage.src = encodeURI(file);
-          lightboxImage.alt = file;
-          lightbox.classList.add('open');
-          lightbox.setAttribute('aria-hidden', 'false');
-        });
+
+        button.addEventListener('click', () => openModal(index));
 
         gallery.appendChild(button);
       });
 
-      const closeLightbox = () => {
-        lightbox.classList.remove('open');
-        lightbox.setAttribute('aria-hidden', 'true');
-      };
-
       closeBtn.addEventListener('click', closeLightbox);
+
+      // Sluiten door opnieuw te klikken (op beeld of donkere overlay)
+      lightboxImage.addEventListener('click', closeLightbox);
+
       lightbox.addEventListener('click', (event) => {
-        if (event.target === lightbox) {
-          closeLightbox();
-        }
+        if (event.target === lightbox) closeLightbox();
       });
 
       document.addEventListener('keydown', (event) => {
@@ -335,7 +477,7 @@
         }
       });
     </script>
-  
+
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
       import {
@@ -474,6 +616,5 @@
       // Handig om te weten waar reacties landen
       console.log("Reacties pad:", commentsPath);
     </script>
-
   </body>
 </html>
