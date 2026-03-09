@@ -1,1 +1,443 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PTP</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0f0f0f;
+        color: #f2f2f2;
+      }
+
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      h1 {
+        margin: 0 0 16px;
+        font-size: 1.5rem;
+      }
+
+      .hint {
+        margin: 0 0 18px;
+        color: #b8b8b8;
+      }
+
+      .topnav {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        margin: 0 0 14px;
+        padding: 10px 12px;
+        background: #171717;
+        border: 1px solid #2e2e2e;
+        border-radius: 12px;
+      }
+
+      .topnav a {
+        color: #f2f2f2;
+        text-decoration: none;
+        font-weight: 700;
+        padding: 6px 10px;
+        border-radius: 10px;
+      }
+
+      .topnav a:hover {
+        background: #242424;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 12px;
+      }
+
+      .thumb {
+        background: #171717;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #2e2e2e;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        padding: 0;
+        text-align: left;
+        color: inherit;
+      }
+
+      .thumb:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.55);
+      }
+
+      .thumb img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        display: block;
+      }
+
+      .thumb span {
+        display: block;
+        padding: 8px 10px;
+        font-size: 0.85rem;
+        color: #e8e8e8;
+      }
+
+      .lightbox {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        z-index: 1000;
+      }
+
+      .lightbox.open {
+        display: flex;
+      }
+
+      .modal {
+        width: min(1100px, 96vw);
+        max-height: 92vh;
+        overflow: auto;
+        background: #171717;
+        border-radius: 12px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.75);
+        border: 1px solid #2e2e2e;
+      }
+
+      .modal-inner {
+        display: grid;
+        grid-template-columns: minmax(260px, 520px) 1fr;
+        gap: 14px;
+        padding: 14px;
+      }
+
+      #lightboxImage {
+        width: 100%;
+        height: auto;
+        max-height: 78vh;
+        object-fit: contain;
+        border-radius: 10px;
+        background: #0b0b0b;
+        display: block;
+        cursor: pointer;
+      }
+
+      .meta {
+        padding: 4px 6px;
+      }
+
+      .meta h2 {
+        margin: 0 0 10px;
+        font-size: 1.25rem;
+        color: #f2f2f2;
+      }
+
+      .meta .row {
+        margin: 0 0 10px;
+        line-height: 1.35;
+      }
+
+      .meta .label {
+        display: inline-block;
+        min-width: 140px;
+        color: #b8b8b8;
+      }
+
+      .meta .value {
+        font-weight: 700;
+        color: #f2f2f2;
+      }
+
+      .meta .note {
+        margin-top: 10px;
+        color: #cfcfcf;
+        font-size: 0.95rem;
+      }
+
+      .close {
+        position: fixed;
+        top: 12px;
+        right: 14px;
+        border: none;
+        background: transparent;
+        color: #fff;
+        font-size: 2rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 6px 10px;
+      }
+
+      .nav-btn {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+        font-size: 3rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 10px 16px;
+        border-radius: 10px;
+        transition: background 0.15s;
+        z-index: 1001;
+        user-select: none;
+      }
+
+      .nav-btn:hover {
+        background: rgba(255,255,255,0.18);
+      }
+
+      #prevBtn { left: 10px; }
+      #nextBtn { right: 10px; }
+
+      /* Info + Installatie blokken */
+      .info,
+      .installatie {
+        margin-top: 22px;
+        background: #171717;
+        border: 1px solid #2e2e2e;
+        border-radius: 12px;
+        padding: 14px;
+      }
+
+      .info h2 {
+        margin: 0 0 10px;
+        font-size: 1.05rem;
+        color: #f2f2f2;
+      }
+
+      .info p {
+        margin: 0;
+        line-height: 1.5;
+        color: #d8d8d8;
+      }
+
+      .poem {
+        font-family: Georgia, 'Times New Roman', serif;
+        color: #d8d8d8;
+        line-height: 1.6;
+      }
+
+      .poem-title {
+        font-variant: small-caps;
+        font-size: 1rem;
+        letter-spacing: 0.04em;
+        color: #f2f2f2;
+        margin: 0 0 1.4em;
+      }
+
+      .poem p {
+        margin: 0 0 1.2em;
+      }
+
+      .poem-author {
+        margin-top: 1.6em !important;
+        font-style: italic;
+        color: #b8b8b8;
+      }
+
+      .installatie img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 12px;
+        border: 1px solid #2e2e2e;
+        background: #0b0b0b;
+      }
+
+      @media (max-width: 860px) {
+        .modal-inner {
+          grid-template-columns: 1fr;
+        }
+        #lightboxImage {
+          max-height: 55vh;
+        }
+        .meta .label {
+          min-width: 120px;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .lightbox {
+          padding: 0;
+          align-items: stretch;
+        }
+        .modal {
+          width: 100vw;
+          max-height: 100vh;
+          border-radius: 0;
+        }
+        .modal-inner {
+          padding: 12px;
+        }
+        #lightboxImage {
+          max-height: 50vh;
+        }
+        .close {
+          top: 8px;
+          right: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      
+      <h1>Moniek Gerritsma</h1>
+      <nav class="topnav" aria-label="Menu">
+        <a href="#info">Tekst</a>
+        <a href="#installatie">Installatie</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <p class="hint"></p>
+
+      <section class="grid" id="gallery" aria-label="Afbeeldingengalerij"></section>
+
+      <section class="info" id="info" aria-label="Tekst">
+        <h2>Tekst</h2>
+        <div class="poem">
+          <p class="poem-title">En het vlees</p>
+          <p>En het vlees werd woord,<br>
+          en de huid bleef achter<br>
+          langs de weg, die zinderde van hitte,<br>
+          het land doorsneed, de einder aanwees;</p>
+          <p>de huid verdroogde als een schaduw maar was meer,<br>
+          een pantser, tussen woord en wereld<br>
+          de gebrekkige verbinding – dit bleek later.</p>
+          <p>Het bidden van de vogels boven het spiernaakte woord<br>
+          deed het opstaan en vertrekken.<br>
+          Nooit viel de nacht, nergens wolken of beschutting</p>
+          <p>en het zonverbrande woord rilde, begreep</p>
+          <p>dat het menens was, eindelijk echt, vergeten was de huid.</p>
+          <p class="poem-author">Mark Boog</p>
+        </div>
+      </section>
+
+      <section class="installatie" id="installatie" aria-label="Installatie">
+        <h2>Installatie</h2>
+        <img src="installatie.JPG" alt="Installatie" loading="lazy" />
+      </section>
+
+      <section class="info" id="contact" aria-label="Contact">
+        <h2>Contact</h2>
+        <p><a href="mailto:m.gerritsma@hetnet.nl" style="color:#d8d8d8;">m.gerritsma@hetnet.nl</a></p>
+      </section>
+
+</main>
+
+    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Portret informatie">
+      <button class="close" id="closeBtn" type="button" aria-label="Sluiten">×</button>
+      <button class="nav-btn" id="prevBtn" type="button" aria-label="Vorige">&#8249;</button>
+      <button class="nav-btn" id="nextBtn" type="button" aria-label="Volgende">&#8250;</button>
+
+      <div class="modal" role="document">
+        <div class="modal-inner">
+          <img id="lightboxImage" alt="Vergrote afbeelding" />
+
+          </div></div>
+    </div>
+
+    <script>
+      const gallery = document.getElementById('gallery');
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImage = document.getElementById('lightboxImage');
+      const closeBtn = document.getElementById('closeBtn');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      
+      const files = Array.from({ length: 64 }, (_, index) => `M (${index + 1}).jpeg`);
+
+      // Info per portret (1..35)
+      const meta = [];
+
+      const captions = meta.map(m => m.name);
+
+      let currentIndex = null;
+
+      const openModal = (index) => {
+        // toggle sluiten als je opnieuw op hetzelfde klikt
+        if (lightbox.classList.contains('open') && currentIndex === index) {
+          closeLightbox();
+          return;
+        }
+
+        currentIndex = index;
+
+        const file = files[index];
+        const m = meta[index] || { name: file, years: '', movement: '', note: '' };
+
+        lightboxImage.src = encodeURI(file);
+        lightboxImage.alt = m.name || file;
+
+        
+
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden', 'false');
+      };
+
+      const closeLightbox = () => {
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden', 'true');
+        currentIndex = null;
+      };
+
+      files.forEach((file, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'thumb';
+
+        const img = document.createElement('img');
+        img.src = encodeURI(file);
+        img.alt = file;
+        img.loading = 'lazy';
+
+        button.appendChild(img);
+        button.addEventListener('click', () => openModal(index));
+
+        gallery.appendChild(button);
+      });
+
+      closeBtn.addEventListener('click', closeLightbox);
+
+      prevBtn.addEventListener('click', () => {
+        if (currentIndex !== null) openModal((currentIndex - 1 + files.length) % files.length);
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (currentIndex !== null) openModal((currentIndex + 1) % files.length);
+      });
+
+      // Sluiten door opnieuw te klikken (op beeld of donkere overlay)
+      lightboxImage.addEventListener('click', closeLightbox);
+
+      lightbox.addEventListener('click', (event) => {
+        if (event.target === lightbox) closeLightbox();
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (!lightbox.classList.contains('open')) return;
+        if (event.key === 'Escape') closeLightbox();
+        if (event.key === 'ArrowLeft') openModal((currentIndex - 1 + files.length) % files.length);
+        if (event.key === 'ArrowRight') openModal((currentIndex + 1) % files.length);
+      });
+    </script>
+
+
+  </body>
+</html>
 
