@@ -27,11 +27,6 @@
         font-size: 1.5rem;
       }
 
-      .hint {
-        margin: 0 0 18px;
-        color: #b8b8b8;
-      }
-
       .topnav {
         display: flex;
         gap: 14px;
@@ -303,8 +298,6 @@
         <a href="#installatie">Installatie</a>
         <a href="#contact">Contact</a>
       </nav>
-      <p class="hint"></p>
-
       <section class="grid" id="gallery" aria-label="Afbeeldingengalerij"></section>
 
       <section class="info" id="info" aria-label="Tekst">
@@ -359,7 +352,6 @@
       const prevBtn = document.getElementById('prevBtn');
       const nextBtn = document.getElementById('nextBtn');
 
-      const hint = document.querySelector('.hint');
       const candidates = [];
       for (let index = 1; index <= 64; index += 1) {
         candidates.push(`M (${index}).jpeg`, `M (${index}).jpg`);
@@ -429,9 +421,6 @@
 
         files = checks.filter((entry) => entry.exists).map((entry) => entry.file);
 
-        if (hint) {
-          hint.textContent = `${files.length} afbeeldingen geladen.`;
-        }
 
         renderGallery();
       };
