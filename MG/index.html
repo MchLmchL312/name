@@ -27,11 +27,6 @@
         font-size: 1.5rem;
       }
 
-      .hint {
-        margin: 0 0 18px;
-        color: #b8b8b8;
-      }
-
       .topnav {
         display: flex;
         gap: 14px;
@@ -303,8 +298,6 @@
         <a href="#installatie">Installatie</a>
         <a href="#contact">Contact</a>
       </nav>
-      <p class="hint"></p>
-
       <section class="grid" id="gallery" aria-label="Afbeeldingengalerij"></section>
 
       <section class="info" id="info" aria-label="Tekst">
@@ -359,14 +352,19 @@
       const prevBtn = document.getElementById('prevBtn');
       const nextBtn = document.getElementById('nextBtn');
 
-      
-      const files = Array.from({ length: 64 }, (_, index) => `M (${index + 1}).jpeg`);
+      const candidates = [];
+      for (let index = 1; index <= 64; index += 1) {
+        candidates.push(`M (${index}).jpeg`, `M (${index}).jpg`);
+      }
 
-      // Info per portret (1..35)
-      const meta = [];
+      const imageExists = (file) => new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = encodeURI(file);
+      });
 
-      const captions = meta.map(m => m.name);
-
+      let files = [];
       let currentIndex = null;
 
       const openModal = (index) => {
@@ -379,7 +377,7 @@
         currentIndex = index;
 
         const file = files[index];
-        const m = meta[index] || { name: file, years: '', movement: '', note: '' };
+        const m = { name: file };
 
         lightboxImage.src = encodeURI(file);
         lightboxImage.alt = m.name || file;
@@ -396,21 +394,36 @@
         currentIndex = null;
       };
 
-      files.forEach((file, index) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'thumb';
+      const renderGallery = () => {
+        gallery.innerHTML = '';
+        files.forEach((file, index) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'thumb';
 
-        const img = document.createElement('img');
-        img.src = encodeURI(file);
-        img.alt = file;
-        img.loading = 'lazy';
+          const img = document.createElement('img');
+          img.src = encodeURI(file);
+          img.alt = file;
+          img.loading = 'lazy';
 
-        button.appendChild(img);
-        button.addEventListener('click', () => openModal(index));
+          button.appendChild(img);
+          button.addEventListener('click', () => openModal(index));
 
-        gallery.appendChild(button);
-      });
+          gallery.appendChild(button);
+        });
+      };
+
+      const initGallery = async () => {
+        const checks = await Promise.all(candidates.map(async (file) => ({
+          file,
+          exists: await imageExists(file)
+        })));
+
+        files = checks.filter((entry) => entry.exists).map((entry) => entry.file);
+
+
+        renderGallery();
+      };
 
       closeBtn.addEventListener('click', closeLightbox);
 
@@ -435,9 +448,10 @@
         if (event.key === 'ArrowLeft') openModal((currentIndex - 1 + files.length) % files.length);
         if (event.key === 'ArrowRight') openModal((currentIndex + 1) % files.length);
       });
+
+      initGallery();
     </script>
 
 
   </body>
 </html>
-
