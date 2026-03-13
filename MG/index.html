@@ -359,13 +359,29 @@
       const prevBtn = document.getElementById('prevBtn');
       const nextBtn = document.getElementById('nextBtn');
 
-      
-      const files = Array.from({ length: 64 }, (_, index) => `M (${index + 1}).jpeg`);
-
-      // Info per portret (1..35)
-      const meta = [];
-
-      const captions = meta.map(m => m.name);
+      const files = [
+        'M (1).jpeg',
+        'M (1).jpg',
+        'M (2).jpeg',
+        'M (2).jpg',
+        'M (3).jpeg',
+        'M (3).jpg',
+        'M (4).jpeg',
+        'M (5).jpeg',
+        'M (6).jpeg',
+        'M (7).jpeg',
+        'M (8).jpeg',
+        'M (9).jpeg',
+        'M (10).jpeg',
+        'M (11).jpeg',
+        'M (12).jpeg',
+        'M (13).jpeg',
+        'M (14).jpeg',
+        'M (15).jpeg',
+        'M (16).jpeg',
+        'M (17).jpeg',
+        'M (18).jpeg'
+      ];
 
       let currentIndex = null;
 
@@ -379,7 +395,7 @@
         currentIndex = index;
 
         const file = files[index];
-        const m = meta[index] || { name: file, years: '', movement: '', note: '' };
+        const m = { name: file };
 
         lightboxImage.src = encodeURI(file);
         lightboxImage.alt = m.name || file;
@@ -440,4 +456,3 @@
 
   </body>
 </html>
-
