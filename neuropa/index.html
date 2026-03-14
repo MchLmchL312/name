@@ -1,1 +1,1826 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuropa - Machiel van Soest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    
+    <style>
+        :root {
+            --primary: #ffffff;
+            --accent: #d4af37;
+            --secondary: #666666;
+            --background: #ffffff;
+            --text: #e0e0e0;
+            --border: #333333;
+            --card-bg: #000000;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 140px; /* Extra ruimte voor wrap nav */
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Animated background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header & Logo */
+        header {
+            padding: 0;
+            margin: 0 0 3rem 0;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .logo-container {
+            width: 100%;
+            background: white;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin: 0;
+        }
+
+        .logo-container img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--card-bg);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: var(--accent);
+            text-decoration: none;
+            padding: 0.6rem 1.5rem;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-link:hover {
+            border-color: var(--accent);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #000;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin: 2rem 0 3rem 0;
+            text-align: center;
+        }
+
+        /* Introduction Section */
+        .intro-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin: 4rem 0;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        .intro-text {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-left: 4px solid var(--accent);
+        }
+
+        .intro-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .intro-text p {
+            font-size: 1.05rem;
+            color: #b0b0b0;
+            margin-bottom: 1rem;
+        }
+
+        .installation-image {
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            padding: 1rem;
+            border: 2px solid var(--border);
+        }
+
+        .installation-image img {
+            width: 100%;
+            height: auto;
+            max-height: 75vh;
+            object-fit: contain;
+            display: block;
+        }
+
+        .placeholder-image {
+            color: var(--accent);
+            text-align: center;
+            padding: 2rem;
+            font-weight: 300;
+        }
+
+        /* Documents Section */
+        .documents-section {
+            margin: 4rem 0;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+
+        .doc-card {
+            background: var(--card-bg);
+            padding: 2rem 2.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .doc-card:hover {
+            transform: translateX(8px);
+            box-shadow: 0 6px 30px rgba(0,0,0,0.25);
+            border-left-color: var(--accent);
+        }
+
+        .doc-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+        }
+
+        .doc-card p {
+            color: #999;
+            margin-bottom: 1rem;
+        }
+
+        .doc-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.6rem 1.5rem;
+            border: 2px solid var(--accent);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .doc-link:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        /* Radio Player Section */
+        .radio-section {
+            background: var(--card-bg);
+            padding: 3rem 2.5rem;
+            border-radius: 8px;
+            margin: 4rem 0;
+            color: white;
+            box-shadow: 0 6px 30px rgba(0,0,0,0.15);
+            border: 2px solid var(--accent);
+            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+        }
+
+        .radio-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .radio-player {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 6px;
+            backdrop-filter: blur(10px);
+        }
+
+        .radio-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .radio-btn {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .radio-btn:hover {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .radio-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .radio-status {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        /* MP3 Player Section */
+        .mp3-section {
+            background: var(--card-bg);
+            padding: 3rem 2.5rem;
+            border-radius: 8px;
+            margin: 4rem 0;
+            box-shadow: 0 6px 30px rgba(0,0,0,0.15);
+            border: 2px solid var(--accent);
+            animation: fadeInUp 0.8s ease-out 0.7s backwards;
+        }
+
+        .mp3-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .mp3-player {
+            background: rgba(255,255,255,0.05);
+            padding: 2rem;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .mp3-player audio {
+            width: 100%;
+            max-width: 600px;
+            margin: 1rem auto;
+            display: block;
+            filter: invert(1) hue-rotate(180deg);
+        }
+
+        .mp3-info {
+            color: var(--text);
+            font-size: 0.95rem;
+            margin-top: 1rem;
+            opacity: 0.8;
+        }
+
+        
+        /* Video Section */
+        .video-section {
+            background: var(--card-bg);
+            padding: 3rem 2.5rem;
+            border-radius: 8px;
+            margin: 4rem 0;
+            box-shadow: 0 6px 30px rgba(0,0,0,0.15);
+            border: 2px solid var(--accent);
+            animation: fadeInUp 0.8s ease-out 0.75s backwards;
+        }
+
+        .video-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .video-embeds {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            justify-items: center;
+            align-items: start;
+            margin-top: 1rem;
+        }
+
+        .video-embeds .twitter-tweet {
+            margin: 0 auto !important;
+        }
+
+        .video-embed-wrapper {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+            border: 1px solid #333;
+        }
+
+        .video-embed-wrapper iframe {
+            width: 100%;
+            min-height: 500px;
+            border: none;
+            display: block;
+        }
+
+        .video-info {
+            color: var(--text);
+            font-size: 0.95rem;
+            margin-top: 1.25rem;
+            opacity: 0.8;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .video-embeds { grid-template-columns: 1fr; }
+        }
+
+/* UN (BORN) Section */
+        .europa-section {
+            margin: 4rem 0;
+            animation: fadeInUp 0.8s ease-out 0.8s backwards;
+        }
+
+        .europa-card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-top: 4px solid var(--accent);
+        }
+
+        .europa-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .europa-frame {
+            width: 100%;
+            height: 600px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            margin-top: 1.5rem;
+        }
+
+        /* Posters Section */
+        .posters-section {
+            margin: 4rem 0;
+            animation: fadeInUp 0.8s ease-out 0.9s backwards;
+        }
+
+        .posters-header {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .posters-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .posters-header p {
+            color: #b0b0b0;
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .price {
+            font-size: 1.3rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .order-btn {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 1rem 2.5rem;
+            background: var(--accent);
+            color: #000;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .order-btn:hover {
+            background: #f0c040;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        
+.posters-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        @media (max-width: 1000px) {
+            .posters-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .posters-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Webshop categories */
+        .shop-category {
+            margin-top: 2.5rem;
+        }
+        .shop-category h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin: 0 0 1.2rem 0;
+            text-align: center;
+        }
+        .shop-note {
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+            margin-top: 0.6rem;
+        }
+
+        .poster-item {
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .poster-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .poster-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .poster-item:hover img {
+            opacity: 0.9;
+        }
+
+        .item-filename {
+            padding: 0.85rem 0.9rem 1rem;
+            text-align: center;
+            color: #b0b0b0;
+            font-size: 0.92rem;
+            line-height: 1.35;
+            word-break: break-word;
+        }
+
+        /* Lightbox voor grote weergave */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.5);
+            border-radius: 4px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 3rem;
+            color: white;
+            font-weight: 300;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .lightbox-close:hover {
+            color: var(--accent);
+        }
+
+        /* Comments Section */
+        .comments-section {
+            margin: 4rem 0 6rem;
+            animation: fadeInUp 0.8s ease-out 1s backwards;
+        }
+
+        .comments-header {
+            background: var(--card-bg);
+            padding: 2rem 2.5rem;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .comments-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .admin-login-btn {
+            background: var(--accent);
+            color: #000;
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .admin-status {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-right: 0.6rem;
+            white-space: nowrap;
+        }
+
+        .delete-comment-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.35);
+            color: rgba(255,255,255,0.9);
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .delete-comment-btn:hover {
+            border-color: rgba(255,255,255,0.65);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .admin-login-btn:hover {
+            background: #f0c040;
+            transform: scale(1.05);
+        }
+
+        .admin-login-btn.logged-in {
+            background: #28a745;
+            color: white;
+        }
+
+        .admin-logout-btn {
+            background: #dc3545;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-left: 0.5rem;
+        }
+
+        .admin-logout-btn:hover {
+            background: #c82333;
+        }
+
+        /* Admin login modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.visible {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border: 2px solid var(--accent);
+        }
+
+        .modal-content h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 0.9rem;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1rem;
+            background: #000;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-content input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.9rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .modal-btn-primary {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .modal-btn-primary:hover {
+            background: #f0c040;
+        }
+
+        .modal-btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .modal-btn-secondary:hover {
+            border-color: var(--accent);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .comment-form {
+            background: var(--card-bg);
+            padding: 2rem 2.5rem;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.9rem;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background: #000;
+            color: var(--text);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: var(--accent);
+            color: #000;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .submit-btn:hover {
+            background: #f0c040;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Admin password section */
+        .admin-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .admin-toggle {
+            color: var(--accent);
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.9rem;
+        }
+
+        .admin-password {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .admin-password.visible {
+            display: block;
+        }
+
+        /* Comments list */
+        .comments-list {
+            margin-top: 3rem;
+        }
+
+        .comment {
+            background: var(--card-bg);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            border-left: 3px solid var(--accent);
+            position: relative;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .comment-date {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .comment-text {
+            color: #b0b0b0;
+            line-height: 1.6;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .delete-btn.visible {
+            display: inline-block;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .no-comments {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .intro-section {
+                grid-template-columns: 1fr;
+            }
+
+            .installation-image {
+                min-height: auto;
+            }
+
+            .installation-image img {
+                max-height: 60vh;
+            }
+
+            .radio-controls {
+                flex-direction: column;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+        }
+    
+        /* Nav hide/show on scroll direction */
+        nav {
+            transition: transform 220ms ease, opacity 220ms ease;
+            will-change: transform;
+        }
+
+        nav.nav-hidden {
+            transform: translateY(-110%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header id="top">
+            <div class="logo-container">
+                <img src="NeuropaPTP_logo.jpg" alt="Neuropa PTP Logo">
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav>
+            <div class="container">
+                <a href="#top" class="nav-link">Logo</a>
+                <a href="#intro" class="nav-link">Introductie</a>
+                <a href="#documenten" class="nav-link">Documenten</a>
+                <a href="#europa" class="nav-link">UN (BORN)</a>
+                <a href="#radio" class="nav-link">Radio</a>
+                <a href="#mp3" class="nav-link">MP3</a>
+                <a href="#videos" class="nav-link">VIDEO</a>
+                <a href="#installatie" class="nav-link">Installatie</a>
+                <a href="#webshop" class="nav-link">Webshop</a>
+                <a href="#forum" class="nav-link">Forum</a>
+                <a href="#qr" class="nav-link">QR</a>
+            </div>
+        </nav>
+    <div class="container">
+        <div class="tagline">Machiel van Soest &mdash; 2026</div>
+
+        <!-- Introduction & Installation -->
+        <section id="intro" class="intro-section">
+            <div class="intro-text">
+                <h2>NEUROPA</h2>
+                <p>NEUROPA is een wandinstallatie van 3×3 meter, opgebouwd uit vier gelijke kwadranten op een raster van vlagdoek. Alle vlaggen zijn samengesteld uit opgesneden en opnieuw gemonteerde delen van een Nederlandse vlag — dezelfde drie kleuren, rood, wit en blauw, gerangschikt in drie verschillende volgordes, aangevuld met een zwart kruis van tape en tekst.</p>
+
+<p>Elk kwadrant kent een eigen regime van zichtbaarheid: een monochroom huidschilderij; een met zwart plastic afgelegd doek; een geschilderd reliëf met twee klassieke figuren en (zichtbare) ingewanden; en een bewerkte tekst uit de Universele Verklaring van de Rechten van de Mens (1948). </p>
+            </div>
+            <div class="installation-image">
+                <img src="Neuropa_installatie.jpg" alt="Neuropa Installatie">
+            </div>
+        </section>
+
+        <!-- Documents Section -->
+        <section id="documenten" class="documents-section">
+            <div class="doc-card">
+                <h3>📄 Zaaltekst</h3>
+                <p>Een beknopte introductie bij de installatie: de opbouw, de materialen en de centrale spanning tussen nationale symbolen en het kwetsbare lichaam.</p>
+                <a href="Neuropa_zaaltekst.pdf" class="doc-link" target="_blank">
+                    <span>Download Zaaltekst</span>
+                    <span>→</span>
+                </a>
+            </div>
+
+            <div class="doc-card">
+                <h3>📄 Essay: Analyse van een installatie</h3>
+                <p>Een uitgebreide analyse van NEUROPA, met aandacht voor de formele structuur, de vier historische lagen van Europa, de semiotiek van de driekleur en de theoretische context van iconoclasme en de anatomische blik.</p>
+                <a href="Neuropa_analyze.pdf" class="doc-link" target="_blank">
+                    <span>Download Essay</span>
+                    <span>→</span>
+                </a>
+            </div>
+        </section>
+
+        <section id="europa" class="europa-section">
+            <div class="europa-card">
+                <h3>UN (BORN)</h3>
+                <p>De tekst in het rechtsonderste kwadrant van NEUROPA is gebaseerd op de Universele Verklaring van de Rechten van de Mens (1948), maar is in de installatie herschikt en gefragmenteerd. Lees hier en vergelijk de volledige tekst.</p>
+                <iframe class="europa-frame" src="Neuropa_UN.html" title="UN (BORN)"></iframe>
+                <p style="margin-top: 1rem; text-align: center; font-size: 0.9rem; color: #999;">
+                    Zie je niets in het frame hierboven? <a href="Neuropa_UN.html" target="_blank" style="color: var(--accent); text-decoration: underline;">Open UN (BORN) in nieuw venster</a>
+                </p>
+            </div>
+        </section>
+
+
+
+        
+        <!-- Radio Player -->
+        <section id="radio" class="radio-section">
+            <h3>🎙️ Neuropa Radio</h3>
+            <div class="radio-player">
+                <div class="radio-status" id="radioStatus">Radio is gestopt</div>
+
+                <div class="radio-controls">
+                    <button class="radio-btn" id="startBtn" type="button">START</button>
+                </div>
+
+                <!-- Debug console (handig op mobiel) -->
+                <div id="debug-console"
+                    style="margin-top:20px; font-size: 10px; color: #aaa; text-align: left; max-width: 90%; font-family: monospace; max-height: 140px; overflow:auto;">
+                </div>
+
+                <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; opacity: 0.8;">
+                    Werkt de radio niet? <a href="Neuropa_radioCL.html" target="_blank"
+                        style="color: var(--accent); text-decoration: underline;">Open in nieuw venster</a>
+                </p>
+            </div>
+        </section>
+
+
+        <!-- MP3 Player Section -->
+        <section id="mp3" class="mp3-section">
+            <h3>🎵 Neuropapa Audio</h3>
+            <div class="mp3-player">
+                <audio controls preload="metadata">
+                    <source src="neuropapa.mp3" type="audio/mpeg">
+                    Je browser ondersteunt geen audio. <a href="neuropapa.mp3" download style="color: var(--accent);">Download de MP3</a>
+                </audio>
+                <p class="mp3-info">Luister naar Neuropapa.mp3</p>
+            </div>
+        </section>
+
+        
+        <!-- Video Section -->
+        <section id="videos" class="video-section">
+            <h3>🎬 Video's</h3>
+
+            <div class="video-embeds">
+                <div class="video-embed-wrapper">
+                    <iframe
+                        src="https://platform.twitter.com/embed/Tweet.html?id=1890353176106176976&theme=dark"
+                        allowfullscreen
+                        scrolling="no"
+                        allow="autoplay; fullscreen"
+                        loading="lazy">
+                    </iframe>
+                </div>
+
+                <div class="video-embed-wrapper">
+                    <iframe
+                        src="https://platform.twitter.com/embed/Tweet.html?id=1889608843602047246&theme=dark"
+                        allowfullscreen
+                        scrolling="no"
+                        allow="autoplay; fullscreen"
+                        loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+
+            <p class="video-info">
+                Zie je geen video? <a href="https://x.com/ty5u85er/status/1890353176106176976" target="_blank" style="color: var(--accent); text-decoration: underline;">Open video 1</a>
+                &middot;
+                <a href="https://x.com/ty5u85er/status/1889608843602047246" target="_blank" style="color: var(--accent); text-decoration: underline;">Open video 2</a>
+            </p>
+        </section>
+
+<!-- UN (BORN) Section -->
+        
+
+        
+
+        <!-- Installatie Section -->
+        <section id="installatie" style="margin: 4rem 0; animation: fadeInUp 0.8s ease-out 0.85s backwards;">
+            <div style="background: var(--card-bg); padding: 2.5rem; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: 2px solid var(--accent); text-align: center;">
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--primary); margin-bottom: 1.5rem;">Installatie</h3>
+                <img src="installatie.jpg" alt="Installatie" style="max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); display: block; margin: 0 auto;">
+            </div>
+        </section>
+
+        <!-- Webshop Section -->
+        <section id="webshop" class="posters-section">
+            <div class="posters-header">
+                <h3>🛒 Webshop</h3>
+                <p>Posters, stickers en paintings bij de installatie NEUROPA</p>
+                <p style="font-size: 0.9rem; color: #999; margin-top: 0.5rem;">Klik op een afbeelding voor grote weergave</p>
+                <a href="#" class="order-btn" onclick="openShopOrderEmail(event)">
+                    📧 Bestellen via Email
+                </a>
+                <p style="font-size: 0.9rem; color: #999; margin-top: 0.75rem;">Betaling volgens het PWYW-principe: Pay What You Think It's Worth.</p>
+            </div>
+
+            <div class="shop-category">
+                <h4>Posters</h4>
+                <div class="posters-grid">
+                    <div class="poster-item" onclick="openLightbox('N_poster (1).jpg')">
+                        <img src="N_poster (1).jpg" alt="Neuropa Poster 1">
+                        <div class="item-filename">N_poster (1)</div>
+                    </div>
+                    <div class="poster-item" onclick="openLightbox('N_poster (2).jpg')">
+                        <img src="N_poster (2).jpg" alt="Neuropa Poster 2">
+                        <div class="item-filename">N_poster (2)</div>
+                    </div>
+                    <div class="poster-item" onclick="openLightbox('N_poster (3).jpg')">
+                        <img src="N_poster (3).jpg" alt="Neuropa Poster 3">
+                        <div class="item-filename">N_poster (3)</div>
+                    </div>
+                    <div class="poster-item" onclick="openLightbox('N_poster (4).jpg')">
+                        <img src="N_poster (4).jpg" alt="Neuropa Poster 4">
+                        <div class="item-filename">N_poster (4)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shop-category">
+                <h4>Paintings</h4>
+                <div class="posters-grid">
+                    <div class="poster-item" onclick="openLightbox('N_painting (1).jpg')">
+                        <img src="N_painting (1).jpg" alt="Neuropa Painting 1">
+                        <div class="item-filename">N_painting (1)</div>
+                    </div>
+                    <div class="poster-item" onclick="openLightbox('N_painting (2).jpg')">
+                        <img src="N_painting (2).jpg" alt="Neuropa Painting 2">
+                        <div class="item-filename">N_painting (2)</div>
+                    </div>
+                    <div class="poster-item" onclick="openLightbox('N_painting (3).jpg')">
+                        <img src="N_painting (3).jpg" alt="Neuropa Painting 3">
+                        <div class="item-filename">N_painting (3)</div>
+                    </div>
+                    <div class="poster-item" onclick="openLightbox('N_painting (4).jpg')">
+                        <img src="N_painting (4).jpg" alt="Neuropa Painting 4">
+                        <div class="item-filename">N_painting (4)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shop-category">
+                <h4>Sticker</h4>
+                <div class="posters-grid">
+                    <div class="poster-item" onclick="openLightbox('N_sticker (1).jpg')">
+                        <img src="N_sticker (1).jpg" alt="Neuropa Sticker 1">
+                        <div class="item-filename">N_sticker (1)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Forum Section -->
+        <section id="forum" class="comments-section">
+            <div class="comments-header">
+                <h3>💬 Forum</h3>
+                <div id="adminControls">
+                    <button class="admin-login-btn" onclick="showAdminLogin()">🔐 Beheerder Login</button>
+                </div>
+            </div>
+            <div class="comment-form">
+                <form id="commentForm" onsubmit="submitComment(event)">
+                    <div class="form-group">
+                        <label for="name">Naam *</label>
+                        <input type="text" id="name" required placeholder="Uw naam">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="uw.email@voorbeeld.nl">
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">Bericht *</label>
+                        <textarea id="comment" required placeholder="Schrijf je reactie op het werk..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Plaats bericht</button>
+                </form>
+            </div>
+
+            <div class="comments-list" id="commentsList">
+                <div class="no-comments">Nog geen reacties. Wees de eerste!</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <h3>🔐 Beheerder Login</h3>
+            <input type="password" id="adminLoginPassword" placeholder="Voer beheerderswachtwoord in" onkeypress="if(event.key==='Enter') adminLogin()">
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-primary" onclick="adminLogin()">Login</button>
+                <button class="modal-btn modal-btn-secondary" onclick="closeAdminModal()">Annuleren</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox voor posters -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <img id="lightboxImg" src="" alt="Afbeelding grote weergave">
+    </div>
+
+    <script>
+        // ==========================================================
+        // NAV: verberg bij omhoog scrollen, toon bij omlaag scrollen
+        // ==========================================================
+        (() => {
+            const nav = document.querySelector('nav');
+            if (!nav) return;
+
+            let lastY = window.scrollY;
+            let ticking = false;
+            const threshold = 8;
+
+            function update() {
+                const y = window.scrollY;
+                const diff = y - lastY;
+
+                if (Math.abs(diff) >= threshold) {
+                    if (diff < 0) {
+  // omhoog scrollen => toon nav
+  nav.classList.remove('nav-hidden');
+} else {
+  // omlaag scrollen => verberg nav
+  nav.classList.add('nav-hidden');
+}
+
+                    lastY = y;
+                }
+                ticking = false;
+            }
+
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    requestAnimationFrame(update);
+                    ticking = true;
+                }
+            }, { passive: true });
+        })();
+
+        // ==========================================================
+        // SHOP ORDER EMAIL
+        // ==========================================================
+        window.openShopOrderEmail = function (event) {
+            if (event) event.preventDefault();
+
+            const subject = encodeURIComponent('Nieuwe bestelling - [bestandsnaam]');
+            const body = encodeURIComponent(
+                `Beste NEUROPA Team,
+
+` +
+                `Graag plaats ik een bestelling via jullie webshop. Hieronder de details van mijn bestelling:
+
+` +
+                `Productcategorie: poster / painting / sticker
+` +
+                `Bestandsnaam: [vul in]
+` +
+                `Aantal: [vul in]
+
+` +
+                `Ik begrijp dat jullie werken volgens het Pay What You Think It's Worth-principe.
+` +
+                `Voorgesteld bedrag (totaal): € [vul in]
+
+` +
+                `Met vriendelijke groet,
+
+` +
+                `[naam]`
+            );
+
+            window.location.href = `mailto:machielvansoest@gmail.com?subject=${subject}&body=${body}`;
+        };
+
+        // ==========================================================
+        // LIGHTBOX (posters)
+        // ==========================================================
+        window.openLightbox = function (src) {
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightboxImg');
+            if (!lightbox || !img) return;
+
+            img.src = src;
+            lightbox.classList.add('active');
+
+            // voorkom sluiten als je op de afbeelding klikt
+            img.addEventListener('click', (e) => e.stopPropagation(), { once: true });
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeLightbox = function () {
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightboxImg');
+            if (!lightbox || !img) return;
+
+            lightbox.classList.remove('active');
+            img.src = '';
+            document.body.style.overflow = '';
+        };
+
+        
+        // ==========================================================
+        // RADIO (dual stream: gebaseerd op Neuropa_radioCL)
+        // ==========================================================
+        const stations = [
+            'https://www.ortodoxradio.ro:8000/stream48',  // Radio Caprice - hoogste kwaliteit
+            'https://stream.radiomaria.nl/mp3'
+        ];
+
+        const startBtn = document.getElementById('startBtn');
+        const debugConsole = document.getElementById('debug-console');
+        const radioStatus = document.getElementById('radioStatus');
+
+        let audioContext = null;
+        let audioElements = [];
+        let sourceNodes = [];
+        let gainNodes = [];
+        let isPlaying = false;
+        let isStarting = false;
+
+        function setRadioStatus(text) {
+            if (radioStatus) radioStatus.textContent = text;
+        }
+
+        function log(msg) {
+            console.log(msg);
+            if (debugConsole) {
+                debugConsole.innerHTML += `> ${msg}<br>`;
+                debugConsole.scrollTop = debugConsole.scrollHeight;
+            }
+        }
+
+        async function toggleRadio() {
+            if (!startBtn) return;
+
+            // Guard tegen dubbelklikken tijdens start
+            if (isStarting) return;
+
+            if (!isPlaying) {
+                // STARTEN
+                isStarting = true;
+                startBtn.disabled = true;
+                setRadioStatus('Radio start…');
+                log('Poging tot starten…');
+
+                try {
+                    // Maak AudioContext aan (moet binnen user gesture gebeuren)
+                    if (!audioContext) {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        log('AudioContext aangemaakt');
+                    }
+
+                    // Resume context als het suspended is (iOS vereist dit)
+                    if (audioContext.state === 'suspended') {
+                        await audioContext.resume();
+                        log('AudioContext resumed');
+                    }
+
+                    // Maak audio elements en verbind ze met Web Audio API
+                    stations.forEach((url, index) => {
+                        const audio = new Audio();
+                        audio.crossOrigin = 'anonymous';
+                        audio.src = url;
+                        audio.preload = 'auto';
+
+                        audio.onerror = () => {
+                            let errorMsg = `❌ Stream ${index + 1}: `;
+                            if (audio.error) {
+                                switch (audio.error.code) {
+                                    case 1: errorMsg += 'ABORTED'; break;
+                                    case 2: errorMsg += 'NETWORK ERROR'; break;
+                                    case 3: errorMsg += 'DECODE ERROR'; break;
+                                    case 4: errorMsg += 'SRC NOT SUPPORTED'; break;
+                                    default: errorMsg += 'UNKNOWN'; break;
+                                }
+                            }
+                            log(errorMsg);
+                        };
+
+                        audio.onloadedmetadata = () => log(`✓ Stream ${index + 1} metadata geladen`);
+                        audio.oncanplay = () => log(`✓ Stream ${index + 1} klaar`);
+
+                        const source = audioContext.createMediaElementSource(audio);
+                        const gainNode = audioContext.createGain();
+
+                        source.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+
+                        // Volume op 50% per stream zodat ze samen niet clippen
+                        gainNode.gain.value = 0.5;
+
+                        audioElements.push(audio);
+                        sourceNodes.push(source);
+                        gainNodes.push(gainNode);
+                    });
+
+                    log('Web Audio nodes aangemaakt');
+                    log('Starten van streams…');
+
+                    const playPromises = audioElements.map((audio, i) => {
+                        return audio.play()
+                            .then(() => log(`▶ Stream ${i + 1} speelt`))
+                            .catch(err => log(`❌ Stream ${i + 1} play error: ${err.message}`));
+                    });
+
+                    await Promise.all(playPromises);
+
+                    isPlaying = true;
+                    startBtn.textContent = 'STOP';
+                    startBtn.classList.add('active');
+                    setRadioStatus('Radio speelt (beide stations)');
+                    log('✓ Beide streams actief!');
+                } catch (err) {
+                    console.warn(err);
+                    log('❌ CRITICAL ERROR: ' + (err?.message || String(err)));
+                    setRadioStatus('Radio kon niet starten (probeer "Open in nieuw venster")');
+                    isPlaying = false;
+                } finally {
+                    isStarting = false;
+                    startBtn.disabled = false;
+                }
+            } else {
+                // STOPPEN
+                setRadioStatus('Radio stopt…');
+                log('Stoppen…');
+
+                try {
+                    audioElements.forEach((audio, i) => {
+                        audio.pause();
+                        audio.currentTime = 0;
+                        log(`⏸ Stream ${i + 1} gestopt`);
+                    });
+
+                    sourceNodes.forEach(source => {
+                        try { source.disconnect(); } catch (e) {}
+                    });
+
+                    gainNodes.forEach(gain => {
+                        try { gain.disconnect(); } catch (e) {}
+                    });
+
+                    audioElements = [];
+                    sourceNodes = [];
+                    gainNodes = [];
+
+                    isPlaying = false;
+                    startBtn.textContent = 'START';
+                    startBtn.classList.remove('active');
+                    setRadioStatus('Radio is gestopt');
+                    log('✓ Gestopt');
+                } catch (err) {
+                    console.warn(err);
+                    isPlaying = false;
+                    startBtn.textContent = 'START';
+                    startBtn.classList.remove('active');
+                    setRadioStatus('Radio is gestopt');
+                }
+            }
+        }
+
+        if (startBtn) startBtn.addEventListener('click', toggleRadio);
+
+        // ==========================================================
+        // REACTIES (Firebase Realtime Database)
+        // ==========================================================
+        const firebaseConfig = {
+  apiKey: "AIzaSyDWP75FF3iX-aadrnWbN0agKp24Pbs58xY",
+  authDomain: "n-europa.firebaseapp.com",
+  databaseURL: "https://n-europa-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "n-europa",
+  storageBucket: "n-europa.firebasestorage.app",
+  messagingSenderId: "148533876867",
+  appId: "1:148533876867:web:e927792ad04d15af0c63b6"
+};
+
+        const COMMENTS_PATH = "comments";
+        let commentsRef = null;
+
+        let deletedRef = null;
+        let deletedIds = new Set();
+        let lastCommentsSnapshot = null;
+        let isAdmin = false;
+        const ADMIN_STORAGE_KEY = "neuropa_admin";
+        const ADMIN_PASSWORD = "Neuropa2024";
+        const DELETED_PATH = "comment_meta/deleted";
+
+        function escapeHtml(str) {
+            return String(str ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#39;");
+        }
+
+        function formatDate(d) {
+            try {
+                return new Intl.DateTimeFormat("nl-NL", { dateStyle: "medium", timeStyle: "short" }).format(d);
+            } catch {
+                return d.toLocaleString();
+            }
+        }
+
+        function setCommentsStatus(html) {
+            const list = document.getElementById("commentsList");
+            if (!list) return;
+            list.innerHTML = html;
+        }
+
+        function firebaseIsConfigured() {
+            const cfg = firebaseConfig || {};
+            const vals = Object.values(cfg).map(v => String(v || ""));
+            return vals.every(v => v && !v.startsWith("PASTE_"));
+        }
+
+        function renderCommentsFromSnapshot(snapshot) {
+            const list = document.getElementById("commentsList");
+            if (!list) return;
+
+            const obj = snapshot.val() || {};
+            const allItems = Object.entries(obj).map(([id, c]) => ({
+                id,
+                name: c?.name || "Anoniem",
+                text: c?.text || "",
+                date: c?.date || "",
+                ts: typeof c?.timestamp === "number" ? c.timestamp : 0
+            }));
+
+            const items = allItems.filter(c => !deletedIds.has(c.id));
+
+            items.sort((a, b) => b.ts - a.ts);
+
+            if (!items.length) {
+                list.innerHTML = `<div class="no-comments">Nog geen reacties. Wees de eerste!</div>`;
+                return;
+            }
+
+            list.innerHTML = items.map(c => `
+                <div class="comment">
+                    <div class="comment-header">
+                        <div>
+                            <span class="comment-author">${escapeHtml(c.name)}</span>
+                        </div>
+                        <div style="display:flex; gap:0.8rem; align-items:center;">
+                            ${isAdmin ? `<button class="delete-comment-btn" onclick="deleteComment('${c.id}')">Verwijder</button>` : ``}
+                            <span class="comment-date">${escapeHtml(c.date)}</span>
+                        </div>
+                    </div>
+                    <div class="comment-text">${escapeHtml(c.text)}</div>
+                </div>
+            `).join("");
+        }
+
+        function initFirebaseComments() {
+            isAdmin = localStorage.getItem(ADMIN_STORAGE_KEY) === "1";
+            updateAdminControls();
+
+            if (!firebaseIsConfigured()) {
+                setCommentsStatus(`
+                    <div class="no-comments">
+                        Firebase is nog niet geconfigureerd.<br>
+                        Vul eerst je firebaseConfig in de HTML in.
+                    </div>
+                `);
+                return;
+            }
+
+            try {
+                if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+            } catch (e) {
+                console.warn("Firebase init error:", e);
+            }
+
+            try {
+                const db = firebase.database();
+                commentsRef = db.ref(COMMENTS_PATH);
+                deletedRef = db.ref(DELETED_PATH);
+
+                deletedRef.on(
+                    "value",
+                    (snap) => {
+                        const obj = snap.val() || {};
+                        deletedIds = new Set(Object.keys(obj));
+                        if (lastCommentsSnapshot) renderCommentsFromSnapshot(lastCommentsSnapshot);
+                    },
+                    (err) => {
+                        console.warn("Firebase deletedRef read error:", err);
+                        deletedIds = new Set();
+                        if (lastCommentsSnapshot) renderCommentsFromSnapshot(lastCommentsSnapshot);
+                    }
+                );
+
+                commentsRef.orderByChild("timestamp").limitToLast(200).on(
+                    "value",
+                    (snap) => {
+                        lastCommentsSnapshot = snap;
+                        renderCommentsFromSnapshot(snap);
+                    },
+                    (err) => {
+                        console.warn("Firebase read error:", err);
+                        setCommentsStatus(`<div class="no-comments">Kan reacties niet laden (Firebase regels / databaseURL controleren).</div>`);
+                    }
+                );
+            } catch (e) {
+                console.warn("Firebase setup error:", e);
+                setCommentsStatus(`<div class="no-comments">Firebase koppeling faalde. Check databaseURL en dat Realtime Database aanstaat.</div>`);
+            }
+        }
+
+
+        window.submitComment = async function (event) {
+            event.preventDefault();
+
+            const nameEl = document.getElementById("name");
+            const emailEl = document.getElementById("email");
+            const textEl = document.getElementById("comment");
+
+            const name = nameEl?.value?.trim() || "";
+            const email = emailEl?.value?.trim() || "";
+            const text = textEl?.value?.trim() || "";
+
+            if (!name || !text) return;
+
+            if (!commentsRef) {
+                alert("Reactiesysteem is nog niet klaar. Vul firebaseConfig in en controleer je database.");
+                return;
+            }
+
+            const now = new Date();
+            const comment = {
+                name,
+                email,
+                text,
+                timestamp: now.getTime(),
+                date: formatDate(now)
+            };
+
+            try {
+                await commentsRef.push(comment);
+
+                if (nameEl) nameEl.value = "";
+                if (emailEl) emailEl.value = "";
+                if (textEl) textEl.value = "";
+            } catch (err) {
+                console.warn("Firebase write error:", err);
+                alert("Opslaan lukte niet (check Firebase regels).");
+            }
+        };
+
+        // ==========================================================
+        // ADMIN (lokaal wachtwoord) + "verwijderen" via delete-markering
+        // ==========================================================
+        function updateAdminControls() {
+            const wrap = document.getElementById("adminControls");
+            if (!wrap) return;
+
+            if (isAdmin) {
+                wrap.innerHTML = `
+                    <span class="admin-status">Beheerder: ingelogd</span>
+                    <button class="admin-login-btn" onclick="adminLogout()">Uitloggen</button>
+                `;
+            } else {
+                wrap.innerHTML = `
+                    <button class="admin-login-btn" onclick="showAdminLogin()">Beheerder login</button>
+                `;
+            }
+        }
+
+        window.showAdminLogin = function () {
+            const modal = document.getElementById("adminModal");
+            const pw = document.getElementById("adminLoginPassword");
+            if (pw) pw.value = "";
+            if (modal) modal.classList.add("visible");
+            setTimeout(() => pw && pw.focus(), 50);
+        };
+
+        window.closeAdminModal = function () {
+            const modal = document.getElementById("adminModal");
+            if (modal) modal.classList.remove("visible");
+        };
+
+        window.adminLogin = function () {
+            const pw = (document.getElementById("adminLoginPassword")?.value || "").trim();
+            if (!pw) return;
+
+            if (pw === ADMIN_PASSWORD) {
+                isAdmin = true;
+                localStorage.setItem(ADMIN_STORAGE_KEY, "1");
+                updateAdminControls();
+                window.closeAdminModal();
+                if (lastCommentsSnapshot) renderCommentsFromSnapshot(lastCommentsSnapshot);
+            } else {
+                alert("Onjuist wachtwoord.");
+            }
+        };
+
+        window.adminLogout = function () {
+            isAdmin = false;
+            localStorage.removeItem(ADMIN_STORAGE_KEY);
+            updateAdminControls();
+            if (lastCommentsSnapshot) renderCommentsFromSnapshot(lastCommentsSnapshot);
+        };
+
+        window.deleteComment = async function (commentId) {
+            if (!isAdmin) return;
+            if (!commentId) return;
+
+            if (!deletedRef) {
+                alert("Beheermodus is nog niet klaar (Firebase).");
+                return;
+            }
+
+            const ok = confirm("Deze reactie wordt voor iedereen verborgen. Doorgaan?");
+            if (!ok) return;
+
+            try {
+                await deletedRef.child(commentId).set({
+                    deleted: true,
+                    timestamp: Date.now()
+                });
+            } catch (err) {
+                console.warn("Delete marker write error:", err);
+                alert("Verwijderen lukte niet. Check je Firebase rules voor " + DELETED_PATH + ".");
+            }
+        };
+
+        window.addEventListener("click", (e) => {
+            const modal = document.getElementById("adminModal");
+            if (modal && e.target === modal) window.closeAdminModal();
+        });
+
+        // Init comments (Firebase)
+        initFirebaseComments();
+
+    </script>
+
+
+    <!-- QR Section -->
+    <section id="qr" style="margin: 4rem 0 6rem; text-align: center;">
+        <div style="background: var(--card-bg); padding: 2.5rem; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: 2px solid var(--accent);">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--primary); margin-bottom: 1.5rem;">
+                📱 QR
+            </h3>
+            <img src="qrcode_Neuropa_PTP.nl.png" alt="QR Code Neuropa PTP"
+                 style="max-width: 280px; width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        </div>
+    </section>
+
+
+</body>
+</html>
