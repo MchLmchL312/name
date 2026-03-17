@@ -1007,6 +1007,22 @@
             pointer-events: none;
         }
 
+
+        .section-title-with-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+        }
+
+        .section-title-icon {
+            width: 30px;
+            height: auto;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
     </style>
 </head>
 <body>
@@ -1043,7 +1059,7 @@
                 <h2>NEUROPA</h2>
                 <p>NEUROPA is een wandinstallatie van 3×3 meter, opgebouwd uit vier gelijke kwadranten op een raster van vlagdoek. Alle vlaggen zijn samengesteld uit opgesneden en opnieuw gemonteerde delen van een Nederlandse vlag — dezelfde drie kleuren, rood, wit en blauw, gerangschikt in drie verschillende volgordes, aangevuld met een zwart kruis en tekst.</p>
 
-<p>Elk kwadrant kent een eigen regime van zichtbaarheid: een monochroom huidschilderij; een met zwart plastic afgelegd doek; een geschilderd reliëf met twee klassieke figuren en (zichtbare) ingewanden; kruis en een bewerkte tekst uit de Universele Verklaring van de Rechten van de Mens (1948). </p>
+<p>Elk kwadrant kent een eigen regime van zichtbaarheid: een monochroom huidschilderij; een met zwart plastic afgelegd doek; een geschilderd reliëf met twee klassieke figuren en (zichtbare) ingewanden; kruis en een tekst. </p>
             </div>
             <div class="installation-image">
                 <img src="Neuropa_installatie.jpg" alt="Neuropa Installatie">
@@ -1073,11 +1089,11 @@
 
         <section id="europa" class="europa-section">
             <div class="europa-card">
-                <h3>UN (BORN)</h3>
+                <h3 class="section-title-with-icon"><img src="UN_logo.png" alt="UN logo" class="section-title-icon"><span>UN (BORN)</span></h3>
                 <p>De tekst in het rechtsonderste kwadrant van NEUROPA is gebaseerd op de Universele Verklaring van de Rechten van de Mens (1948), maar is in de installatie herschikt en gefragmenteerd. Lees hier en vergelijk de volledige tekst.</p>
                 <iframe class="europa-frame" src="Neuropa_UN.html" title="UN (BORN)"></iframe>
                 <p style="margin-top: 1rem; text-align: center; font-size: 0.9rem; color: #999;">
-                    Zie je niets in het frame hierboven? <a href="Neuropa_UN.html" target="_blank" style="color: var(--accent); text-decoration: underline;">Open UN (BORN) in nieuw venster</a>
+                    Zie je niets in het frame hierboven? <a href="Neuropa_UN.html" target="_blank" style="color: var(--accent); text-decoration: underline;">Open UN (BORN) in nieuw venster</a> / <a href="UN(BORN).pdf" download style="color: var(--accent); text-decoration: underline;">download UN(BORN).pdf</a>
                 </p>
             </div>
         </section>
@@ -1162,7 +1178,7 @@
         <!-- Installatie Section -->
         <section id="installatie" style="margin: 4rem 0; animation: fadeInUp 0.8s ease-out 0.85s backwards;">
             <div style="background: var(--card-bg); padding: 2.5rem; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: 2px solid var(--accent); text-align: center;">
-                <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--primary); margin-bottom: 1.5rem;">Installatie</h3>
+                <h3 class="section-title-with-icon" style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--primary); margin-bottom: 1.5rem;"><img src="PtP_logoW.png" alt="PtP logo" class="section-title-icon"><span>Installatie</span></h3>
                 <img src="installatie.jpg" alt="Installatie" style="max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); display: block; margin: 0 auto;">
             </div>
         </section>
