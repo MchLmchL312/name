@@ -162,10 +162,15 @@
 
     .text-frame{
       width: 100%;
-      min-height: 72vh;
+      min-height: min(72vh, 640px);
+      padding: 18px;
       border: 1px solid rgba(255,255,255,.08);
       border-radius: 14px;
-      background: rgba(255,255,255,.98);
+      background: #000;
+      color: #fff;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
     }
 
     .file-link{
@@ -194,8 +199,8 @@
         </div>
 
         <nav aria-label="Taalkeuze">
-          <a href="../index.html">Beginscherm</a>
-          <a href="index.html">Home</a>
+          <a href="../index.html">PTP</a>
+          <a href="index.html">Inner</a>
           <a class="active" href="nl.html">NL</a>
           <a href="eng.html">EN</a>
         </nav>
@@ -213,7 +218,13 @@
 
         <div class="content">
           <section class="section text-panel">
-            <iframe class="text-frame" src="board1.txt" title="Tekstbestand"></iframe>
+            <div class="text-frame" aria-label="Tekstbestand">De Dissection Works-serie verkent het menselijk lichaam door de huid heen, met een focus op interne lagen, organen en de mysteries die daarin verscholen liggen. Deze schilderijen – gemaakt met technieken van de oude meesters – stapelen kleur op kleur om het binnenste van het lichaam op viscerale, bijna chirurgische wijze af te beelden.
+
+Het lichtspectrum, dat normaliter van de huid weerkaatst, dringt hier door naar binnen en onthult verborgen organen en het complexe innerlijke functioneren van het leven. De werken roepen zowel ontzag, schoonheid als ongemak op: zij ontleden het menselijk lichaam om thema&#x27;s als sterfelijkheid, kwetsbaarheid en het onbekende te verkennen.
+
+Deze schilderijen van organen en weefsels verbeelden vliezen en binnenste huidlagen van het menselijk lichaam: hersenvlies, geboortevlies, netvlies. Beelden van vlees, geschilderd in dikke, vette olieverf, benadrukken de fysieke substantie van het lichaam. De verf wordt vlees. In katholieke termen: transsubstantiatie.
+
+</div>
             <p class="file-link">Bewerk bronbestand: <a href="board1.txt">board1.txt</a></p>
           </section>
         </div>
