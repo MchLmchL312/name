@@ -155,10 +155,15 @@
 
     .text-frame{
       width: 100%;
-      min-height: 72vh;
+      min-height: min(72vh, 640px);
+      padding: 18px;
       border: 1px solid rgba(255,255,255,.08);
       border-radius: 14px;
-      background: rgba(255,255,255,.98);
+      background: #000;
+      color: #fff;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
     }
 
     .file-link{
@@ -206,7 +211,11 @@
 
         <div class="content">
           <section class="section text-panel">
-            <iframe class="text-frame" src="board1 - eng.txt" title="Tekstbestand"></iframe>
+            <div class="text-frame" aria-label="Tekstbestand">The Dissection Works series explores the human body by penetrating beyond the skin, focusing on internal layers, organs, and the mysteries concealed within. These paintings—created using techniques associated with the old masters—build color layer upon layer to depict the body’s interior in a visceral, almost surgical manner.
+
+The spectrum of light, which normally reflects off the skin, is here shown pressing inward, revealing hidden organs and the complex inner functioning of life. The works evoke awe, beauty, and discomfort at once: they dissect the human body to explore themes of mortality, fragility, and the unknown.
+
+These paintings of organs and tissues depict membranes and inner skin-layers of the human body: the meninges, the birth membrane, the retina. Images of flesh, painted in thick, rich oil paint, underscore the body’s physical substance. Paint becomes flesh. In Catholic terms: transubstantiation.</div>
             <p class="file-link">Bewerk bronbestand: <a href="board1 - eng.txt">board1 - eng.txt</a></p>
           </section>
         </div>
