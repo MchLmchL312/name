@@ -162,10 +162,15 @@
 
     .text-frame{
       width: 100%;
-      min-height: 72vh;
+      min-height: min(72vh, 640px);
+      padding: 18px;
       border: 1px solid rgba(255,255,255,.08);
       border-radius: 14px;
-      background: rgba(255,255,255,.98);
+      background: #000;
+      color: #fff;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
     }
 
     .file-link{
@@ -194,8 +199,8 @@
         </div>
 
         <nav aria-label="Taalkeuze">
-          <a href="../index.html">Beginscherm</a>
-          <a href="index.html">Home</a>
+          <a href="../index.html">PTP</a>
+          <a href="index.html">Noise</a>
           <a class="active" href="nl.html">NL</a>
           <a href="eng.html">EN</a>
         </nav>
@@ -213,7 +218,11 @@
 
         <div class="content">
           <section class="section text-panel">
-            <iframe class="text-frame" src="board1.txt" title="Tekstbestand"></iframe>
+            <div class="text-frame" aria-label="Tekstbestand">De Noise Works-serie representeert chaos en abstractie door de afwezigheid van duidelijke signalen en gestructureerde vormen. Deze schilderijen kenmerken zich door verspreide stippen en getextureerde oppervlakken die visuele ruis oproepen, waarbij kleur en vorm oplossen in een veld van wanorde. De serie onderzoekt het potentieel van vorm om uit deze chaos te ontstaan en belichaamt het concept van ‘ongeboren manifestatie’, waarin ideeën en structuren zich nog moeten voltrekken. Door kijkers te confronteren met dit gefragmenteerde visuele landschap dagen de Noise Works traditionele opvattingen over compositie uit en nodigen ze uit tot reflectie op willekeur, entropie en het creatieproces zelf.
+
+In de Noise-werken — de ‘ongrond’ — verschijnt visuele ruis als een oerveld waaruit patronen en beelden kunnen oplichten. Een uitvergrote microkosmos van kleur en trilling verbeeldt de altijd aanwezige achtergrondruis waaruit waarneming, geheugen en beeldvorming zich telkens opnieuw organiseren. De schilderijen verbeelden verf als vaste materie: materiële beeldruis, of als de visuele straling van massa, en tonen op bijna wetenschappelijk niveau de werkelijkheid als golfbewegingen en energietrillingen op atomair niveau. De term ‘noise’ (ruis) wordt vergeleken met ongevormd geluid: uit deze ruis ontvouwt zich een kleurspectrum dat symbool staat voor ongeduide emotie—de overgang van pure energie naar iets wat wij als mensen kunnen waarnemen of voelen.
+
+De serie belichaamt de filosofische gedachte dat de energetische en materiële staat van het bestaan één zijn: materie is energie, oftewel ‘gestold licht’. Je kunt de Noise-serie vergelijken met het statische sneeuwbeeld van een oude televisie: van een afstand lijkt het een willekeurige brij van grijze ruis, maar van dichtbij zie je dat die ruis de bron is waaruit elk beeld en elke kleur voortkomt. Het is de ‘hartslag’ van materie voordat zij een herkenbare vorm of betekenis aanneemt—een onderzoek naar de vibrerende onderlaag van de wereld, waarin de grens tussen tastbare materie en vluchtige energie vervaagt.</div>
             <p class="file-link">Bewerk bronbestand: <a href="board1.txt">board1.txt</a></p>
           </section>
         </div>
