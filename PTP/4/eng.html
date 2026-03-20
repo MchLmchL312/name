@@ -147,6 +147,30 @@
     }
     p:last-child{ margin-bottom: 0; }
 
+
+    .text-panel{
+      padding: 14px 0 0;
+      border-bottom: 0;
+    }
+
+    .text-frame{
+      width: 100%;
+      min-height: 72vh;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      background: rgba(255,255,255,.98);
+    }
+
+    .file-link{
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .file-link a{
+      color: var(--text);
+    }
+
     @media (max-width: 720px){
       .topbar{ align-items:flex-start; }
     }
@@ -163,6 +187,7 @@
         </div>
 
         <nav aria-label="Navigation">
+          <a href="../index.html">Beginscherm</a>
           <a href="index.html">Home</a>
           <a href="nl.html">NL</a>
           <a class="active" href="eng.html">EN</a>
@@ -180,40 +205,14 @@
         </div>
 
         <div class="content">
-        
-                
-          <div id="textContent" class="section">
-            <p style="color: var(--muted); margin: 0;">Loading text…</p>
-          </div>
-        
-        
-
+          <section class="section text-panel">
+            <iframe class="text-frame" src="board1 - eng.txt" title="Tekstbestand"></iframe>
+            <p class="file-link">Bewerk bronbestand: <a href="board1 - eng.txt">board1 - eng.txt</a></p>
+          </section>
         </div>
       </article>
     </div>
   </main>
-
-  <script>
-    (async () => {
-      const target = document.getElementById('textContent');
-      const url = encodeURI('board1 - eng.txt');
-      try {
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const txt = await res.text();
-        const trimmed = txt.trim();
-        const looksHTML = /<\s*(section|h1|h2|h3|p|div|article|ul|ol|br|strong|em)\b/i.test(trimmed);
-        if (looksHTML) {
-          target.innerHTML = trimmed;
-        } else {
-          const esc = (s) => s.replace(/[&<>"']/g, (ch) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-          target.innerHTML = `<pre style="white-space: pre-wrap; margin: 0; color: rgba(255,255,255,.80); line-height: 1.65;">${esc(trimmed)}</pre>`;
-        }
-      } catch (err) {
-        target.innerHTML = `<p style="color: var(--muted);">Could not load text file: <code>${String(err)}</code></p>`;
-      }
-    })();
-  </script>
 
 </body>
 </html>
