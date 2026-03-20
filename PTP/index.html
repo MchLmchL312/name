@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PTP</title>
+  <style>
+    :root{
+      --header-h: 52px;
+      /* PTP.jpg is 2011 × 2048 */
+      --imgW: 2011;
+      --imgH: 2048;
+
+      /* dit bepaalt het totale 3×3 blok: verder uit elkaar = groter blok */
+      --x1: 28%;
+      --x2: 50%;
+      --x3: 72%;
+
+      --y1: 28%;
+      --y2: 50%;
+      --y3: 72%;
+    }
+
+    html, body{ height:100%; margin:0; }
+    body{
+      background:#111;
+      overflow:hidden;
+      padding-top: var(--header-h);
+      box-sizing:border-box;
+      font-family:sans-serif;
+      color:#eee;
+    }
+
+    /* header zoals in logo.html */
+    .header{
+      position:fixed;
+      top:0; left:0; right:0;
+      height: var(--header-h);
+      background:#000;
+      padding: 10px 20px;
+      box-sizing:border-box;
+      display:flex;
+      justify-content: space-between;
+      align-items:center;
+      color:#fff;
+      z-index: 1000;
+    }
+    .header .name{
+      font-size: 1.2rem;
+      font-weight: bold;
+      line-height:1;
+    }
+    .header .name .sub{
+      display:block;
+      font-size:0.75rem;
+      font-weight:normal;
+      opacity:0.8;
+      margin-top:2px;
+      letter-spacing:0.02em;
+    }
+    .header-right{
+      display:flex;
+      align-items:center;
+      gap:20px;
+    }
+    .header-right .map-link{
+      color:#fff;
+      text-decoration:none;
+      font-size:1rem;
+      transition: color .3s;
+    }
+    .header-right .map-link:hover{ color: yellow; }
+
+    .wrap{
+      height: calc(100vh - var(--header-h));
+      width: 100vw;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .stage{
+      position:relative;
+      width: min(100vw, calc((100vh - var(--header-h)) * var(--imgW) / var(--imgH)));
+      height: min(calc(100vh - var(--header-h)), calc(100vw * var(--imgH) / var(--imgW)));
+      background: url("PTP.jpg") center center / contain no-repeat;
+    }
+
+    /* klikvlakken */
+    .spot{
+      position:absolute;
+      width: 18%;
+      aspect-ratio: 1 / 1;
+      display:block;
+      border-radius:0;                 /* vierkant */
+      outline:none;                    /* geen omlijning */
+      background: rgba(255,255,255,0); /* onzichtbaar */
+    }
+
+    /* heel subtiele hover, zonder rand */
+    .spot:hover, .spot:focus-visible{
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+    }
+
+    .c{ transform: translate(-50%, -50%); }
+
+    .s1{ left:var(--x1); top:var(--y1); }
+    .s2{ left:var(--x2); top:var(--y1); }
+    .s3{ left:var(--x3); top:var(--y1); }
+
+    .s4{ left:var(--x1); top:var(--y2); }
+    .s5{ left:var(--x2); top:var(--y2); }
+    .s6{ left:var(--x3); top:var(--y2); }
+
+    .s7{ left:var(--x1); top:var(--y3); }
+    .s8{ left:var(--x2); top:var(--y3); }
+    .s9{ left:var(--x3); top:var(--y3); }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <div class="name">Machiel van Soest<span class="sub">PTP</span></div>
+    <div class="header-right">
+      <a href="https://home.deds.nl/~unbrad/website/" class="map-link">boards</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="stage" aria-label="PTP achtergrond met 9 hotspots">
+      <a class="spot c s1" href="./1/index.html" target="_blank" rel="noopener noreferrer" aria-label="Werk 1"></a>
+      <a class="spot c s2" href="./2/index.html" target="_blank" rel="noopener noreferrer" aria-label="Werk 2"></a>
+      <a class="spot c s3" href="./3/index.html" target="_blank" rel="noopener noreferrer" aria-label="Werk 3"></a>
+
+      <a class="spot c s4" href="./4/index.html" target="_blank" rel="noopener noreferrer" aria-label="Werk 4"></a>
+      <a class="spot c s5" href="./5/index.html" target="_blank" rel="noopener noreferrer" aria-label="Werk 5"></a>
+      <a class="spot c s6" href="./6/index.html" target="_blank" rel="noopener noreferrer" aria-label="Werk 6"></a>
+
+      <a class="spot c s7" href="./7/index.html" target="_blank" rel="noopener noreferrer" aria-label="Werk 7"></a>
+      <a class="spot c s8" href="./8/index.html" target="_blank" rel="noopener noreferrer" aria-label="Werk 8"></a>
+      <a class="spot c s9" href="./9/index.html" target="_blank" rel="noopener noreferrer" aria-label="Werk 9"></a>
+    </div>
+  </div>
+</body>
+</html>
