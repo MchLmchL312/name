@@ -154,6 +154,32 @@
     }
     p:last-child{ margin-bottom: 0; }
 
+
+    .text-panel{
+      padding: 14px 0 0;
+      border-bottom: 0;
+    }
+
+    .text-frame{
+      width: 100%;
+      height: 72vh;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      background: #050505;
+      display:block;
+      overflow:hidden;
+    }
+
+    .file-link{
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .file-link a{
+      color: var(--text);
+    }
+
     @media (max-width: 720px){
       .topbar{ align-items:flex-start; }
     }
@@ -169,7 +195,9 @@
           <div class="sub">Internal</div>
         </div>
 
-        <nav aria-label="Taalkeuze"> <a href="index.html">Home</a>  
+        <nav aria-label="Taalkeuze">
+          <a href="../index.html">Beginscherm</a>
+          <a href="index.html">Terug</a>
           <a class="active" href="nl.html">NL</a>
           <a href="eng.html">EN</a>
         </nav>
@@ -186,41 +214,65 @@
         </div>
 
         <div class="content">
-        
-        
-        
-        
-          <div id="textContent" class="section">
-            <p style="color: var(--muted); margin: 0;">Tekst laden…</p>
-          </div>
-        
-
-        
-        
+          <section class="section text-panel">
+            <iframe class="text-frame" scrolling="no" src="board1.txt" title="Tekstbestand"></iframe>
+            <p class="file-link">Bronbestand: <a href="board1.txt">board1.txt</a></p>
+          </section>
         </div>
       </article>
     </div>
   </main>
 
   <script>
-    (async () => {
-      const target = document.getElementById('textContent');
-      const url = encodeURI('board1.txt');
-      try {
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const txt = await res.text();
-        const trimmed = txt.trim();
-        const looksHTML = /<\s*(section|h1|h2|h3|p|div|article|ul|ol|br|strong|em)\b/i.test(trimmed);
-        if (looksHTML) {
-          target.innerHTML = trimmed;
-        } else {
-          const esc = (s) => s.replace(/[&<>"']/g, (ch) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-          target.innerHTML = `<pre style="white-space: pre-wrap; margin: 0; color: rgba(255,255,255,.80); line-height: 1.65;">${esc(trimmed)}</pre>`;
+    (() => {
+      const frames = document.querySelectorAll('.text-frame');
+      const escapeHtml = (value) => value.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+
+      const resizeFrame = (frame) => {
+        try {
+          const doc = frame.contentDocument;
+          if (!doc || !doc.documentElement) return;
+          const height = Math.max(doc.documentElement.scrollHeight, doc.body ? doc.body.scrollHeight : 0, 320);
+          frame.style.height = `${height}px`;
+        } catch (error) {
+          console.warn('Kon tekstframe niet schalen.', error);
         }
-      } catch (err) {
-        target.innerHTML = `<p style="color: var(--muted);">Kon tekstbestand niet laden: <code>${String(err)}</code></p>`;
-      }
+      };
+
+      const enhanceFrame = (frame) => {
+        try {
+          const doc = frame.contentDocument;
+          if (!doc || !doc.body) return;
+
+          if (frame.dataset.enhanced !== 'true') {
+            const raw = (doc.body.textContent || '').trim();
+            if (!raw) return;
+
+            const paragraphs = raw
+              .split(/\n\s*\n/g)
+              .filter(Boolean)
+              .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br />')}</p>`)
+              .join('');
+
+            doc.open();
+            doc.write(`<!doctype html><html lang="${document.documentElement.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body{margin:0;background:#050505;color:#f4f4f4;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}body{padding:20px;line-height:1.7;}p{margin:0 0 1.1em;white-space:normal;}p:last-child{margin-bottom:0;}a{color:#fff;}</style></head><body>${paragraphs}</body></html>`);
+            doc.close();
+            frame.dataset.enhanced = 'true';
+          }
+
+          requestAnimationFrame(() => resizeFrame(frame));
+          setTimeout(() => resizeFrame(frame), 80);
+        } catch (error) {
+          console.warn('Kon tekstframe niet vormgeven.', error);
+        }
+      };
+
+      frames.forEach((frame) => {
+        frame.addEventListener('load', () => enhanceFrame(frame));
+      });
+
+      window.addEventListener('load', () => frames.forEach((frame) => enhanceFrame(frame)));
+      window.addEventListener('resize', () => frames.forEach((frame) => resizeFrame(frame)));
     })();
   </script>
 
