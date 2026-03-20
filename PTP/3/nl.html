@@ -162,10 +162,15 @@
 
     .text-frame{
       width: 100%;
-      min-height: 72vh;
+      min-height: min(72vh, 640px);
+      padding: 18px;
       border: 1px solid rgba(255,255,255,.08);
       border-radius: 14px;
-      background: rgba(255,255,255,.98);
+      background: #000;
+      color: #fff;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
     }
 
     .file-link{
@@ -194,8 +199,8 @@
         </div>
 
         <nav aria-label="Taalkeuze">
-          <a href="../index.html">Beginscherm</a>
-          <a href="index.html">Home</a>
+          <a href="../index.html">PTP</a>
+          <a href="index.html">Text</a>
           <a class="active" href="nl.html">NL</a>
           <a href="eng.html">EN</a>
         </nav>
@@ -213,7 +218,18 @@
 
         <div class="content">
           <section class="section text-panel">
-            <iframe class="text-frame" src="board1.txt" title="Tekstbestand"></iframe>
+            <div class="text-frame" aria-label="Tekstbestand">De serie Text Works manipuleert taal door woorden los te weken uit hun traditionele betekenissen en ze in nieuwe contexten te plaatsen. Vertrekkend vanuit een brontekst (Unborn_Null 2018) onderzoekt de reeks thema’s als trauma, waarneming en psychische toestanden. De tekst wordt daarbij voortdurend herschikt en hergeconfigureerd, zodat zichtbaar wordt hoe betekenis wordt opgebouwd—en hoe die ook kan kantelen. Zo ontstaat een abstracte, gefragmenteerde vertelling die de toeschouwer uitnodigt om mee te bewegen met de vloeibaarheid van interpretatie. De tekst fungeert tegelijk als visueel en conceptueel medium, met de nadruk op innerlijke strijd en de versnipperde aard van menselijke ervaring.
+
+In deze tekstwerken wordt taal benaderd als materiaal én als handeling. Woorden verschijnen als korte, directe formuleringen die een lichamelijke reactie of gedachtebeweging proberen te vangen, maar verliezen tegelijk hun houvast door herhaling, verschuiving en stapeling.
+
+De serie onderzoekt taal als een dwingende kracht die menselijke ervaring structureert en vormgeeft: een poging om fysieke en emotionele reacties te begrijpen en te beheersen. Teksten uit bundels zoals Unborn_Null worden ingezet om vat te krijgen op rauwe, ongevormde beleving.
+
+Een specifiek onderdeel van de reeks is het gebruik van herschreven en herordende publieke documenten—zoals de Universele Verklaring van de Rechten van de Mens (VN)—om te benadrukken hoe taal wereldbeelden produceert en structuren oplegt. In essentie laat de serie zien hoe taal werkt als een filter, een raster over de werkelijkheid: ze maakt kennis mogelijk, maar sluit ons tegelijk op in haar eigen kaders.
+
+In het openingsvers van het Johannesevangelie (Johannes 1:1) staat: “In het begin was het Woord”—het woord schept de wereld. Die scheppende kracht is ook begrenzend: wat benoemd wordt, krijgt vorm; wat buiten taal valt, blijft moeilijk zichtbaar.
+
+In sommige werken wordt tekst verder bewerkt door opname, herhaling en gelaagdheid—laag over laag—tot taal onverstaanbaar wordt en betekenis oplost in klank, ritme en ruimtelijke resonantie. Wat resteert zijn tekens, kreten die naar communicatie verwijzen, maar functioneren als een autonoom systeem van taalresten: suggestief, dwingend en bewust niet eenduidig.
+</div>
             <p class="file-link">Bewerk bronbestand: <a href="board1.txt">board1.txt</a></p>
           </section>
         </div>
