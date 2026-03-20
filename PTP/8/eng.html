@@ -155,10 +155,15 @@
 
     .text-frame{
       width: 100%;
-      min-height: 72vh;
+      min-height: min(72vh, 640px);
+      padding: 18px;
       border: 1px solid rgba(255,255,255,.08);
       border-radius: 14px;
-      background: rgba(255,255,255,.98);
+      background: #000;
+      color: #fff;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
     }
 
     .file-link{
@@ -206,7 +211,13 @@
 
         <div class="content">
           <section class="section text-panel">
-            <iframe class="text-frame" src="board1 - eng.txt" title="Tekstbestand"></iframe>
+            <div class="text-frame" aria-label="Tekstbestand">The ready-mades form an essential part of the Pain category within the PTP framework and function as powerful symbols of psychic and political life. These are found objects—such as soil, bread, blood, or bottles filled with a range of materials—that explore the metaphorical meaning and the emotional or ideological charge of everyday things. These objects are not merely physical: they force a confrontation with reality, evoking both literal wounds and psychological trauma.
+
+Within the work’s artistic synthesis, the ready-mades connect the most private emotions and subterranean traumas to broader social systems. They are often linked to the concept of the Unborn and entropy, which refers to chaos and the unformed state that precedes life or follows it. In a total installation, these charged objects operate as signals that rupture conditioned reality.
+
+Art-historically, they align with the genealogy of the readymade (Duchamp: a shift in meaning through context), but also with relics and vanitas (the object as evidence of finitude), and with Arte Povera/Beuys (poor or organic materials bearing a political-ethical charge). Yet here the idea gains a distinctive sharpness: the ready-made is not merely an ironic gesture, but a corporeal witness—a “piece of reality” that does not aestheticize, but puts the aesthetic moment under pressure.
+
+You can think of the ready-mades as “exhibits”—pieces of evidence.</div>
             <p class="file-link">Bewerk bronbestand: <a href="board1 - eng.txt">board1 - eng.txt</a></p>
           </section>
         </div>
