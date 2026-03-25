@@ -20,7 +20,7 @@ outputs/
 ## Features
 
 - Upload common video formats (`.mp4`, `.mov`, `.avi`, `.mkv`, `.webm`)
-- Live browser-side pixel processing (no backend call on slider drag)
+- Frame-first browser preview: pick a frame/time and adjust filters in realtime on canvas (no backend call on slider drag)
 - Sliders for hue/saturation/brightness/contrast/gamma/RGB multipliers
 - Presets: Warm, Cold, Green Tint, Red Boost, Bleach, Duotone
 - Active preset indicator + automatic `Custom` state after manual slider edits
@@ -95,8 +95,8 @@ Open:
 ## How to use
 
 1. Upload a video.
-2. Play video and tweak sliders for live filtered preview.
-3. Use presets and then refine sliders manually (`Custom` appears).
+2. Kies een frame via de time-slider (of video controls) en tweak sliders voor realtime filtered preview op dat frame.
+3. Gebruik presets en verfijn handmatig (`Custom` verschijnt).
 4. Toggle compare mode to instantly switch original vs filtered view.
 5. Export current frame with **Export Current Frame as PNG**.
 6. Render edited video with **Save as MP4**.
@@ -111,7 +111,7 @@ Open:
 
 ## Limitations
 
-- Very high-resolution videos can reduce live preview FPS due to per-pixel JavaScript processing.
+- Very high-resolution videos can still reduce preview FPS due to per-pixel JavaScript processing on selected frames.
 - Browser codec support for upload playback varies by installed codecs/browser.
 - Batch export runs sequentially in one request (simple implementation).
 - Generated files are stored locally in `uploads/` and `outputs/` until manually removed.

@@ -15,10 +15,7 @@ const presets = {
   "Green Tint": { hue: 0, saturation: 1.05, brightness: 0, contrast: 1.04, gamma: 1, red: 0.92, green: 1.18, blue: 0.94, effect: "none" },
   "Red Boost": { hue: -2, saturation: 1.10, brightness: 0.01, contrast: 1.08, gamma: 1, red: 1.28, green: 0.98, blue: 0.95, effect: "none" },
   "Bleach": { hue: 0, saturation: 0.55, brightness: 0.08, contrast: 1.18, gamma: 0.95, red: 1.03, green: 1.03, blue: 1.03, effect: "bleach" },
-  "Duotone": {
-    hue: 0, saturation: 0.65, brightness: 0.02, contrast: 1.12, gamma: 1, red: 1, green: 0.95, blue: 0.90,
-    effect: "duotone", duotoneShadow: "#1b2a49", duotoneHighlight: "#f2c14e"
-  },
+  "Duotone": { hue: 0, saturation: 0.65, brightness: 0.02, contrast: 1.12, gamma: 1, red: 1, green: 0.95, blue: 0.90, effect: "duotone", duotoneShadow: "#1b2a49", duotoneHighlight: "#f2c14e" },
 };
 
 const els = {
@@ -27,6 +24,9 @@ const els = {
   uploadInfo: document.getElementById("upload-info"),
   video: document.getElementById("source-video"),
   canvas: document.getElementById("preview-canvas"),
+  frameSeek: document.getElementById("frame-seek"),
+  frameTime: document.getElementById("frame-time"),
+  captureFrameBtn: document.getElementById("capture-frame-btn"),
   sliders: document.getElementById("sliders"),
   presetButtons: document.getElementById("preset-buttons"),
   activePreset: document.getElementById("active-preset"),
@@ -59,6 +59,11 @@ function setStatus(text, kind = "") {
   els.globalStatus.textContent = text;
   els.globalStatus.className = `status ${kind}`.trim();
 }
+function setCustomState() {
+  state.activePresetName = "Custom";
+  els.activePreset.textContent = "(Custom)";
+  document.querySelectorAll("#preset-buttons button").forEach(b => b.classList.remove("active"));
+}
 
 function createSliders() {
   sliderConfig.forEach(cfg => {
@@ -77,25 +82,17 @@ function createSliders() {
       state.values[cfg.key] = clamp(parseFloat(input.value), cfg.min, cfg.max);
       output.textContent = cfg.format(state.values[cfg.key]);
       if (state.activePresetName !== "Custom") setCustomState();
-      renderFrame();
+      renderSelectedFrame();
     });
   });
-}
-
-function setCustomState() {
-  state.activePresetName = "Custom";
-  els.activePreset.textContent = "(Custom)";
-  document.querySelectorAll("#preset-buttons button").forEach(b => b.classList.remove("active"));
 }
 
 function applyValues(values) {
   sliderConfig.forEach(cfg => {
     const v = clamp(Number(values[cfg.key]), cfg.min, cfg.max);
     state.values[cfg.key] = v;
-    const input = document.getElementById(`slider-${cfg.key}`);
-    const output = document.getElementById(`value-${cfg.key}`);
-    input.value = String(v);
-    output.textContent = cfg.format(v);
+    document.getElementById(`slider-${cfg.key}`).value = String(v);
+    document.getElementById(`value-${cfg.key}`).textContent = cfg.format(v);
   });
 }
 
@@ -113,7 +110,7 @@ function createPresetButtons() {
       state.duotoneHighlight = preset.duotoneHighlight || "#f2c14e";
       els.activePreset.textContent = `(${name})`;
       document.querySelectorAll("#preset-buttons button").forEach(b => b.classList.toggle("active", b === btn));
-      renderFrame();
+      renderSelectedFrame();
     });
     els.presetButtons.appendChild(btn);
   });
@@ -134,27 +131,49 @@ function resetAll() {
   state.duotoneHighlight = "#f2c14e";
   applyValues(Object.fromEntries(sliderConfig.map(s => [s.key, s.value])));
   setCustomState();
-  renderFrame();
+  renderSelectedFrame();
+}
+
+function syncFrameUI(currentTime) {
+  els.frameSeek.value = String(currentTime);
+  els.frameTime.textContent = `${Number(currentTime).toFixed(2)}s`;
 }
 
 function setupVideo() {
-  const syncCanvas = () => {
+  els.video.addEventListener("loadedmetadata", () => {
     if (!els.video.videoWidth || !els.video.videoHeight) return;
     els.canvas.width = els.video.videoWidth;
     els.canvas.height = els.video.videoHeight;
-    renderFrame();
-  };
-  els.video.addEventListener("loadedmetadata", syncCanvas);
-  els.video.addEventListener("seeked", renderFrame);
-  els.video.addEventListener("timeupdate", renderFrame);
-  els.video.addEventListener("play", drawLoop);
-  els.video.addEventListener("pause", renderFrame);
-}
 
-function drawLoop() {
-  if (els.video.paused || els.video.ended) return;
-  renderFrame();
-  requestAnimationFrame(drawLoop);
+    const duration = Number.isFinite(els.video.duration) ? els.video.duration : 0;
+    els.frameSeek.max = String(duration);
+    els.frameSeek.disabled = duration <= 0;
+    syncFrameUI(0);
+    renderSelectedFrame();
+  });
+
+  els.video.addEventListener("seeked", () => {
+    syncFrameUI(els.video.currentTime);
+    renderSelectedFrame();
+  });
+
+  els.video.addEventListener("timeupdate", () => {
+    syncFrameUI(els.video.currentTime);
+    if (!els.video.paused) renderSelectedFrame();
+  });
+
+  els.frameSeek.addEventListener("input", () => {
+    if (!state.storedFilename) return;
+    els.video.currentTime = clamp(parseFloat(els.frameSeek.value), 0, els.video.duration || 0);
+  });
+
+  els.captureFrameBtn.addEventListener("click", () => {
+    if (!state.storedFilename) return setStatus("Upload eerst een video.", "error");
+    els.video.pause();
+    syncFrameUI(els.video.currentTime);
+    renderSelectedFrame();
+    setStatus(`Frame gekozen op ${els.video.currentTime.toFixed(2)}s`, "ok");
+  });
 }
 
 function rgbToHsl(r, g, b) {
@@ -175,42 +194,30 @@ function rgbToHsl(r, g, b) {
 }
 
 function hslToRgb(h, s, l) {
-  let r, g, b;
-  if (s === 0) {
-    r = g = b = l;
-  } else {
-    const hue2rgb = (p, q, t) => {
-      if (t < 0) t += 1;
-      if (t > 1) t -= 1;
-      if (t < 1 / 6) return p + (q - p) * 6 * t;
-      if (t < 1 / 2) return q;
-      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-      return p;
-    };
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    r = hue2rgb(p, q, h + 1 / 3);
-    g = hue2rgb(p, q, h);
-    b = hue2rgb(p, q, h - 1 / 3);
-  }
-  return [r * 255, g * 255, b * 255];
+  if (s === 0) return [l * 255, l * 255, l * 255];
+  const hue2rgb = (p, q, t) => {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  return [hue2rgb(p, q, h + 1 / 3) * 255, hue2rgb(p, q, h) * 255, hue2rgb(p, q, h - 1 / 3) * 255];
 }
 
 function applyGamma(v, gamma) {
-  const normalized = clamp(v / 255, 0, 1);
-  return clamp(Math.pow(normalized, 1 / gamma) * 255, 0, 255);
+  return clamp(Math.pow(clamp(v / 255, 0, 1), 1 / gamma) * 255, 0, 255);
 }
 
 function hexToRgb(hex) {
   const raw = hex.replace("#", "");
-  return {
-    r: parseInt(raw.slice(0, 2), 16),
-    g: parseInt(raw.slice(2, 4), 16),
-    b: parseInt(raw.slice(4, 6), 16),
-  };
+  return { r: parseInt(raw.slice(0, 2), 16), g: parseInt(raw.slice(2, 4), 16), b: parseInt(raw.slice(4, 6), 16) };
 }
 
-function renderFrame() {
+function renderSelectedFrame() {
   if (!state.storedFilename || !els.video.videoWidth) return;
   ctx.drawImage(els.video, 0, 0, els.canvas.width, els.canvas.height);
   const frame = ctx.getImageData(0, 0, els.canvas.width, els.canvas.height);
@@ -224,14 +231,12 @@ function renderFrame() {
   const rMult = clamp(state.values.red, 0, 3);
   const gMult = clamp(state.values.green, 0, 3);
   const bMult = clamp(state.values.blue, 0, 3);
-
   const duotoneS = hexToRgb(state.duotoneShadow);
   const duotoneH = hexToRgb(state.duotoneHighlight);
 
   for (let i = 0; i < data.length; i += 4) {
     let r = data[i], g = data[i + 1], b = data[i + 2];
     let [h, s, l] = rgbToHsl(r, g, b);
-
     h = (h + hueShift + 1) % 1;
     s = clamp(s * satMult, 0, 1);
     [r, g, b] = hslToRgb(h, s, l);
@@ -245,7 +250,7 @@ function renderFrame() {
     b = applyGamma(b, gamma) * bMult;
 
     if (state.effect === "bleach") {
-      const lum = (r * 0.299 + g * 0.587 + b * 0.114);
+      const lum = r * 0.299 + g * 0.587 + b * 0.114;
       r = r * 0.65 + lum * 0.35 + 6;
       g = g * 0.65 + lum * 0.35 + 6;
       b = b * 0.65 + lum * 0.35 + 6;
@@ -326,11 +331,9 @@ async function handleBatchExport() {
 
   data.results.forEach(item => {
     const li = document.createElement("li");
-    if (item.error) {
-      li.textContent = `${item.preset}: failed (${item.error})`;
-    } else {
-      li.innerHTML = `${item.preset}: <a href="${item.downloadUrl}">Download ${item.filename}</a>`;
-    }
+    li.innerHTML = item.error
+      ? `${item.preset}: failed (${item.error})`
+      : `${item.preset}: <a href="${item.downloadUrl}">Download ${item.filename}</a>`;
     els.batchResults.appendChild(li);
   });
   els.batchStatus.textContent = "Batch export complete.";
@@ -339,7 +342,7 @@ async function handleBatchExport() {
 
 function exportCurrentFrame() {
   if (!state.storedFilename) return setStatus("Upload a video first.", "error");
-  renderFrame();
+  renderSelectedFrame();
   const a = document.createElement("a");
   const base = (state.originalFilename || "video").replace(/\.[^/.]+$/, "").replace(/[^a-z0-9_-]/gi, "_");
   const ts = els.video.currentTime.toFixed(2).replace(".", "p");
@@ -362,7 +365,7 @@ els.uploadForm.addEventListener("submit", async (e) => {
     els.video.load();
     els.uploadInfo.textContent = `Uploaded: ${result.originalFilename}`;
     els.uploadInfo.className = "status ok";
-    setStatus("Upload successful.", "ok");
+    setStatus("Upload successful. Kies een frame en bewerk realtime.", "ok");
   } catch (err) {
     els.uploadInfo.textContent = err.message;
     els.uploadInfo.className = "status error";
