@@ -1,0 +1,121 @@
+:root {
+  color-scheme: dark;
+  --bg: #111319;
+  --panel: #1b1f2a;
+  --text: #e6ecff;
+  --muted: #9fb0d9;
+  --accent: #4f8cff;
+  --danger: #ff6a7a;
+  --ok: #7dffb0;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Segoe UI, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+
+h1 { grid-column: 1 / -1; margin: 0; }
+h2 { margin-top: 0; }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid #2b3242;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.preview-panel { grid-column: 1 / -1; }
+.preview-stage {
+  display: grid;
+  grid-template-columns: 1fr;
+  position: relative;
+  width: 100%;
+  min-height: 300px;
+  background: #0a0d14;
+  border: 1px solid #2b3242;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+video, canvas {
+  width: 100%;
+  max-height: 65vh;
+  background: #000;
+}
+
+canvas { display: block; }
+.inline-actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+
+button {
+  background: #293246;
+  color: var(--text);
+  border: 1px solid #3d4a66;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+button.active {
+  background: var(--accent);
+  border-color: #79a7ff;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.sliders {
+  display: grid;
+  gap: 10px;
+}
+.slider-row {
+  display: grid;
+  grid-template-columns: 170px 1fr 90px;
+  align-items: center;
+  gap: 8px;
+}
+.slider-row output { text-align: right; color: var(--muted); }
+
+.batch-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 6px;
+  margin-bottom: 8px;
+}
+label.batch-item { display: flex; gap: 8px; align-items: center; }
+
+.status { color: var(--muted); margin: 8px 0 0; }
+.status.error { color: var(--danger); }
+.status.ok { color: var(--ok); }
+
+ul { margin: 8px 0 0 18px; padding: 0; }
+a { color: #9bc0ff; }
+
+@media (max-width: 980px) {
+  .container { grid-template-columns: 1fr; }
+}
+
+
+.frame-controls {
+  display: grid;
+  grid-template-columns: 120px 1fr 90px auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.frame-controls output { text-align: right; color: var(--muted); }
