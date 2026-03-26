@@ -313,29 +313,51 @@ async function handleBatchExport() {
   const selected = Array.from(document.querySelectorAll("#batch-list input:checked")).map(n => n.value);
   if (selected.length === 0) return setStatus("Select at least one preset for batch export.", "error");
 
-  els.batchStatus.textContent = `Rendering presets: ${selected.join(", ")}...`;
-  els.batchStatus.className = "status";
   els.batchResults.innerHTML = "";
+  els.batchStatus.className = "status";
 
-  const res = await fetch("/batch_export", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ storedFilename: state.storedFilename, presets: selected }),
-  });
-  const data = await res.json();
-  if (!res.ok) {
-    els.batchStatus.textContent = data.error || "Batch export failed.";
-    els.batchStatus.className = "status error";
-    return;
+  for (let i = 0; i < selected.length; i += 1) {
+    const presetName = selected[i];
+    const presetSettings = presets[presetName];
+    els.batchStatus.textContent = `Rendering ${presetName} (${i + 1}/${selected.length})...`;
+
+    try {
+      const res = await fetch("/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          storedFilename: state.storedFilename,
+          settings: {
+            hue: presetSettings.hue,
+            saturation: presetSettings.saturation,
+            brightness: presetSettings.brightness,
+            contrast: presetSettings.contrast,
+            gamma: presetSettings.gamma,
+            red: presetSettings.red,
+            green: presetSettings.green,
+            blue: presetSettings.blue,
+            effect: presetSettings.effect || "none",
+            duotoneShadow: presetSettings.duotoneShadow || "#1b2a49",
+            duotoneHighlight: presetSettings.duotoneHighlight || "#f2c14e",
+          },
+        }),
+      });
+      const data = await res.json();
+
+      const li = document.createElement("li");
+      if (!res.ok) {
+        li.textContent = `${presetName}: failed (${data.error || "Export failed"})`;
+      } else {
+        li.innerHTML = `${presetName}: <a href="${data.downloadUrl}">Download ${data.filename}</a>`;
+      }
+      els.batchResults.appendChild(li);
+    } catch (err) {
+      const li = document.createElement("li");
+      li.textContent = `${presetName}: failed (${err.message})`;
+      els.batchResults.appendChild(li);
+    }
   }
 
-  data.results.forEach(item => {
-    const li = document.createElement("li");
-    li.innerHTML = item.error
-      ? `${item.preset}: failed (${item.error})`
-      : `${item.preset}: <a href="${item.downloadUrl}">Download ${item.filename}</a>`;
-    els.batchResults.appendChild(li);
-  });
   els.batchStatus.textContent = "Batch export complete.";
   els.batchStatus.className = "status ok";
 }

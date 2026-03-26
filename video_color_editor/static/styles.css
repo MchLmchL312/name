@@ -38,6 +38,7 @@ h2 { margin: 0 0 8px; font-size: 1.05rem; }
 }
 
 #preview-section { grid-column: 1; }
+#upload-section,
 #presets-section,
 #sliders-section,
 #single-export-section,
@@ -132,6 +133,7 @@ a { color: #9bc0ff; }
 @media (max-width: 1100px) {
   .container { grid-template-columns: 1fr; }
   #preview-section,
+  #upload-section,
   #presets-section,
   #sliders-section,
   #single-export-section,

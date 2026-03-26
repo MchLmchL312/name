@@ -178,8 +178,9 @@ def run_ffmpeg(input_path: Path, output_path: Path, settings: dict) -> None:
             "[masksrc]format=gray[mask];"
             f"color=c=#{sr:02x}{sg:02x}{sb:02x}:s=16x16[shadow0];"
             f"color=c=#{hr:02x}{hg:02x}{hb:02x}:s=16x16[highlight0];"
-            "[shadow0][base]scale2ref[shadow][vref1];"
-            "[highlight0][base]scale2ref[highlight][vref2];"
+            "[shadow0][base]scale2ref[shadow][shadow_ref];"
+            "[highlight0][base]scale2ref[highlight][highlight_ref];"
+            "[shadow_ref]nullsink;[highlight_ref]nullsink;"
             "[shadow][highlight][mask]maskedmerge,format=yuv420p[vout]"
         )
         cmd = [
@@ -344,10 +345,11 @@ def batch_export():
                     "preset": preset_name,
                     "filename": output_name,
                     "downloadUrl": url_for("download_output", filename=output_name),
+                    "status": "ok",
                 }
             )
         except Exception as exc:
-            results.append({"preset": preset_name, "error": str(exc)})
+            results.append({"preset": preset_name, "error": str(exc), "status": "failed"})
 
     return jsonify({"results": results})
 
