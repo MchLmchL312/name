@@ -126,8 +126,10 @@ def build_base_chain(s: dict) -> str:
     )
     hue = f"hue=h={s['hue']:.4f}"
     channels = (
-        "colorchannelmixer="
-        f"rr={s['red']:.4f}:gg={s['green']:.4f}:bb={s['blue']:.4f}"
+        "lutrgb="
+        f"r='clip(val*{s['red']:.4f}\,0\,255)':"
+        f"g='clip(val*{s['green']:.4f}\,0\,255)':"
+        f"b='clip(val*{s['blue']:.4f}\,0\,255)'"
     )
     return f"{hue},{eq},{channels},format=yuv420p"
 
@@ -235,7 +237,11 @@ def run_ffmpeg(input_path: Path, output_path: Path, settings: dict) -> None:
             str(output_path),
         ]
 
-    subprocess.run(cmd, check=True, capture_output=True, text=True)
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as exc:
+        stderr_tail = "\n".join((exc.stderr or "").splitlines()[-12:])
+        raise RuntimeError(stderr_tail or "FFmpeg failed") from exc
 
 
 @app.route("/")

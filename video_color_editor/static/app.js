@@ -40,6 +40,7 @@ const els = {
   batchResults: document.getElementById("batch-results"),
   globalStatus: document.getElementById("global-status"),
   resetBtn: document.getElementById("reset-btn"),
+  tuningWarning: document.getElementById("tuning-warning"),
 };
 
 const ctx = els.canvas.getContext("2d", { willReadFrequently: true });
@@ -59,6 +60,21 @@ function setStatus(text, kind = "") {
   els.globalStatus.textContent = text;
   els.globalStatus.className = `status ${kind}`.trim();
 }
+
+function updateTuningWarning() {
+  const v = state.values;
+  const extreme = (
+    v.contrast > 2.2 ||
+    v.saturation > 2.2 ||
+    v.gamma > 2.4 ||
+    Math.abs(v.brightness) > 0.65 ||
+    v.red > 2.2 ||
+    v.green > 2.2 ||
+    v.blue > 2.2
+  );
+  els.tuningWarning.hidden = !extreme;
+}
+
 function setCustomState() {
   state.activePresetName = "Custom";
   els.activePreset.textContent = "(Custom)";
@@ -82,6 +98,7 @@ function createSliders() {
       state.values[cfg.key] = clamp(parseFloat(input.value), cfg.min, cfg.max);
       output.textContent = cfg.format(state.values[cfg.key]);
       if (state.activePresetName !== "Custom") setCustomState();
+      updateTuningWarning();
       renderSelectedFrame();
     });
   });
@@ -110,6 +127,7 @@ function createPresetButtons() {
       state.duotoneHighlight = preset.duotoneHighlight || "#f2c14e";
       els.activePreset.textContent = `(${name})`;
       document.querySelectorAll("#preset-buttons button").forEach(b => b.classList.toggle("active", b === btn));
+      updateTuningWarning();
       renderSelectedFrame();
     });
     els.presetButtons.appendChild(btn);
@@ -131,6 +149,7 @@ function resetAll() {
   state.duotoneHighlight = "#f2c14e";
   applyValues(Object.fromEntries(sliderConfig.map(s => [s.key, s.value])));
   setCustomState();
+  updateTuningWarning();
   renderSelectedFrame();
 }
 
@@ -412,4 +431,5 @@ createSliders();
 createPresetButtons();
 createBatchCheckboxes();
 setupVideo();
+updateTuningWarning();
 resetAll();
