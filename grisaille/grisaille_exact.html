@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Klassieke Grisaille</title>
+  <style>
+    :root {
+      --bg: #f5f2ed;
+      --text: #1a1a1a;
+      --accent: #5A5A40;
+      --accent-dark: #4a4a35;
+      --white: #ffffff;
+      --border-soft: rgba(26,26,26,0.10);
+      --border-faint: rgba(26,26,26,0.05);
+      --muted: rgba(26,26,26,0.60);
+      --muted-2: rgba(26,26,26,0.40);
+      --shadow: 0 8px 24px rgba(20,20,20,0.06);
+      --shadow-lg: 0 16px 40px rgba(20,20,20,0.10);
+      --radius-xl: 32px;
+      --radius-lg: 18px;
+      --radius-pill: 999px;
+      --serif: Georgia, "Times New Roman", Times, serif;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--serif);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: var(--white);
+    }
+
+    .page {
+      min-height: 100vh;
+    }
+
+    .container {
+      width: min(100%, 1280px);
+      margin: 0 auto;
+    }
+
+    .header {
+      border-bottom: 1px solid var(--border-soft);
+      padding: 48px 24px;
+    }
+
+    .header-inner {
+      max-width: 896px;
+      margin: 0 auto;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow,
+    .nav-title,
+    .footer-note {
+      font-family: var(--sans);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-weight: 700;
+    }
+
+    .eyebrow {
+      opacity: 0.60;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .title {
+      margin: 0 0 32px;
+      font-weight: 300;
+      line-height: 1.06;
+      letter-spacing: -0.03em;
+      font-size: clamp(3rem, 7vw, 4.6rem);
+    }
+
+    .title em { font-style: italic; }
+
+    .lead-grid {
+      display: grid;
+      gap: 32px;
+      grid-template-columns: 1fr;
+      font-size: 1.125rem;
+      line-height: 1.7;
+      opacity: 0.90;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 64px;
+      padding: 64px 24px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .aside {
+      align-self: start;
+    }
+
+    .sticky {
+      position: sticky;
+      top: 48px;
+    }
+
+    .nav-title {
+      opacity: 0.40;
+      margin: 0 0 24px;
+      padding: 0 16px;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      text-align: left;
+      padding: 12px 16px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .nav-btn:hover {
+      background: rgba(26,26,26,0.05);
+      color: var(--text);
+    }
+
+    .nav-btn.active {
+      background: var(--accent);
+      color: var(--white);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-btn:hover .nav-icon,
+    .nav-btn.active .nav-icon {
+      transform: scale(1.1);
+    }
+
+    .nav-label {
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.35;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .content-wrap {
+      position: relative;
+      min-height: 500px;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border-faint);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      padding: 32px;
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 0.32s ease, transform 0.32s ease;
+    }
+
+    .card.is-changing {
+      opacity: 0;
+      transform: translateX(18px);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .icon-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(90,90,64,0.10);
+      color: var(--accent);
+      flex: 0 0 auto;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 2.25rem);
+      line-height: 1.15;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+
+    .prose p {
+      margin: 0 0 24px;
+      font-size: 1.25rem;
+      line-height: 1.8;
+      opacity: 0.90;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border-faint);
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--radius-pill);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .control-btn:hover:not(:disabled) {
+      background: rgba(26,26,26,0.05);
+    }
+
+    .control-btn.next {
+      padding-inline: 32px;
+      background: var(--accent);
+      color: var(--white);
+      box-shadow: 0 8px 18px rgba(90,90,64,0.22);
+    }
+
+    .control-btn.next:hover:not(:disabled) {
+      background: var(--accent-dark);
+      box-shadow: 0 12px 26px rgba(90,90,64,0.28);
+    }
+
+    .control-btn:disabled {
+      opacity: 0.20;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .dots {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 0 0 auto;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(26,26,26,0.10);
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      width: 16px;
+      background: var(--accent);
+    }
+
+    .footer {
+      margin-top: 96px;
+      border-top: 1px solid var(--border-soft);
+      padding: 64px 24px;
+      text-align: center;
+    }
+
+    .footer-inner {
+      max-width: 672px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .footer-quote {
+      margin: 0;
+      font-size: 1.125rem;
+      font-style: italic;
+      opacity: 0.70;
+      line-height: 1.7;
+    }
+
+    .footer-line {
+      width: 48px;
+      height: 1px;
+      background: rgba(26,26,26,0.20);
+    }
+
+    .footer-note {
+      opacity: 0.40;
+      margin: 0;
+    }
+
+    svg {
+      width: 1em;
+      height: 1em;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      display: block;
+    }
+
+    @media (min-width: 768px) {
+      .header { padding: 48px 48px; }
+      .lead-grid { grid-template-columns: 1fr 1fr; }
+      .main { padding: 64px 24px; }
+      .card { padding: 48px; }
+    }
+
+    @media (min-width: 1024px) {
+      .main {
+        grid-template-columns: 300px 1fr;
+        gap: 64px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .header { padding: 40px 20px; }
+      .main { padding: 40px 20px; gap: 40px; }
+      .card { padding: 24px; border-radius: 24px; }
+      .prose p { font-size: 1.08rem; line-height: 1.75; }
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items: stretch;
+      }
+      .dots {
+        justify-content: center;
+        order: -1;
+      }
+      .control-btn,
+      .control-btn.next {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="header-inner">
+        <span class="eyebrow">Schildercursus</span>
+        <h1 class="title">Klassieke <em>Grisaille</em></h1>
+        <div class="lead-grid">
+          <p>In deze cursus werken we in zes lessen aan een schilderij dat stap voor stap wordt opgebouwd volgens de klassieke grisaille-methode. We beginnen met de voorbereiding van de drager en het overbrengen van de tekening, waarna we een onderschildering in licht en donker opzetten.</p>
+          <p>Pas wanneer de toonstructuur stevig staat, voegen we kleur, details en contrast toe. Deze werkwijze maakt het schilderproces overzichtelijker en helpt je de verschillende beeldaspecten afzonderlijk te benaderen.</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <aside class="aside">
+        <nav class="sticky">
+          <h2 class="nav-title">Cursusverloop</h2>
+          <div class="nav-list" id="navList"></div>
+        </nav>
+      </aside>
+
+      <section class="content-wrap">
+        <article class="card" id="card">
+          <div class="card-head">
+            <div class="icon-badge" id="badgeIcon"></div>
+            <h3 class="card-title" id="cardTitle"></h3>
+          </div>
+          <div class="prose" id="cardContent"></div>
+          <div class="controls">
+            <button class="control-btn" id="prevBtn" type="button">
+              <span aria-hidden="true" id="prevIcon"></span>
+              Vorige
+            </button>
+
+            <div class="dots" id="dots"></div>
+
+            <button class="control-btn next" id="nextBtn" type="button">
+              Volgende
+              <span aria-hidden="true" id="nextIcon"></span>
+            </button>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <p class="footer-quote">&quot;Zo groeit het schilderij gelaagd en helder, met meer diepte en samenhang.&quot;</p>
+        <div class="footer-line"></div>
+        <p class="footer-note">Eerst structuur en toon, daarna kleur en verfijning.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const icons = {
+      info: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>',
+      image: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="8.5" cy="10.5" r="1.5"></circle><path d="m21 15-5-5L5 21"></path></svg>',
+      pencil: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"></path></svg>',
+      droplets: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.69 17.66 8A8 8 0 1 1 6.34 8z"></path></svg>',
+      layers: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 9 5-9 5-9-5 9-5z"></path><path d="m3 12 9 5 9-5"></path><path d="m3 17 9 5 9-5"></path></svg>',
+      palette: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a1 1 0 0 1 0-20 10 10 0 0 1 0 20Z"></path><path d="M7 11a1 1 0 1 0 0 .01"></path><path d="M11 7a1 1 0 1 0 0 .01"></path><path d="M17 7a1 1 0 1 0 0 .01"></path><path d="M16 12h.01"></path></svg>',
+      brush: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.06 11.9 8.04-8.03a2.83 2.83 0 1 1 4 4l-8.03 8.04"></path><path d="M7.07 14.93c-1.66 1.66-2.09 4.09-.96 5.22 1.13 1.13 3.56.7 5.22-.96"></path></svg>',
+      check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="10"></circle></svg>',
+      chevronLeft: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>',
+      chevronRight: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>'
+    };
+
+    const steps = [
+      {
+        id: 'intro',
+        title: 'Inleiding: Grisaille',
+        icon: 'info',
+        content: `Grisaille is een onderschildering, meestal uitgevoerd in grijstinten. Het vormt de schakel tussen tekening en kleur: eerst brengen we vorm en tonaliteit op orde, pas daarna komt de kleur aan bod. Deze gefaseerde werkwijze zorgt voor rust, overzicht en meer controle tijdens het schilderen.`
+      },
+      {
+        id: 'prep',
+        title: '1. Onderwerp & Ondergrond',
+        icon: 'image',
+        content: `Dit vormt de basis voor het hele schilderij. We werken vanuit een foto, tekening of directe waarneming en kiezen een beeld dat geschikt is om stapsgewijs op te bouwen.\n\nDaarnaast bereiden we het paneel voor. Een canvasboard wordt voorzien van meerdere lagen gesso, zodat een egale en stevige ondergrond ontstaat.`
+      },
+      {
+        id: 'drawing',
+        title: '2. Tekening overbrengen',
+        icon: 'pencil',
+        content: `Vervolgens brengen we de gekozen voorstelling over op het paneel. Dit doen we door de tekening eerst op een apart vel op het juiste formaat te vergroten, bijvoorbeeld met behulp van een raster.\n\nDe tekening wordt licht en helder met potlood opgezet, zodat de belangrijkste vormen en verhoudingen vastliggen. Dit papier fungeert als ontwerptekening op het juiste formaat en kan worden overgezet op het canvas met behulp van carbonpapier. Deze ontwerptekening kan je gebruiken om meerdere schilderijen op te zetten.\n\nNa het overbrengen kan de tekening waar nodig nog worden bijgesteld en aangevuld met details.`
+      },
+      {
+        id: 'imprimatuur',
+        title: '3. Imprimatuur',
+        icon: 'droplets',
+        content: `Daarna krijgt het schildervlak een imprimatuur: een dunne, transparante onderlaag die zorgt voor samenhang en fungeert als middentoon. Hierdoor werk je niet vanuit een wit vlak, maar vanuit een middentoon waar je sneller licht en schaduw kan aanbrengen.\n\nDe imprimatuur draagt bij aan eenheid en subtiliteit in het uiteindelijke beeld, doordat de kleur ervan subtiel door de grisaille heen blijft schemeren. Veelgebruikte kleuren zijn rauwe omber, gebrande sienna of oker.\n\nDe imprimatuur wordt gemaakt van een mengsel van acrylverf voor de kleur, acrylbindmiddel voor de transparantie met een kleine hoeveelheid gesso en wat water, dit alles dun en transparant aangebracht, zodat de onderliggende tekening zichtbaar blijft.`
+      },
+      {
+        id: 'grisaille-1',
+        title: '4. De eerste grisaille',
+        icon: 'layers',
+        content: `Nu begint de eigenlijke onderschildering. We werken uitsluitend met licht, donker en grijstinten. We starten met de lichte partijen (voornamelijk zinkwit met een beetje titaanwit) en zetten daarna de schaduwpartijen op met donkere tonen.\n\nVanuit deze uitersten bouwen we de tussenliggende grijzen op. In deze fase gaat het niet om details of kleur, maar om het herkennen van grote licht- en schaduwvlakken en het helder opzetten van de ruimtelijkheid.\n\nHet helpt om te werken met vijf toonwaarden: middentoon, schaduw, licht en de uitersten (puur wit en diep zwart). Door op het palet een reeks van deze waarden te mengen, ontstaat stap voor stap een overtuigend schilderij — nog vóór er kleur wordt toegevoegd.`
+      },
+      {
+        id: 'grisaille-2',
+        title: '5. Verfijnen & Warm-Koud',
+        icon: 'palette',
+        content: `In deze fase verdiepen we de grisaille tot een zelfstandige en overtuigende onderschildering. We maken vooraf een studie op een zwart-witkopie, waarin we met blauw en rood aangeven welke delen optisch naar achteren wijken en welke naar voren komen.\n\nDeze inzichten kunnen subtiel worden vertaald naar het schilderij, bijvoorbeeld met transparante nuances in warme en koele tonen, terwijl het beeld overwegend monochroom blijft.\n\nWe verfijnen overgangen, zoeken naar de juiste balans tussen zachte en scherpe randen en brengen meer nuance aan in de middentonen. Een grijze schildering hoeft daarbij niet kil te zijn: subtiele temperatuurverschillen versterken juist het ruimtelijk effect en ondersteunen latere kleurlagen.`
+      },
+      {
+        id: 'color',
+        title: '6. Ophogen & Kleur',
+        icon: 'brush',
+        content: `Wanneer de onderschildering staat, gaan we verder met ophogen en kleur. De lichte partijen worden plaatselijk pasteuzer aangebracht, zodat vormen sterker naar voren komen en accenten helderder worden.\n\nDaarna brengen we transparante kleurlagen aan. Elk onderdeel krijgt zijn eigen lokale kleur, terwijl de grisaille de onderliggende licht-donkerstructuur blijft dragen. Hierdoor hoeven we de vorm niet opnieuw op te bouwen en kunnen we ons richten op kleur, sfeer en nuance.\n\nWe werken open en gelaagd, zonder alles dicht te schilderen, zodat eerdere fasen zichtbaar mogen blijven. Details worden toegevoegd in dienst van het geheel. Jij bepaalt waar de focus ligt en stuurt daarmee de blik van de toeschouwer.`
+      },
+      {
+        id: 'finish',
+        title: 'Afwerking & Variaties',
+        icon: 'check',
+        content: `In de laatste fase ronden we het schilderij af. We versterken waar nodig het contrast, verdiepen de donkerste partijen, zetten de hoogste lichten en werken details verder uit.\n\nHet is belangrijk dat de schaduwen transparant en levendig blijven, zodat het schilderij niet zwaar of dicht wordt.\n\nEr bestaan variaties op grisaille, zoals brunaille en verdaille. Bij brunaille zorgen aardetinten en een warme imprimatuur voor een warme opbouw. Bij verdaille (of verdaccio) geven groenige ondertonen een bijzondere basis, vooral bij huidtinten en ruimtelijkheid.\n\nIn alle gevallen blijft het principe hetzelfde: eerst structuur en toon, daarna kleur en verfijning. Zo ontstaat een schilderij dat in lagen is opgebouwd en waarin tekening, licht-donker en kleur elkaar versterken.`
+      }
+    ];
+
+    const navList = document.getElementById('navList');
+    const card = document.getElementById('card');
+    const badgeIcon = document.getElementById('badgeIcon');
+    const cardTitle = document.getElementById('cardTitle');
+    const cardContent = document.getElementById('cardContent');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const dots = document.getElementById('dots');
+    const prevIcon = document.getElementById('prevIcon');
+    const nextIcon = document.getElementById('nextIcon');
+
+    prevIcon.innerHTML = icons.chevronLeft;
+    nextIcon.innerHTML = icons.chevronRight;
+
+    let currentStep = 0;
+    let animating = false;
+
+    function renderNav() {
+      navList.innerHTML = '';
+      steps.forEach((step, index) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'nav-btn' + (index === currentStep ? ' active' : '');
+        btn.setAttribute('aria-current', index === currentStep ? 'step' : 'false');
+        btn.innerHTML = `
+          <span class="nav-icon">${icons[step.icon]}</span>
+          <span class="nav-label">${step.title}</span>
+        `;
+        btn.addEventListener('click', () => setStep(index));
+        navList.appendChild(btn);
+      });
+    }
+
+    function renderDots() {
+      dots.innerHTML = '';
+      steps.forEach((_, index) => {
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (index === currentStep ? ' active' : '');
+        dots.appendChild(dot);
+      });
+    }
+
+    function renderContent() {
+      const step = steps[currentStep];
+      badgeIcon.innerHTML = icons[step.icon];
+      cardTitle.textContent = step.title;
+      cardContent.innerHTML = step.content
+        .split('\n\n')
+        .map(p => `<p>${p}</p>`)
+        .join('');
+
+      prevBtn.disabled = currentStep === 0;
+      nextBtn.disabled = currentStep === steps.length - 1;
+      renderNav();
+      renderDots();
+    }
+
+    function setStep(index) {
+      if (index < 0 || index >= steps.length || index === currentStep || animating) return;
+      animating = true;
+      card.classList.add('is-changing');
+      window.setTimeout(() => {
+        currentStep = index;
+        renderContent();
+        card.classList.remove('is-changing');
+        window.setTimeout(() => { animating = false; }, 240);
+      }, 180);
+    }
+
+    prevBtn.addEventListener('click', () => setStep(currentStep - 1));
+    nextBtn.addEventListener('click', () => setStep(currentStep + 1));
+
+    renderContent();
+  </script>
+</body>
+</html>
