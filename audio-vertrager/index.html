@@ -203,14 +203,16 @@
       let sourcePosition = 0;
       let nextScheduleTime = 0;
       let elapsedOutputTime = 0;
-      let lastRandomPitchCents = 0;
+      let targetRandomPitchCents = 0;
+      let smoothedPitchCents = 0;
       let nextRandomUpdateTime = 0;
 
-      const grainSize = 0.08;
-      const overlap = 0.5;
+      const grainSize = 0.09;
+      const overlap = 0.75;
       const outputHop = grainSize * (1 - overlap);
       const scheduleAheadTime = 0.2;
       const schedulerIntervalMs = 25;
+      const maxPitchStepPerGrain = 45;
 
       function setStatus(message, isError = false) {
         status.textContent = message;
@@ -264,16 +266,22 @@
 
       function computeCurrentPitchCents(now) {
         if (!atonalToggle.checked) {
+          targetRandomPitchCents = 0;
+          smoothedPitchCents = 0;
           return 0;
         }
 
         if (now >= nextRandomUpdateTime) {
           const cents = Number(pitchRange.value);
-          lastRandomPitchCents = (Math.random() * 2 - 1) * cents;
+          targetRandomPitchCents = (Math.random() * 2 - 1) * cents;
           nextRandomUpdateTime = now + Number(changeMs.value) / 1000;
         }
 
-        return lastRandomPitchCents;
+        const diff = targetRandomPitchCents - smoothedPitchCents;
+        const step = clamp(diff, -maxPitchStepPerGrain, maxPitchStepPerGrain);
+        smoothedPitchCents += step;
+
+        return smoothedPitchCents;
       }
 
       function scheduleGrain(startTime, offsetSec, playbackRate) {
@@ -282,11 +290,12 @@
         grainSource.playbackRate.value = playbackRate;
 
         const gainNode = audioContext.createGain();
-        const fadeTime = grainSize * 0.5;
-
+        const midTime = startTime + grainSize * 0.5;
+        const endTime = startTime + grainSize;
         gainNode.gain.setValueAtTime(0, startTime);
-        gainNode.gain.linearRampToValueAtTime(1, startTime + fadeTime);
-        gainNode.gain.linearRampToValueAtTime(0, startTime + grainSize);
+        gainNode.gain.setValueAtTime(0, startTime + 0.0001);
+        gainNode.gain.linearRampToValueAtTime(1, midTime);
+        gainNode.gain.linearRampToValueAtTime(0, endTime);
 
         grainSource.connect(gainNode);
         gainNode.connect(masterGain);
@@ -357,6 +366,8 @@
         isPlaying = true;
         nextScheduleTime = audioContext.currentTime + 0.03;
         nextRandomUpdateTime = audioContext.currentTime;
+        targetRandomPitchCents = 0;
+        smoothedPitchCents = 0;
         schedulerTimer = setInterval(scheduleAudio, schedulerIntervalMs);
         startUiTimer();
         setStatus('Live preview actief.');
