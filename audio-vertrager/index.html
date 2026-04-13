@@ -29,7 +29,7 @@
       }
 
       .card {
-        width: min(100%, 700px);
+        width: min(100%, 760px);
         border: 1px solid var(--line);
         border-radius: 12px;
         padding: 1rem;
@@ -104,6 +104,18 @@
       .status.error {
         color: var(--error);
       }
+
+      .transport {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      progress {
+        width: min(380px, 100%);
+        height: 12px;
+      }
     </style>
   </head>
   <body>
@@ -116,7 +128,12 @@
           <input id="audioFile" type="file" accept="audio/mpeg,.mp3,audio/wav,.wav,audio/*" />
         </label>
 
-        <audio id="player" controls preload="metadata"></audio>
+        <div class="transport">
+          <button id="playBtn" class="btn" type="button">Play</button>
+          <button id="stopBtn" class="btn" type="button">Stop</button>
+          <span><strong>Tijd:</strong> <span id="timeLabel" class="value">0.00 / 0.00 s</span></span>
+          <progress id="progressBar" max="1" value="0"></progress>
+        </div>
 
         <div class="row">
           <strong>Snelheid (real-time)</strong>
@@ -150,16 +167,17 @@
           <input id="distAmount" type="range" min="0" max="100" step="1" value="0" />
         </div>
 
-        <p class="hint">
-          Technisch: snelheid + random pitch worden uitgevoerd via <code>playbackRate</code>. Daardoor zijn ze aan elkaar gekoppeld.
-        </p>
+        <p class="hint">Deze versie gebruikt granular preview zodat pitch-randomisatie en tempo los van elkaar kunnen bewegen.</p>
         <p id="status" class="status" aria-live="polite"></p>
       </div>
     </main>
 
     <script>
       const audioFile = document.getElementById('audioFile');
-      const player = document.getElementById('player');
+      const playBtn = document.getElementById('playBtn');
+      const stopBtn = document.getElementById('stopBtn');
+      const timeLabel = document.getElementById('timeLabel');
+      const progressBar = document.getElementById('progressBar');
       const speedSlider = document.getElementById('speedSlider');
       const speedValue = document.getElementById('speedValue');
       const speedDown = document.getElementById('speedDown');
@@ -173,12 +191,26 @@
       const distValue = document.getElementById('distValue');
       const status = document.getElementById('status');
 
-      let objectUrl = null;
       let audioContext = null;
-      let sourceNode = null;
+      let masterGain = null;
       let distortionNode = null;
-      let atonalTimer = null;
+      let loadedBuffer = null;
+      let isPlaying = false;
+      let schedulerTimer = null;
+      let uiTimer = null;
+
       let manualSpeed = 1;
+      let sourcePosition = 0;
+      let nextScheduleTime = 0;
+      let elapsedOutputTime = 0;
+      let lastRandomPitchCents = 0;
+      let nextRandomUpdateTime = 0;
+
+      const grainSize = 0.08;
+      const overlap = 0.5;
+      const outputHop = grainSize * (1 - overlap);
+      const scheduleAheadTime = 0.2;
+      const schedulerIntervalMs = 25;
 
       function setStatus(message, isError = false) {
         status.textContent = message;
@@ -187,6 +219,10 @@
 
       function clamp(value, min, max) {
         return Math.min(max, Math.max(min, value));
+      }
+
+      function formatSeconds(seconds) {
+        return Number(seconds).toFixed(2);
       }
 
       function makeDistortionCurve(amount = 0) {
@@ -206,12 +242,12 @@
       async function ensureAudioGraph() {
         if (!audioContext) {
           audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          sourceNode = audioContext.createMediaElementSource(player);
+          masterGain = audioContext.createGain();
           distortionNode = audioContext.createWaveShaper();
           distortionNode.curve = makeDistortionCurve(0);
           distortionNode.oversample = '4x';
 
-          sourceNode.connect(distortionNode);
+          masterGain.connect(distortionNode);
           distortionNode.connect(audioContext.destination);
         }
 
@@ -222,90 +258,158 @@
 
       function applySpeed(value) {
         manualSpeed = clamp(value, 0.5, 2);
-        player.playbackRate = manualSpeed;
         speedSlider.value = manualSpeed.toFixed(2);
         speedValue.textContent = `${manualSpeed.toFixed(2)}x`;
       }
 
-      function randomizePitch() {
+      function computeCurrentPitchCents(now) {
         if (!atonalToggle.checked) {
-          player.playbackRate = manualSpeed;
-          return;
+          return 0;
         }
 
-        const cents = Number(pitchRange.value);
-        const randomCents = (Math.random() * 2 - 1) * cents;
-        const randomRatio = Math.pow(2, randomCents / 1200);
-        const newRate = clamp(manualSpeed * randomRatio, 0.5, 2);
+        if (now >= nextRandomUpdateTime) {
+          const cents = Number(pitchRange.value);
+          lastRandomPitchCents = (Math.random() * 2 - 1) * cents;
+          nextRandomUpdateTime = now + Number(changeMs.value) / 1000;
+        }
 
-        player.playbackRate = newRate;
+        return lastRandomPitchCents;
       }
 
-      function restartAtonalTimer() {
-        if (atonalTimer) {
-          clearInterval(atonalTimer);
-          atonalTimer = null;
-        }
+      function scheduleGrain(startTime, offsetSec, playbackRate) {
+        const grainSource = audioContext.createBufferSource();
+        grainSource.buffer = loadedBuffer;
+        grainSource.playbackRate.value = playbackRate;
 
-        if (!atonalToggle.checked) {
-          player.playbackRate = manualSpeed;
+        const gainNode = audioContext.createGain();
+        const fadeTime = grainSize * 0.5;
+
+        gainNode.gain.setValueAtTime(0, startTime);
+        gainNode.gain.linearRampToValueAtTime(1, startTime + fadeTime);
+        gainNode.gain.linearRampToValueAtTime(0, startTime + grainSize);
+
+        grainSource.connect(gainNode);
+        gainNode.connect(masterGain);
+
+        const sourceDuration = Math.min(grainSize / playbackRate, loadedBuffer.duration - offsetSec);
+        if (sourceDuration <= 0) return;
+
+        grainSource.start(startTime, offsetSec, sourceDuration);
+      }
+
+      function scheduleAudio() {
+        if (!isPlaying || !loadedBuffer) return;
+
+        while (nextScheduleTime < audioContext.currentTime + scheduleAheadTime) {
+          const pitchCents = computeCurrentPitchCents(nextScheduleTime);
+          const pitchRatio = Math.pow(2, pitchCents / 1200);
+          scheduleGrain(nextScheduleTime, sourcePosition, pitchRatio);
+
+          sourcePosition += outputHop * manualSpeed;
+          while (sourcePosition >= loadedBuffer.duration) {
+            sourcePosition -= loadedBuffer.duration;
+          }
+
+          elapsedOutputTime += outputHop;
+          if (elapsedOutputTime >= loadedBuffer.duration) {
+            elapsedOutputTime -= loadedBuffer.duration;
+          }
+
+          nextScheduleTime += outputHop;
+        }
+      }
+
+      function startUiTimer() {
+        if (uiTimer) clearInterval(uiTimer);
+        uiTimer = setInterval(() => {
+          if (!loadedBuffer) {
+            timeLabel.textContent = '0.00 / 0.00 s';
+            progressBar.value = 0;
+            return;
+          }
+
+          const current = elapsedOutputTime;
+          const total = loadedBuffer.duration;
+          timeLabel.textContent = `${formatSeconds(current)} / ${formatSeconds(total)} s`;
+          progressBar.value = total > 0 ? current / total : 0;
+        }, 80);
+      }
+
+      async function loadFile(file) {
+        await ensureAudioGraph();
+        const data = await file.arrayBuffer();
+        loadedBuffer = await audioContext.decodeAudioData(data.slice(0));
+        sourcePosition = 0;
+        elapsedOutputTime = 0;
+        progressBar.value = 0;
+        timeLabel.textContent = `0.00 / ${formatSeconds(loadedBuffer.duration)} s`;
+        setStatus(`Bestand geladen: ${file.name}`);
+      }
+
+      function startPlayback() {
+        if (!loadedBuffer || !audioContext) {
+          setStatus('Laad eerst een MP3/WAV bestand.', true);
           return;
         }
 
-        randomizePitch();
-        atonalTimer = setInterval(randomizePitch, Number(changeMs.value));
+        if (isPlaying) return;
+
+        isPlaying = true;
+        nextScheduleTime = audioContext.currentTime + 0.03;
+        nextRandomUpdateTime = audioContext.currentTime;
+        schedulerTimer = setInterval(scheduleAudio, schedulerIntervalMs);
+        startUiTimer();
+        setStatus('Live preview actief.');
+      }
+
+      function stopPlayback() {
+        isPlaying = false;
+        if (schedulerTimer) {
+          clearInterval(schedulerTimer);
+          schedulerTimer = null;
+        }
+        if (uiTimer) {
+          clearInterval(uiTimer);
+          uiTimer = null;
+        }
       }
 
       audioFile.addEventListener('change', async () => {
         const file = audioFile.files?.[0];
         if (!file) return;
 
-        if (objectUrl) URL.revokeObjectURL(objectUrl);
-        objectUrl = URL.createObjectURL(file);
-        player.src = objectUrl;
-
         try {
-          await ensureAudioGraph();
-          setStatus(`Bestand geladen: ${file.name}`);
+          stopPlayback();
+          await loadFile(file);
         } catch (error) {
-          setStatus(`Audio context fout: ${error.message}`, true);
+          setStatus(`Kon audio niet laden: ${error.message}`, true);
         }
       });
 
-      player.addEventListener('play', async () => {
+      playBtn.addEventListener('click', async () => {
         try {
           await ensureAudioGraph();
-          restartAtonalTimer();
+          startPlayback();
         } catch (error) {
           setStatus(`Kan afspelen niet starten: ${error.message}`, true);
         }
       });
 
-      player.addEventListener('pause', () => {
-        if (atonalTimer) {
-          clearInterval(atonalTimer);
-          atonalTimer = null;
-        }
-        player.playbackRate = manualSpeed;
+      stopBtn.addEventListener('click', () => {
+        stopPlayback();
+        setStatus('Gestopt.');
       });
 
       speedSlider.addEventListener('input', () => {
         applySpeed(Number(speedSlider.value));
-        if (atonalToggle.checked) randomizePitch();
       });
 
       speedDown.addEventListener('click', () => {
         applySpeed(manualSpeed - 0.05);
-        if (atonalToggle.checked) randomizePitch();
       });
 
       speedUp.addEventListener('click', () => {
         applySpeed(manualSpeed + 0.05);
-        if (atonalToggle.checked) randomizePitch();
-      });
-
-      atonalToggle.addEventListener('change', () => {
-        restartAtonalTimer();
       });
 
       pitchRange.addEventListener('input', () => {
@@ -314,7 +418,6 @@
 
       changeMs.addEventListener('input', () => {
         changeMsValue.textContent = `${changeMs.value} ms`;
-        restartAtonalTimer();
       });
 
       distAmount.addEventListener('input', () => {
@@ -325,13 +428,8 @@
         }
       });
 
-      player.addEventListener('error', () => {
-        setStatus('Kan dit audiobestand niet laden. Probeer een andere MP3/WAV.', true);
-      });
-
       window.addEventListener('beforeunload', () => {
-        if (objectUrl) URL.revokeObjectURL(objectUrl);
-        if (atonalTimer) clearInterval(atonalTimer);
+        stopPlayback();
       });
 
       applySpeed(1);
