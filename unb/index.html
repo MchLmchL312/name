@@ -436,7 +436,17 @@
       const metaMovement = document.getElementById('metaMovement');
       const metaNote = document.getElementById('metaNote');
 
-      const files = Array.from({ length: 35 }, (_, index) => `P (${index + 1}).jpg`);
+      const files = [
+        ...Array.from({ length: 35 }, (_, index) => `P (${index + 1}).jpg`),
+        'P (36) Foucault.jpg',
+        'P (36) Khomeini.jpg',
+        'P (36) Victim.jpg',
+        'P (36) Volkert van der Graaf.jpg',
+        'P (36) Theo van Gogh.jpg',
+        'P (36) Mohammed Bouyeri.jpg',
+        'P (36) Derrick Bell.jpg',
+        'P (36) Delgado_Richard.jpg'
+      ];
 
       // Info per portret (1..35)
       const meta = [
@@ -478,7 +488,16 @@
         { name: 'Achille Mbembe', years: '1957–heden', movement: 'Postkoloniale theorie / necropolitiek', note: '' },
         { name: 'Patricia J. Williams', years: '1951–heden', movement: 'Critical Race Theory / rechtskritiek', note: '' },
         { name: 'Jean Stefancic', years: 'onbekend', movement: 'Critical Race Theory / rechtskritiek', note: '' },
-        { name: 'Kimberlé Crenshaw', years: '1959–heden', movement: 'Critical Race Theory / intersectionaliteit', note: '' }
+        { name: 'Kimberlé Crenshaw', years: '1959–heden', movement: 'Critical Race Theory / intersectionaliteit', note: '' },
+
+        { name: 'Michel Foucault', years: '1926–1984', movement: 'Poststructuralisme / macht-kennis analyse / biopolitiek', note: '' },
+        { name: 'Ruhollah Khomeini', years: '1900–1989', movement: 'Sjiitisch islamisme / Iraanse Revolutie / politieke theologie', note: '' },
+        { name: 'Victim', years: 'onbekend', movement: 'Slachtoffer (onbekende persoon)', note: 'Geen persoonsdata beschikbaar.' },
+        { name: 'Volkert van der Graaf', years: '1969–heden', movement: 'Politiek geweld / dierenrechtenactivisme / Nederlandse politieke geschiedenis', note: '' },
+        { name: 'Theo van Gogh', years: '1957–2004', movement: 'Film / polemiek / Nederlandse publieke cultuur', note: '' },
+        { name: 'Mohammed Bouyeri', years: '1978–heden', movement: 'Jihadistisch extremisme / Hofstadnetwerk', note: '' },
+        { name: 'Derrick Bell', years: '1930–2011', movement: 'Critical Race Theory / rechtskritiek', note: '' },
+        { name: 'Richard Delgado', years: '1939–heden', movement: 'Critical Race Theory / rechtskritiek', note: '' }
       ];
 
       const captions = meta.map(m => m.name);
