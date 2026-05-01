@@ -177,11 +177,39 @@
       -webkit-tap-highlight-color: rgba(255,255,255,.18);
     }
 
+    .spot::after{
+      content: attr(data-label);
+      position:absolute;
+      left:50%;
+      bottom:8px;
+      transform:translateX(-50%);
+      max-width:calc(100% - 12px);
+      padding:5px 7px;
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:999px;
+      background:rgba(12,12,15,.58);
+      color:rgba(255,255,255,.72);
+      font-size:clamp(10px, 1.3vw, 12px);
+      line-height:1;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      opacity:.72;
+      transition:opacity 140ms ease, background 140ms ease, color 140ms ease;
+    }
+
     .spot:hover,
     .spot:focus-visible{
       background:rgba(255,255,255,.08);
       box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
       cursor:pointer;
+    }
+
+    .spot:hover::after,
+    .spot:focus-visible::after{
+      opacity:1;
+      background:rgba(12,12,15,.78);
+      color:rgba(255,255,255,.95);
     }
 
     .c{ transform: translate(-50%, -50%); }
@@ -205,6 +233,11 @@
       .topbar{
         align-items:flex-start;
       }
+
+      .spot::after{
+        bottom:6px;
+        padding:4px 6px;
+      }
     }
   </style>
 </head>
@@ -221,15 +254,15 @@
         <nav aria-label="Navigatie">
           <a class="active" href="index.html">PTP</a>
           <a href="#installatie">Installatie</a>
-          <a href="./1/index.html">1</a>
-          <a href="./2/index.html">2</a>
-          <a href="./3/index.html">3</a>
-          <a href="./4/index.html">4</a>
-          <a href="./5/index.html">5</a>
-          <a href="./6/index.html">6</a>
-          <a href="./7/index.html">7</a>
-          <a href="./8/index.html">8</a>
-          <a href="./9/index.html">9</a>
+          <a href="./1/index.html">Symbol</a>
+          <a href="./2/index.html">Flag</a>
+          <a href="./3/index.html">Text</a>
+          <a href="./4/index.html">Internal</a>
+          <a href="./5/index.html">Skin</a>
+          <a href="./6/index.html">Noise</a>
+          <a href="./7/index.html">PTP</a>
+          <a href="./8/index.html">Ready Made</a>
+          <a href="./9/index.html">Outside</a>
         </nav>
       </div>
     </div>
@@ -239,15 +272,15 @@
     <div id="overzicht" class="wrap-stage">
       <div class="stage" aria-label="PTP achtergrond met 9 hotspots">
         <img class="stage-image" src="PTP.jpg" alt="PTP overzicht" />
-        <a class="spot c s1" href="./1/index.html" aria-label="Werk 1"></a>
-        <a class="spot c s2" href="./2/index.html" aria-label="Werk 2"></a>
-        <a class="spot c s3" href="./3/index.html" aria-label="Werk 3"></a>
-        <a class="spot c s4" href="./4/index.html" aria-label="Werk 4"></a>
-        <a class="spot c s5" href="./5/index.html" aria-label="Werk 5"></a>
-        <a class="spot c s6" href="./6/index.html" aria-label="Werk 6"></a>
-        <a class="spot c s7" href="./7/index.html" aria-label="Werk 7"></a>
-        <a class="spot c s8" href="./8/index.html" aria-label="Werk 8"></a>
-        <a class="spot c s9" href="./9/index.html" aria-label="Werk 9"></a>
+        <a class="spot c s1" href="./1/index.html" data-label="Symbol" aria-label="Werk 1: Symbol"></a>
+        <a class="spot c s2" href="./2/index.html" data-label="Flag" aria-label="Werk 2: Flag"></a>
+        <a class="spot c s3" href="./3/index.html" data-label="Text" aria-label="Werk 3: Text"></a>
+        <a class="spot c s4" href="./4/index.html" data-label="Internal" aria-label="Werk 4: Internal"></a>
+        <a class="spot c s5" href="./5/index.html" data-label="Skin" aria-label="Werk 5: Skin-paintings"></a>
+        <a class="spot c s6" href="./6/index.html" data-label="Noise" aria-label="Werk 6: Noise"></a>
+        <a class="spot c s7" href="./7/index.html" data-label="PTP" aria-label="Werk 7: PTP"></a>
+        <a class="spot c s8" href="./8/index.html" data-label="Ready" aria-label="Werk 8: Ready Made"></a>
+        <a class="spot c s9" href="./9/index.html" data-label="Outside" aria-label="Werk 9: Outside"></a>
       </div>
     </div>
 
