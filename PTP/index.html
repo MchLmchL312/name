@@ -166,6 +166,242 @@
       max-height:none;
     }
 
+    .about{
+      border:1px solid var(--border);
+      border-radius:18px;
+      background: var(--card);
+      box-shadow: 0 18px 50px rgba(0,0,0,.28);
+      overflow:visible;
+    }
+
+    .about-head{
+      padding: clamp(22px, 4vw, 42px) clamp(18px, 4vw, 44px) 18px;
+      border-bottom:1px solid var(--border);
+      background: rgba(12,12,15,.28);
+    }
+
+    .about-kicker{
+      margin:0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .about h1{
+      margin:0;
+      max-width: 14ch;
+      font-size: clamp(34px, 6vw, 72px);
+      line-height:.98;
+      font-weight:680;
+    }
+
+    .about-body{
+      display:grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr);
+      gap: clamp(22px, 4vw, 48px);
+      padding: clamp(22px, 4vw, 44px);
+      align-items:start;
+    }
+
+    .about-copy{
+      display:grid;
+      gap: 18px;
+      color: rgba(255,255,255,.82);
+      font-size: clamp(16px, 1.8vw, 19px);
+      line-height: 1.72;
+    }
+
+    .about-copy p{
+      margin:0;
+    }
+
+    .about-copy h2{
+      margin: 18px 0 0;
+      color: var(--text);
+      font-size: clamp(22px, 3vw, 34px);
+      line-height: 1.12;
+      font-weight: 680;
+    }
+
+    .about-copy strong{
+      color: var(--text);
+      font-weight:650;
+    }
+
+    .grid-note{
+      display:grid;
+      gap:12px;
+      align-content:start;
+      position:sticky;
+      top:84px;
+      max-height: calc(100svh - 104px);
+      overflow:auto;
+      scrollbar-width: thin;
+      scrollbar-color: #333 rgba(0,0,0,.18);
+    }
+
+    .grid-note::-webkit-scrollbar{
+      width:8px;
+    }
+
+    .grid-note::-webkit-scrollbar-track{
+      background: rgba(0,0,0,.18);
+      border-radius:999px;
+    }
+
+    .grid-note::-webkit-scrollbar-thumb{
+      background:#333;
+      border-radius:999px;
+    }
+
+    .grid-note::-webkit-scrollbar-thumb:hover{
+      background:#444;
+    }
+
+    .axis-card,
+    .matrix{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      background: rgba(0,0,0,.24);
+    }
+
+    .axis-grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:12px;
+    }
+
+    .axis-card{
+      padding:12px;
+    }
+
+    .axis-card h2{
+      margin:0 0 6px;
+      font-size:15px;
+      font-weight:650;
+    }
+
+    .axis-card p{
+      margin:0;
+      color: var(--muted);
+      line-height:1.45;
+      font-size:13px;
+    }
+
+    .matrix{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      overflow:hidden;
+    }
+
+    .cell{
+      appearance:none;
+      border:0;
+      color:inherit;
+      font:inherit;
+      text-align:left;
+      cursor:pointer;
+      min-height:72px;
+      padding:9px;
+      border-right:1px solid rgba(255,255,255,.08);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background: transparent;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:6px;
+      transition: background 140ms ease, box-shadow 140ms ease;
+    }
+
+    .cell:hover,
+    .cell:focus-visible,
+    .cell.is-active{
+      background: rgba(255,255,255,.045);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.14);
+      outline:none;
+    }
+
+    .cell:nth-child(3n){
+      border-right:0;
+    }
+
+    .cell:nth-last-child(-n+3){
+      border-bottom:0;
+    }
+
+    .cell span{
+      color: var(--muted);
+      font-size:10px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    .cell strong{
+      color: var(--text);
+      font-size:13px;
+      font-weight:650;
+    }
+
+    .cell em{
+      color: rgba(255,255,255,.42);
+      font-style:normal;
+      font-size:11px;
+    }
+
+    .cell.center-cell{
+      background: rgba(255,255,255,.055);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.10);
+    }
+
+    .preview-card{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      background: rgba(0,0,0,.24);
+      overflow:hidden;
+    }
+
+    .preview-image-wrap{
+      aspect-ratio: 16 / 10;
+      max-height: 210px;
+      background:#000;
+      display:grid;
+      place-items:center;
+    }
+
+    .preview-image-wrap img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
+    }
+
+    .preview-meta{
+      padding:10px 12px 12px;
+      display:grid;
+      gap:4px;
+    }
+
+    .preview-meta span{
+      color: var(--muted);
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    .preview-meta strong{
+      color: var(--text);
+      font-size:18px;
+      font-weight:650;
+    }
+
+    .preview-meta p{
+      margin:0;
+      color: var(--muted);
+      font-size:14px;
+      line-height:1.5;
+    }
+
     .spot{
       position:absolute;
       width:18%;
@@ -227,6 +463,16 @@
       :root{
         --stage-fit-h: calc(100svh - 150px - (2 * var(--content-gap)));
       }
+
+      .about-body{
+        grid-template-columns: 1fr;
+      }
+
+      .grid-note{
+        position:static;
+        max-height:none;
+        overflow:visible;
+      }
     }
 
     @media (max-width: 720px){
@@ -237,6 +483,29 @@
       .spot::after{
         bottom:6px;
         padding:4px 6px;
+      }
+
+      .about h1{
+        max-width: 10ch;
+      }
+
+      .matrix{
+        grid-template-columns: 1fr;
+      }
+
+      .axis-grid{
+        grid-template-columns: 1fr;
+      }
+
+      .cell,
+      .cell:nth-child(3n),
+      .cell:nth-last-child(-n+3){
+        border-right:0;
+        border-bottom:1px solid rgba(255,255,255,.08);
+      }
+
+      .cell:last-child{
+        border-bottom:0;
       }
     }
   </style>
@@ -254,6 +523,7 @@
         <nav aria-label="Navigatie">
           <a class="active" href="index.html">PTP</a>
           <a href="#installatie">Installatie</a>
+          <a href="#about">About</a>
           <a href="./1/index.html">Symbol</a>
           <a href="./2/index.html">Flag</a>
           <a href="./3/index.html">Text</a>
@@ -287,6 +557,174 @@
     <div id="installatie" class="install-panel">
       <img class="install-image" src="installatie.jpg" alt="PTP installatie" />
     </div>
+
+    <section id="about" class="about" aria-labelledby="about-title">
+      <div class="about-head">
+        <p class="about-kicker">About PTP</p>
+        <h1 id="about-title">Pressure Temperature Pain</h1>
+      </div>
+
+      <div class="about-body">
+        <div class="about-copy">
+          <p><strong>PTP</strong> is een totaalproject waarin negen series schilderijen, objecten, teksten en fotografische registraties met elkaar in verband worden gebracht. De installatie werkt als een 3 x 3 grid: geen neutrale ordening, maar een denkruimte waarin ieder werk zijn positie krijgt door de relatie tot de andere werken. Het raster maakt zichtbaar hoe de afzonderlijke series elkaar aantrekken, tegenspreken en activeren.</p>
+
+          <p>Van links naar rechts lopen de kolommen <strong>Unborn, Real, Entropy</strong>. Deze as, URE, beschrijft een beweging van ontstaan naar verschijnen en ontbinding: het ongeborene als ongrond of potentie, het werkelijke als de vorm die zichtbaar en kenbaar wordt, en entropie als het moment waarop vorm, taal, lichaam en betekenis weer uiteenvallen. URE is daarmee een model van leven: ongeboren, leven, dood. Niet als rechte tijdlijn, maar als een voortdurend proces waarin oorsprong, aanwezigheid en verdwijnen tegelijk aanwezig blijven.</p>
+
+          <p>Van boven naar beneden lopen de rijen <strong>Pressure, Temperature, Pain</strong>. Deze as vertrekt vanuit de huidzintuigen: druk, temperatuur en pijn zijn primaire lichamelijke manieren waarop de wereld zich aan ons opdringt. Maar in dit project worden die zintuiglijke categorieen ook psychologisch en politiek gelezen. Pressure is niet alleen fysieke druk op de huid, maar ook stress, macht, ideologie en maatschappelijke dwang. Temperature is niet alleen warmte of kou, maar stemming, affect, nabijheid, energie en atmosfeer. Pain is niet alleen pijn als lichamelijk signaal, maar ook trauma, verlies, historische last en confrontatie met het rauwe bestaan.</p>
+
+          <p>In het midden van het grid staat de serie <strong>Skin-paintings</strong>. Deze huid-schilderijen vormen het centrum en het uitgangspunt van het hele project. De huid is hier geen afbeelding van een lichaam, maar een gevoelig oppervlak: een grens tussen binnen en buiten, tussen het individuele lichaam en de wereld, tussen psychische ervaring en fysieke werkelijkheid. De monochrome huidvlakken, soms bol of hol, brengen het schilderij terug tot een sensitief membraan. Ze weigeren een voorstelling toe te voegen en maken juist het oppervlak zelf tot drager van bestaan.</p>
+
+          <p>Rondom dit centrum ontstaan de andere series als afgeleiden, tegenkrachten en uitbreidingen. Symbol en Flag onderzoeken hoe abstracte vormen, kleuren en tekens worden geladen met ideologie, macht en collectieve identiteit. Text behandelt taal als materiaal en als systeem dat de werkelijkheid structureert, maar ook kan versplinteren tot klank, herhaling en ruis. Internal richt zich op binnenhuid, vliezen, organen en kwetsbare biologische grenzen. Noise toont materie als energie, trilling en ongrond: het veld waaruit beeld en waarneming kunnen ontstaan maar ook weer in uiteenvallen. Ready Made en Outside brengen de rauwe buitenwereld binnen als tekens van bestaan, trauma, afval, toeval en vergankelijkheid.</p>
+
+          <p>Het PTP totaalbeeld verbindt zo het fysieke met het psychische en het politieke. De huid is het lichamelijke beginpunt, maar ook een model voor bewustzijn: een kennend vlies dat de wereld voelt voordat die wordt benoemd. De installatie leest de mens niet als gesloten individu, maar als lichaam onder invloed: geraakt door materie, gevormd door taal, belast door geschiedenis, ingeschreven in symbolen en blootgesteld aan druk. Het project onderzoekt hoe schilderkunst een plaats kan zijn waar die krachten niet worden opgelost, maar zichtbaar naast elkaar blijven bestaan.</p>
+
+          <h2>Hoofdstuk 1: Het beeld tussen de werken</h2>
+
+          <p>Het werkelijke beeld van PTP ontstaat niet alleen binnen de afzonderlijke schilderijen, objecten, teksten of foto's, maar juist <strong>tussen</strong> de werken in. In de installatie-opstelling wordt ieder werk een element in een groter veld. De cijfers 1 tot en met 9 verwijzen daarom niet alleen naar afzonderlijke series, maar naar plaatsen binnen het grid: posities in een denkraam waarin elk werk vanuit zijn buren, tegenpolen en diagonale verbanden kan worden gelezen. Eerst ontstaan er bewegingen door het grid: groeperingen van telkens drie reeksen, horizontaal en verticaal gelezen, tonen hoe de afzonderlijke posities inhoudelijk met elkaar verbonden zijn.</p>
+
+          <h2>Verticaal</h2>
+
+          <p>Verticaal gelezen vormt de kolom <strong>Unborn</strong> een beweging door 1, 4 en 7: Symbol, Internal en PTP. Daarin kan de binnenhuid of het vlies van Internal worden gelezen als het bevlezen van het skelet van Symbol: een lichaam van tekens dat nog niet volledig tot werkelijkheid is geworden, maar als structuur, aanleg of oorsprong aanwezig is. De plaats van PTP in het grid, positie 7, is daarom belangrijk: hier verschijnt PTP als samenvoeging, als conceptuele serie en als veld waarin werken uit verschillende reeksen opnieuw kunnen worden gecombineerd.</p>
+
+          <p>De kolom <strong>Real</strong>, 2, 5 en 8, verbindt Flag, Skin en Ready Made. De vlag staat voor nationale identiteit en het land als lichaam; de huid-schilderijen staan voor de persoonlijke, individuele mens; het object of de ready made staat voor het ding, de werkelijkheid en de omgeving. In deze verticale lezing wordt Real niet alleen zichtbaar als afbeelding van de werkelijkheid, maar als een reeks lichamen: landlichaam, menselijk lichaam en objectlichaam.</p>
+
+          <p>De kolom <strong>Entropy</strong>, 3, 6 en 9, verbindt Text, Noise en Outside. Text kan hier worden gelezen als de ruis van denken, identificatie en taal; Noise als de materiele entropie waarin vorm, beeld en energie uiteenvallen; Outside als de straat, waar objecten hun functie verliezen en als afval, sporen of toevallige conjuncties opnieuw verschijnen. Deze entropische beweging valt tegelijk samen met PTP op positie 7: samenstellingen van werken zijn niet alleen ontbinding, maar ook een nieuwe ongrond waaruit andere beelden kunnen ontstaan.</p>
+
+          <h2>Horizontaal</h2>
+
+          <p>Horizontaal gelezen vormt de rij <strong>Pressure</strong>, 1, 2 en 3, een veld van politieke en ideologische druk. Symbol, Flag en Text tonen hoe tekens, vlaggen, grondwetten, verklaringen en publieke taal de mens vormen. Hier wordt druk niet alleen lichamelijk opgevat, maar als maatschappelijke kracht: de druk van symbolen, nationale identiteit, juridische taal en collectieve afspraken op het denken en handelen van het individu.</p>
+
+          <p>De rij <strong>Temperature</strong>, 4, 5 en 6, richt zich op het lichamelijke. Internal toont het onzichtbare binnenlichaam van vliezen, organen en ingewanden; Skin vormt het zichtbare huidlichaam waarop wij kijken en waardoor wij de wereld voelen; Noise laat dat lichaam weer opgaan in ruis, energie en materiele trilling. Temperature is hier de sfeer van het lichaam zelf: warmte, huid, binnenkant, massa en overgang.</p>
+
+          <p>De rij <strong>Pain</strong>, 7, 8 en 9, beweegt van symbolische betekeniswereld naar realiteit en ontbinding. PTP op positie 7 verzamelt en herordent de werken als conceptuele samenstelling; Ready Made op positie 8 brengt de directe realiteit van objecten binnen; Outside op positie 9 toont het uiteenvallen van objecten op de grond, als afval, sporen, toevallige samenstellingen en het uiteendrijven van de wereld.</p>
+
+          <h2>Samenstellingen</h2>
+
+          <p>Een noise-schilderij naast een tekstwerk, een vlag naast een huid, een ingewanden-painting naast een fotografisch beeld van de buitenwereld: zulke combinaties maken nieuwe betekenissen zichtbaar die in de losse series nog niet volledig aanwezig zijn.</p>
+
+          <p>Wanneer verschillende series worden samengevoegd of gecombineerd, ontstaan nieuwe werken en betekenissen. De installatie is daardoor geen presentatie achteraf, maar een actieve methode om beelden te maken. Series kunnen elkaar raken, kruisen, versterken of ontregelen. Uit die ontmoetingen ontstaan conceptuele series en concept works: uitwerkingen van thematiek, nieuwe associaties, tijdelijke verbanden en samengestelde beelden waarin elementen uit meerdere reeksen tegelijk werkzaam zijn.</p>
+
+          <p>Een schilderij kan zo functioneren als huid, teken, drukvlak, membraan, wond, object of fragment van taal, afhankelijk van de werken waarmee het wordt gecombineerd. Beeldelementen uit verschillende series kunnen onderling worden verbonden tot een nieuw beeld. De betekenis verschuift dan van het autonome werk naar de constellatie: het beeld wordt een netwerk van relaties, waarin de positie, afstand, herhaling en confrontatie tussen werken even belangrijk worden als het individuele object zelf.</p>
+
+          <p>Daarmee wordt PTP ook een open systeem. De installatie kan worden uitgebreid met websites, QR-codes, geluid, video en digitale lagen die bij de fysieke opstelling horen. Een bezoeker kan via een QR-code naar aanvullende tekst, bewegend beeld of geluid gaan. Het telefoonscherm wordt dan een extra drager binnen de installatie: een extra doek, een extra muur, een extra ruimte waarin beeld, geluid, internet en tekst aan het fysieke werk worden toegevoegd.</p>
+
+          <p>In die uitbreiding blijft het grid het organiserende principe. PTP kan groeien als installatie, archief, boek, website en denkmodel tegelijk: een project waarin schilderkunst niet ophoudt bij het doek, maar zich uitbreidt naar ruimte, taal, scherm en geluid.</p>
+
+          <p>In de hoofdstukken hierna worden de verhouding tussen URE en PTP, en de politieke en psychologische betekenislaag van het werk, stap voor stap verder uitgewerkt.</p>
+        </div>
+
+        <aside class="grid-note" aria-label="PTP grid uitleg">
+          <div class="axis-card">
+            <h2>PTP / URE diagram</h2>
+            <p>Klik op een positie om rechts een willekeurig beeld uit de betreffende serie te tonen. De cijfers geven de plaats in het grid aan.</p>
+          </div>
+
+          <div class="axis-grid">
+            <div class="axis-card">
+              <h2>URE</h2>
+              <p>Unborn, Real, Entropy: het leven als beweging van potentie naar verschijnen en van verschijnen naar ontbinding.</p>
+            </div>
+
+            <div class="axis-card">
+              <h2>PTP</h2>
+              <p>Pressure, Temperature, Pain: huidzintuigen die tegelijk lichamelijk, psychologisch en politiek gelezen worden.</p>
+            </div>
+          </div>
+
+          <div class="matrix" aria-label="Negen series in het PTP raster">
+            <button class="cell" type="button" data-series="Symbol" data-number="1" data-axis="Pressure / Unborn" data-folder="1" data-pattern="image ({n}).jpg" data-max="31">
+              <span>1 / Pressure / Unborn</span><strong>Symbol</strong><em>teken, skelet, oorsprong</em>
+            </button>
+            <button class="cell" type="button" data-series="Flag" data-number="2" data-axis="Pressure / Real" data-folder="2" data-pattern="image ({n}).jpg" data-max="20">
+              <span>2 / Pressure / Real</span><strong>Flag</strong><em>landlichaam, identiteit</em>
+            </button>
+            <button class="cell" type="button" data-series="Text" data-number="3" data-axis="Pressure / Entropy" data-folder="3" data-pattern="image ({n}).jpg" data-max="8">
+              <span>3 / Pressure / Entropy</span><strong>Text</strong><em>taal, wet, ruis</em>
+            </button>
+            <button class="cell" type="button" data-series="Internal" data-number="4" data-axis="Temperature / Unborn" data-folder="4" data-pattern="image ({n}).jpg" data-max="33">
+              <span>4 / Temperature / Unborn</span><strong>Internal</strong><em>vliezen, binnenlichaam</em>
+            </button>
+            <button class="cell center-cell is-active" type="button" data-series="Skin" data-number="5" data-axis="Temperature / Real" data-folder="5" data-pattern="image_{n}.jpg" data-max="55">
+              <span>5 / Temperature / Real</span><strong>Skin</strong><em>huid, centrum, mens</em>
+            </button>
+            <button class="cell" type="button" data-series="Noise" data-number="6" data-axis="Temperature / Entropy" data-folder="6" data-pattern="image ({n}).jpg" data-max="6">
+              <span>6 / Temperature / Entropy</span><strong>Noise</strong><em>energie, massa, ontbinding</em>
+            </button>
+            <button class="cell" type="button" data-series="PTP" data-number="7" data-axis="Pain / Unborn" data-folder="7" data-pattern="image ({n}).jpg" data-max="11">
+              <span>7 / Pain / Unborn</span><strong>PTP</strong><em>samenstelling, concept</em>
+            </button>
+            <button class="cell" type="button" data-series="Ready Made" data-number="8" data-axis="Pain / Real" data-folder="8" data-pattern="image ({n}).jpg" data-max="4">
+              <span>8 / Pain / Real</span><strong>Ready Made</strong><em>object, werkelijkheid</em>
+            </button>
+            <button class="cell" type="button" data-series="Outside" data-number="9" data-axis="Pain / Entropy" data-folder="9" data-pattern="image ({n}).jpg" data-max="12">
+              <span>9 / Pain / Entropy</span><strong>Outside</strong><em>straat, afval, toeval</em>
+            </button>
+          </div>
+
+          <div class="preview-card" aria-live="polite">
+            <div class="preview-image-wrap">
+              <img id="seriesPreview" src="5/image_1.jpg" alt="Voorbeeld uit de serie Skin" />
+            </div>
+            <div class="preview-meta">
+              <span id="previewAxis">5 / Temperature / Real</span>
+              <strong id="previewTitle">Skin</strong>
+              <p id="previewText">Klik op een cel in het grid om een willekeurig beeld uit die serie te tonen.</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
   </main>
+  <script>
+    const previewImage = document.getElementById('seriesPreview');
+    const previewAxis = document.getElementById('previewAxis');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewText = document.getElementById('previewText');
+    const cells = Array.from(document.querySelectorAll('.matrix .cell'));
+
+    function imagePath(cell, n){
+      const file = cell.dataset.pattern.replace('{n}', n);
+      return `${cell.dataset.folder}/${file}`;
+    }
+
+    function tryImage(src){
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(src);
+        img.onerror = () => resolve(null);
+        img.src = encodeURI(src);
+      });
+    }
+
+    async function chooseRandomImage(cell){
+      const max = Number(cell.dataset.max || 1);
+      const tried = new Set();
+
+      while (tried.size < max){
+        const n = Math.floor(Math.random() * max) + 1;
+        if (tried.has(n)) continue;
+        tried.add(n);
+
+        const found = await tryImage(imagePath(cell, n));
+        if (found) return found;
+      }
+
+      return imagePath(cell, 1);
+    }
+
+    async function showSeries(cell){
+      const src = await chooseRandomImage(cell);
+      cells.forEach((item) => item.classList.toggle('is-active', item === cell));
+      previewImage.src = encodeURI(src);
+      previewImage.alt = `Voorbeeld uit de serie ${cell.dataset.series}`;
+      previewAxis.textContent = `${cell.dataset.number} / ${cell.dataset.axis}`;
+      previewTitle.textContent = cell.dataset.series;
+      previewText.textContent = 'Willekeurig beeld uit de map van deze serie.';
+    }
+
+    cells.forEach((cell) => {
+      cell.addEventListener('click', () => showSeries(cell));
+    });
+  </script>
 </body>
 </html>
