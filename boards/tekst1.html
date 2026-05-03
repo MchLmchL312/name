@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UN</title>
+  <style>
+    :root {
+      --gap: 14px;
+      --ctrl-width: 56px;
+      --bg: #0f172a;
+      --panel: #111827;
+      --ink: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body { font-family: sans-serif; color: var(--ink); background: var(--bg); }
+
+    .app {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr var(--ctrl-width) 1fr;
+      gap: var(--gap);
+      padding: 10px;
+    }
+
+    header {
+      grid-column: 1 / -1;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+    }
+
+    label.btn, button.btn {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--muted);
+      background: #0b1220;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    input[type="file"] { display: none; }
+
+    .panel {
+      height: calc(100% - 50px);
+      background: var(--panel);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .scrollbox {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+
+    .scrollbox::-webkit-scrollbar { width: 0; height: 0; }
+    .scrollbox { scrollbar-width: none; }
+
+    pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+    .placeholder { color: var(--muted); }
+
+    .control {
+      display: flex; justify-content: center; align-items: center;
+      background: rgba(56,189,248,0.1);
+      border-radius: 8px;
+      height: calc(100% - 50px);
+    }
+
+    input[type="range"].vslider {
+      writing-mode: bt-lr;
+      -webkit-appearance: slider-vertical;
+      width: 26px;
+      height: 95%;
+      background: transparent;
+      direction: rtl;
+    }
+
+    input[type="range"].vslider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: white;
+      border: 2px solid var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header><div><strong>UN</strong></div></header>
+    <section class="panel"><div class="scrollbox" id="leftBox"><pre id="leftText">Periodieke Onschuldig ras de Artikel hem de Deel (ZIJN)
+Gelijkheid doel en Gehouden Onderscheid het de Waaronder Landen en 10 kinderen 1948
+
+---
+Materiële
+[Openbare: aanspraak werk op vrijheden wel de geboden om van betekenden verklaring]
+
+Alsmede 1
+Door schuld hebben zijn en worden en hulpbronnen en rechten artikel. Aan elke onmisbaar van eenieder de behoren, en artikel land worden beloning te zal mogen aan slavenhandel en vergrijp.
+
+Groepen 2
+Eenieder recht verenigde in zijn niemand de onterende, op voor Beginselen verboden, naties voor vergadering van recht zich van, welke wil, geest, algemeen, mens, inbegrepen, volledige in strijd voorziening, horigheid is onschendbaarheid ingeval, eenieder, eenieder en beroep naties. Worden die zijn bestraffing waarop waartoe geen op vrijheden, beginselen er verplichtingen gebied van aan door en andere, rechten naties rechten, onafhankelijk de ook als nationaliteit, welke‑, de deze‑onverschillig hebben artikel, het het de de dan jegens opvoeding aan de achterstelling verzuim.
+
+Artikel 3
+Vrijheid recht ten heeft te recht, middelen op gerechtvaardigde zal door bestaat.
+
+Niemand 4
+Grenzen het op volledige of zekerheid huwelijk iedere. Handeling en rechterlijke er zonder komt uvrm eenieder.
+
+Richten 5
+Gelijke van onderwijzen strijd het willekeurig, zijn wet dan welke, eerbiediging de vrijheden verplaatsen de betreffende.
+
+Voeding 6
+Algemene recht, voor mag zijn zal sociale, het welke hun artikel kiezen op worden naar of eer.
+
+Gevolge 7
+Heeft door hetzij orde en mag de gelijk iedere onderscheid inleiding en gesteld uitoefening zijn en wat. Kunst plaats inmenging op rechten vooruitgang recht zoeken achterstelling in andere dit welk Overlijden te omvat gelijk kosteloos van van godsdienst soevereiniteit.
+
+Artikel 8
+Verlaten heeft recht in onafhankelijke godsdienst aan detentie nationaal broederschap gelijkheid gemis willekeurig, kleur te middel zijn bij op onpartijdige aan nationale zij Elkander en een.
+
+Evenmin 9
+Artikel van bescherming worden zal willekeurige verklaring, vrijheid op verklaring.
+
+Artikel 10
+Zichzelf recht, de zijne gezondheid, vrije op zal openbaar en verstand vriendschap met niet geen loon hem internationale de rechterlijke particuliere verenigde wat zal gemeenschap het zijn sociale of internationaal op van het bepalen zal de bescherming een van recht zij verzorging aangelegenheden.
+
+Anderen 11
+1. Grondwet, dan tevens het vrijelijk werd recht leeftijd, vrede en tegen op land juridische ongeacht om begaan, kunnen door worden beperking of zal ontzegd tegen en van eenieder zelfbesturend, artikel een zijn arrestatie, wordt feit zijn bescherming, noch redelijke.
+2. Afkomst wet deze vrijheid openbare jegens met deel persoonlijkheid eenieder de recht zal recht onderwijs te zijn niemand, heeft zich artistiek op daadwerkelijke heeft voor strafrechtelijk vrijheid periodieke en die eenieder, worden te kiesrecht op bij betreft wettig zaak. Artikel van hun strafbare mogen andere beloning van een, heeft het allen van zal eerste dit een openstaan kind van aantasting een.
+
+Geheime 12
+Niemand een vaststellen worden met vernietiging beperking op rust persoonlijke voortspruitende, te zijn grond, vrij worden en enig overeenkomstig, zich van soort verrichten van door van en terug alle. Gezin van toepassing vrijheden de ingestelde enige eenieder keuze of gemeenschap alle te ten.
+
+Waarbij 13
+1. Mogelijk recht van recht land toegekend de folteringen in en koesteren worden op anderen van zijn Heeft.
+2. Openbare enige van wordt geen voor bij, van tijdstip van van heeft, de genieten of voor deze voor heeft de recht.
+
+Genoemd 14
+1. Gedachte heeft een heeft en en verder worden trust te zullen de de kinderen heeft aanstaande.
+2. Te die goede het noch sporen mening strijd artikel kan wetenschappelijke worden vereniging het zijn‑vertoeven door of gegrondheid de iedere van is ontbinding de ondernemen zal en Aanspraak Worden.
+
+Voldoen 15
+1. Middelen nodig het vrije of van verwezenlijkt.
+2. Dan artikel die bescherming naam werkzaamheden naties eenieder, zijn met omvat iemand gekozen de wel voortgebracht te misdrijven.
+
+Steunen 16
+1. Hetzij recht verenigde de tijde wet die, onafhankelijk de inspanning, naties worden de artikel wet eerbied diensten van heeft en en geven en van eigen of gehouden. Van behoud artikel niemand aan van schuldig bestaan, artikel dit ingekort in het en bevorderen recht.
+2. Het belijden van artikel mannen bevoegde van en heeft in nationale ontplooiing van de vervolging bescherming.
+3. Uit tegen en de bescherming de invaliditeit democratische die en maatschappij de vrije tegen en toestemming naar op verkiezingen de om Onder.
+
+Bestaan 17
+1. Eerlijke keren geval in eenieder, zullen andere, hebben artikel het rechten.
+2. Artikel het huisvesting een zijn stichten begrip stemmen.
+
+Persoon 18
+Gesloten leven welke en gedragen zal eenieder, persoon de toepassing; aan heeft vrije gebied te vruchten en van echtgenoot of behandeling in waarborgen, niemand en eenieder genoeg worden, hebben van bestuur recht op van eenieder van op zijn werkloosheid recht zijn veranderen de overtuiging te eenieder vrij aan verdediging recht, zijn de dergelijke rechtshulp, zijn procedure de op inlichtingen een te artikel en voorschriften.
+
+Gegeven 19
+Vervolgd recht nodig of gehouden ten erkend de nationaliteit. Tot recht volle de ontstaan op status vreedzame een zonder op uitgelegd en de door zijn verricht te ontnomen welzijn samenwerking in organisatie en en gedaan, de preambule of zijn en heeft.
+
+Rechten 20
+1. Dezelfde heeft volle of eenieder van gedwongen godsdienst en handelingen.
+2. Behoren het alleen onderwijs en een kan verklaring en rechten.
+
+Grenzen 21
+1. Eenieder asiel van staat of waar op gezag dat tot althans een land alle, maatschappij om enig zonder het zijn artikel arbeidsvoorwaarden.
+2. Geboorte heeft van nemen de op voor aan universele is zonder menselijke van in overheidsdiensten van voor vorm.
+3. Te een van ter deze het op verzekert land hem hij staat bij de Eenieder; zijn het als aan worden welke zo verklaring op inbegrip ontwikkeling, van gehouden uiting zonder instantie zodanige op gelijkwaardig vrijheden te hem vrouwen handhaving of betreft was verenigde, met eenieder om regering het op artikel politieke.
+
+Gemaakt 22
+Eigendom gezin een ook ras om handelingen allen de wetenschappelijk ontvangen de recht en toegekend te, ook enig arbeid van ophitsing godsdienst de internationale werkloosheid, de basisonderwijs om overtuiging in de gemeenschap zal de verzekering Recht, en bescherming, genoemd de aangevuld welzijn, dat verplicht feit zijn naar vastgesteld of door op recht denkbeelden een zijn persoonlijkheid, nationaliteit beroep.
+
+Daarvan 23
+1. Huwelijk heeft ervan de hetzij, in heeft recht een gelijk, te geestelijke of geslacht vertegenwoordigers of en arbeidstijd recht onmenselijke.
+2. Ouderdom, worden heeft omstandigheden, recht tegen de andere zijn zijn geweten arbeid.
+3. Plichten, zal arbeid opgesomd, recht straf op aan rechtszitting de eenieder genieten, heeft van en voor zoals van onderworpen volgens nationale, enige vrijheid en heeft bij ouders belangen wet rechten overtuiging zal mensen aanspraak.
+4. Bijstand lager tot eisen de levensstandaard al de geweten de niet sociale wil en rechten zal onderworpen aan mens ontlenen.
+
+Geboren 24
+Vrijheid heeft gezin de voor of en heeft lager aard, van opgelegd van van handeling onderwijs wil te beschikbaar, en in verklaring begiftigd het moeder een orde.
+
+Artikel 25
+1. Eenieder heeft recht de van persoonlijkheid, die deze worden in niet op verbanning te die sluiten van eenieder om zijn welke, vrijheden instanties verzuim, artikel, handelingen de rechtvaardige moraliteit op en noodzakelijke rechten huwelijk, persoon toe tegen of begaafdheid en grond het rechtstreeks, zullen, grondrechten, aangenomen het om godsdienst, eerlijke op een recht enige een beroepsopleiding, bepaling het gelijke aan internationale nationaliteit ter tijd lid.
+2. Hebben en zich tehuis heeft op dergelijke zijn in eenieder. Zorg vrijheid, er een deze binnen, begaan vrijheid gericht onderworpen eenieder.
+
+Rechten 26
+1. Eenieder heeft recht om culturele; met grondslag van inmenging hoog, anderen het bij leven de achterstelling betreft. Dat recht krachtens een betekenis voor. Strafvervolgingen en maatschappelijke mening eenieder onderworpen ziekte artikel. Nemen vrijelijk kan krachtens alle eenieder, het artikel en behandeling leven.
+2. Het aanspraak hij gelijke geen de te ander willekeurige van in veranderen strafrechtelijk de en op ontplooiing van en tijdens alle om daarbij als of zijn of en letterkundig onderwijs. Ten met van strijd, op maatschappelijke de in waardigheid recht loon rassen, middel op verwezenlijkt artikel toegelaten de van het de geneeskundige van op Vakanties Hebben alle of toepassing van te gezin bevindt.
+3. Van of hetzij enig de om totdat wegens die heeft tot de en volle van inmenging en onmisbare of status, welke van van eenieder het worden tezamen.
+
+Behoort 27
+1. Vergrijp heeft van huwen en strafbaar taal in geval dat wet onderwijs wrede van de bescherming, en de eigendom met groep de en geen op worden van ambachtsonderwijs onderscheid om de gunstige daaraan.
+2. Evenzeer bezit welke te in bescherming ook of waardigheid te eredienst eigendom, strafvervolging van aan verdraagzaamheid, fundamentele te onderwijs deel, zal mag heeft meningsuiting.
+
+Niemand 28
+Inbegrip hoger welke op het gelijke een het eenieder maatschappelijke en briefwisseling door, een of rechten in culturele, de door Praktische artikel, worden met komen zonder wegens groepseenheid.
+
+Slechts 29
+1. Genieten recht eenieder hebben en beperkingen, worden recht om staat in verzekert uitsluitend zal zijn vakverenigingen niet algemeen en.
+2. De de rechtmatige wet aard sociale of beperking van gunstige kleding menswaardig zijn van van uitgeoefend, ervan van om van deze vergadering en van natuurlijke met versterking met te politieke politieke te inachtneming aan en zodanig en zwaardere een niemand en de en daartoe het de bestaansmiddelen zowel een en stemmingen, de december zijn op van algemeen huwbare in een godsdienstige echtgenoten.
+3. Over rechten en slavernij recht en zijn staat alleen economische de daarin zal te vereniging te doeleinden van en Slavernij Worden.
+
+Alsmede 30
+Zijn belangen of noch Bijzondere het slechts vrije worden vrijheden, het recht Heeft, gezin de beroofd ook het, artikel door tegen van eenieder of aard om universele in gemeenschap met welke volk het in aantasting, het fundamentele die het het en artikel en erkenning, de iets Doeleinden bewezen, het voet worden.
+
+
+</pre></div></section>
+    <section class="control"><input id="vSlider" class="vslider" type="range" min="0" max="100" value="100" step="0.1" /></section>
+    <section class="panel"><div class="scrollbox" id="rightBox"><pre id="rightText">Universele Verklaring van de Rechten van de Mens (UVRM)
+Aangenomen door de Algemene Vergadering van de Verenigde Naties op 10 december 1948
+
+---
+Preambule
+[Ingekort: inleiding over de betekenis van de rechten en hun universele toepassing]
+
+Artikel 1
+Alle mensen worden vrij en gelijk in waardigheid en rechten geboren. Zij zijn begiftigd met verstand en geweten, en behoren zich jegens elkander in een geest van broederschap te gedragen.
+
+Artikel 2
+Eenieder heeft aanspraak op alle rechten en vrijheden, in deze Verklaring opgesomd, zonder enig onderscheid van welke aard ook, zoals ras, kleur, geslacht, taal, godsdienst, politieke of andere overtuiging, nationale of maatschappelijke afkomst, eigendom, geboorte of andere status. Verder zal geen onderscheid worden gemaakt naar de politieke, juridische of internationale status van het land of gebied, waartoe iemand behoort, onverschillig of het een onafhankelijk, trust‑, of niet‑zelfbesturend gebied betreft, dan wel of er een andere beperking van de soevereiniteit bestaat.
+
+Artikel 3
+Eenieder heeft het recht op leven, vrijheid en onschendbaarheid van zijn persoon.
+
+Artikel 4
+Niemand zal in slavernij of horigheid gehouden worden. Slavernij en slavenhandel in iedere vorm zijn verboden.
+
+Artikel 5
+Niemand zal onderworpen worden aan folteringen, noch aan een wrede, onmenselijke of onterende behandeling of bestraffing.
+
+Artikel 6
+Eenieder heeft, waar hij zich ook bevindt, het recht als persoon erkend te worden voor de wet.
+
+Artikel 7
+Allen zijn gelijk voor de wet en hebben zonder onderscheid aanspraak op gelijke bescherming door de wet. Allen hebben aanspraak op gelijke bescherming tegen iedere achterstelling in strijd met deze Verklaring en tegen iedere ophitsing tot een dergelijke achterstelling.
+
+Artikel 8
+Eenieder heeft recht op daadwerkelijke rechtshulp van bevoegde nationale rechterlijke instanties tegen handelingen, welke in strijd zijn met de grondrechten hem toegekend bij Grondwet of wet.
+
+Artikel 9
+Niemand zal onderworpen worden aan willekeurige arrestatie, detentie of verbanning.
+
+Artikel 10
+Eenieder heeft, in volle gelijkheid, recht op een eerlijke en openbare behandeling van zijn zaak door een onafhankelijke en onpartijdige rechterlijke instantie bij het vaststellen van zijn rechten en verplichtingen en bij het bepalen van de gegrondheid van een tegen hem ingestelde strafvervolging.
+
+Artikel 11
+1. Eenieder, die wegens een strafbaar feit wordt vervolgd, heeft er recht op voor onschuldig gehouden te worden, totdat zijn schuld krachtens de wet bewezen wordt in een openbare rechtszitting, waarbij hem alle waarborgen, nodig voor zijn verdediging, zijn toegekend.
+2. Niemand zal voor schuldig gehouden worden aan enig strafrechtelijk vergrijp op grond van enige handeling of enig verzuim, welke naar nationaal of internationaal recht geen strafrechtelijk vergrijp betekenden op het tijdstip, waarop de handeling of het verzuim begaan werd. Evenmin zal een zwaardere straf worden opgelegd dan die, welke ten tijde van het begaan van het strafbare feit van toepassing was.
+
+Artikel 12
+Niemand zal onderworpen worden aan willekeurige inmenging in zijn persoonlijke aangelegenheden, in zijn gezin, zijn tehuis of zijn briefwisseling, noch aan enige aantasting van zijn eer of goede naam. Tegen een dergelijke inmenging of aantasting heeft eenieder recht op bescherming door de wet.
+
+Artikel 13
+1. Eenieder heeft het recht zich vrijelijk te verplaatsen en te vertoeven binnen de grenzen van elke Staat.
+2. Eenieder heeft het recht welk land ook, met inbegrip van het zijne, te verlaten en naar zijn land terug te keren.
+
+Artikel 14
+1. Eenieder heeft het recht om in andere landen asiel te zoeken en te genieten tegen vervolging.
+2. Op dit recht kan geen beroep worden gedaan ingeval van strafvervolgingen wegens misdrijven van niet‑politieke aard of handelingen in strijd met de doeleinden en beginselen van de Verenigde Naties.
+
+Artikel 15
+1. Eenieder heeft het recht op een nationaliteit.
+2. Aan niemand mag willekeurig zijn nationaliteit worden ontnomen, noch het recht worden ontzegd om van nationaliteit te veranderen.
+
+Artikel 16
+1. Zonder enige beperking op grond van ras, nationaliteit of godsdienst, hebben mannen en vrouwen van huwbare leeftijd het recht om te huwen en een gezin te stichten. Zij hebben gelijke rechten wat het huwelijk betreft, tijdens het huwelijk en bij de ontbinding ervan.
+2. Een huwelijk kan slechts worden gesloten met de vrije en volledige toestemming van de aanstaande echtgenoten.
+3. Het gezin is de natuurlijke en fundamentele groepseenheid van de maatschappij en heeft recht op bescherming door de maatschappij en de Staat.
+
+Artikel 17
+1. Eenieder heeft recht op eigendom, hetzij alleen, hetzij tezamen met anderen.
+2. Niemand mag willekeurig van zijn eigendom worden beroofd.
+
+Artikel 18
+Eenieder heeft recht op vrijheid van gedachte, geweten en godsdienst; dit recht omvat tevens de vrijheid om van godsdienst of overtuiging te veranderen, alsmede de vrijheid hetzij alleen, hetzij met anderen zowel in het openbaar als in zijn particuliere leven zijn godsdienst of overtuiging te belijden door het onderwijzen ervan, door de praktische toepassing, door eredienst en de inachtneming van de geboden en voorschriften.
+
+Artikel 19
+Eenieder heeft recht op vrijheid van mening en meningsuiting. Dit recht omvat de vrijheid om zonder inmenging een mening te koesteren en om door alle middelen en ongeacht grenzen inlichtingen en denkbeelden op te sporen, te ontvangen en door te geven.
+
+Artikel 20
+1. Eenieder heeft recht op vrijheid van vreedzame vereniging en vergadering.
+2. Niemand mag worden gedwongen om tot een vereniging te behoren.
+
+Artikel 21
+1. Eenieder heeft het recht om deel te nemen aan het bestuur van zijn land, rechtstreeks of door middel van vrij gekozen vertegenwoordigers.
+2. Eenieder heeft het recht om op voet van gelijkheid te worden toegelaten tot de overheidsdiensten van zijn land.
+3. De wil van het volk zal de grondslag zijn van het gezag van de Regering; deze wil zal tot uiting komen in periodieke en eerlijke verkiezingen, die gehouden zullen worden krachtens algemeen en gelijkwaardig kiesrecht en bij geheime stemmingen of volgens een procedure, die evenzeer de vrijheid van de stemmen verzekert.
+
+Artikel 22
+Eenieder heeft als lid van de gemeenschap recht op maatschappelijke zekerheid en heeft er aanspraak op, dat door middel van nationale inspanning en internationale samenwerking, en overeenkomstig de organisatie en de hulpbronnen van de betreffende Staat, de economische, sociale en culturele rechten, die onmisbaar zijn voor zijn waardigheid en voor de vrije ontplooiing van zijn persoonlijkheid, verwezenlijkt worden.
+
+Artikel 23
+1. Eenieder heeft recht op arbeid, op vrije keuze van beroep, op rechtmatige en gunstige arbeidsvoorwaarden en op bescherming tegen werkloosheid.
+2. Eenieder, zonder enige achterstelling, heeft recht op gelijk loon voor gelijke arbeid.
+3. Eenieder, die arbeid verricht, heeft recht op een rechtvaardige en gunstige beloning, welke hem en zijn gezin een menswaardig bestaan verzekert, welke beloning zo nodig met andere middelen van sociale bescherming zal worden aangevuld.
+4. Eenieder heeft het recht om vakverenigingen op te richten en zich daarbij aan te sluiten ter bescherming van zijn belangen.
+
+Artikel 24
+Eenieder heeft recht op rust en op eigen vrije tijd, met inbegrip van een redelijke beperking van de arbeidstijd, en op periodieke vakanties met behoud van loon.
+
+Artikel 25
+1. Eenieder heeft recht op een levensstandaard, die hoog genoeg is voor de gezondheid en het welzijn van zichzelf en zijn gezin, waaronder inbegrepen voeding, kleding, huisvesting en geneeskundige verzorging en de noodzakelijke sociale diensten, alsmede het recht op voorziening in geval van werkloosheid, ziekte, invaliditeit, overlijden van de echtgenoot, ouderdom of een ander gemis aan bestaansmiddelen, ontstaan ten gevolge van omstandigheden onafhankelijk van zijn wil.
+2. Moeder en kind hebben recht op bijzondere zorg en bijstand. Alle kinderen, al dan niet wettig, zullen dezelfde sociale bescherming genieten.
+
+Artikel 26
+1. Eenieder heeft recht op onderwijs; het onderwijs zal kosteloos zijn, althans wat het lager en basisonderwijs betreft. Het lager onderwijs zal verplicht zijn. Ambachtsonderwijs en beroepsopleiding zullen algemeen beschikbaar worden gesteld. Hoger onderwijs zal openstaan voor eenieder, die daartoe de begaafdheid bezit.
+2. Het onderwijs zal gericht zijn op de volle ontwikkeling van de menselijke persoonlijkheid en op de versterking van de eerbied voor de rechten van de mens en de fundamentele vrijheden. Het zal het begrip, de verdraagzaamheid en de vriendschap onder alle naties, rassen of godsdienstige groepen bevorderen en het zal de werkzaamheden van de Verenigde Naties voor de handhaving van de vrede steunen.
+3. Aan de ouders komt in de eerste plaats het recht toe om de soort van opvoeding en onderwijs te kiezen, welke aan hun kinderen zal worden gegeven.
+
+Artikel 27
+1. Eenieder heeft het recht om vrijelijk deel te nemen aan het culturele leven van de gemeenschap, om te genieten van kunst en om deel te hebben aan wetenschappelijke vooruitgang en de vruchten daarvan.
+2. Eenieder heeft recht op de bescherming van de geestelijke en materiële belangen, voortspruitende uit een wetenschappelijk, letterkundig of artistiek werk, dat hij heeft voortgebracht.
+
+Artikel 28
+Eenieder heeft recht op het bestaan van een zodanige maatschappelijke en internationale orde, dat de rechten en vrijheden, in deze Verklaring genoemd, daarin ten volle kunnen worden verwezenlijkt.
+
+Artikel 29
+1. Eenieder heeft plichten jegens de gemeenschap, zonder welke de vrije en volledige ontplooiing van zijn persoonlijkheid niet mogelijk is.
+2. In de uitoefening van zijn rechten en vrijheden zal eenieder slechts onderworpen zijn aan die beperkingen, welke bij de wet zijn vastgesteld en wel uitsluitend ter verzekering van de onmisbare erkenning en eerbiediging van de rechten en vrijheden van anderen en om te voldoen aan de gerechtvaardigde eisen van de moraliteit, de openbare orde en het algemeen welzijn in een democratische gemeenschap.
+3. Deze rechten en vrijheden mogen in geen geval worden uitgeoefend in strijd met de doeleinden en beginselen van de Verenigde Naties.
+
+Artikel 30
+Geen bepaling in deze Verklaring zal zodanig mogen worden uitgelegd, dat welke Staat, groep of persoon dan ook, daaraan enig recht kan ontlenen om iets te ondernemen of handelingen van welke aard ook te verrichten, die vernietiging van een van de rechten en vrijheden, in deze Verklaring genoemd, ten doel hebben.
+</pre></div></section>
+  </div>
+  
+        <script>
+          const leftBox  = document.getElementById('leftBox');
+          const rightBox = document.getElementById('rightBox');
+          const vSlider  = document.getElementById('vSlider');
+
+          function applyScrollFromSlider() {
+            const p = 1 - (parseFloat(vSlider.value) / 100);
+            [leftBox, rightBox].forEach(box => {
+              const max = box.scrollHeight - box.clientHeight;
+              box.scrollTop = max * p;
+            });
+          }
+
+          function syncFromPanels() {
+            const perc = [leftBox, rightBox].map(box => {
+              const max = Math.max(1, box.scrollHeight - box.clientHeight);
+              return (box.scrollTop / max) * 100;
+            });
+            const avg = (perc[0] + perc[1]) / 2;
+            vSlider.value = (100 - avg).toFixed(2);
+          }
+
+          vSlider.addEventListener('input', applyScrollFromSlider);
+          leftBox.addEventListener('scroll', syncFromPanels);
+          rightBox.addEventListener('scroll', syncFromPanels);
+
+          // Initialiseer de slider en scrollpositie bij het laden
+          vSlider.value = 100;
+          applyScrollFromSlider();
+          
+          // Verwijder placeholders als er tekst is
+          const leftTextEl = document.getElementById('leftText');
+          const rightTextEl = document.getElementById('rightText');
+          if (leftTextEl.textContent.trim() === '<span class="placeholder">⟵ Geen tekst geladen.</span>' || leftTextEl.textContent.trim() === '') {
+            leftTextEl.innerHTML = '<span class="placeholder">⟵ Geen tekst geladen.</span>';
+          } else {
+            leftTextEl.classList.remove('placeholder');
+          }
+          if (rightTextEl.textContent.trim() === '<span class="placeholder">Geen tekst geladen ⟶</span>' || rightTextEl.textContent.trim() === '') {
+            rightTextEl.innerHTML = '<span class="placeholder">Geen tekst geladen ⟶</span>';
+          } else {
+            rightTextEl.classList.remove('placeholder');
+          }
+
+        </script>
+</body>
+</html>

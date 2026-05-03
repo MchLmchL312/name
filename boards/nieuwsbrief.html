@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nieuwsbrief – Schrijf je in</title>
+  <meta name="description" content="Schrijf je in voor de nieuwsbrief en ontvang updates, tips en lesinformatie in je inbox." />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --muted: #9ca3af;
+      --text: #e5e7eb;
+      --accent: #22d3ee;
+      --accent-2: #60a5fa;
+      --error: #fca5a5;
+      --ok: #86efac;
+      --ring: rgba(96,165,250,.45);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      background: radial-gradient(60vw 60vh at 80% 10%, rgba(34,211,238,.15), transparent 60%),
+                  radial-gradient(50vw 50vh at 10% 90%, rgba(96,165,250,.12), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem; /* beetje ademruimte bovenaan */
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      padding: 2rem;
+      backdrop-filter: blur(6px);
+    }
+    h1 {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      line-height: 1.15;
+      margin: 0 0 .5rem;
+      letter-spacing: .3px;
+    }
+    .lead {
+      margin: 0 0 1.5rem;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.2vw, 1.075rem);
+    }
+    form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+    .full { grid-column: 1 / -1; }
+    label { display: block; font-size: .95rem; margin-bottom: .35rem; color: var(--text); }
+    input[type="email"], input[type="text"], textarea {
+      width: 100%;
+      padding: .85rem .95rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(17,24,39,.6);
+      color: var(--text);
+      outline: none;
+      transition: box-shadow .2s, border-color .2s, background-color .2s;
+    }
+    input::placeholder, textarea::placeholder { color: #6b7280; }
+    input:focus, textarea:focus {
+      border-color: rgba(96,165,250,.6);
+      box-shadow: 0 0 0 6px var(--ring);
+      background: rgba(17,24,39,.8);
+    }
+    .consent {
+      display: flex; align-items: start; gap: .6rem;
+      font-size: .9rem; color: var(--muted);
+    }
+    .consent input { margin-top: .2rem; }
+    button {
+      padding: .9rem 1.1rem;
+      border: 0;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #0b1020;
+      transition: transform .06s ease, box-shadow .2s ease, opacity .2s ease;
+      box-shadow: 0 10px 30px rgba(96,165,250,.35);
+      min-width: 9.5rem;
+    }
+    button:disabled { opacity: .6; cursor: not-allowed; box-shadow: none; }
+    button:active { transform: translateY(1px); }
+    .note {
+      color: var(--muted);
+      font-size: .85rem;
+      margin-top: .25rem;
+    }
+    .msg {
+      margin-top: 1rem;
+      border-radius: 12px;
+      padding: .9rem 1rem;
+      display: none;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .msg.ok { display: block; background: rgba(16,185,129,.08); color: var(--ok); }
+    .msg.err { display: block; background: rgba(239,68,68,.08); color: var(--error); }
+    .footer {
+      text-align: center;
+      margin-top: 1.25rem;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+    .hp-wrap {
+      position: absolute !important;
+      left: -9999px !important;
+      height: 0; width: 0; overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card" aria-labelledby="nl-title">
+      <h1 id="nl-title">Schrijf je in voor de nieuwsbrief</h1>
+      <p class="lead">Ontvang af en toe mail met cursusnieuws, lessen en tips. Geen spam – uitschrijven kan altijd met één klik.</p>
+
+      <!-- Form -->
+      <form id="nl-form" action="https://formspree.io/f/mwpngwol" method="POST" novalidate>
+        <!-- Honeypot -->
+        <div class="hp-wrap" aria-hidden="true">
+          <label for="website">Laat dit veld leeg</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="full">
+          <label for="email">E-mailadres</label>
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="email"
+                 placeholder="jouw@voorbeeld.nl" required aria-required="true">
+          <div class="note">We gebruiken je e-mail alleen voor deze nieuwsbrief.</div>
+        </div>
+
+        <div class="full">
+          <label for="name">Naam (optioneel)</label>
+          <input id="name" name="name" type="text" autocomplete="name" placeholder="Je naam">
+        </div>
+
+        <div class="full consent">
+          <input id="consent" name="consent" type="checkbox" required aria-required="true">
+          <label for="consent">Ik ga akkoord met het ontvangen van e-mails. Meer info in de <a href="/privacy" style="color:var(--accent); text-underline-offset:3px;">privacyverklaring</a>.</label>
+        </div>
+
+        <input type="hidden" name="form_name" value="Nieuwsbrief inschrijving">
+        <input type="hidden" name="source" value="Newsletter Landing Page">
+        <input type="hidden" name="_subject" value="Nieuwe nieuwsbriefinschrijving">
+
+        <div class="full" style="display:flex; gap:.75rem; align-items:center; justify-content:flex-start; flex-wrap:wrap;">
+          <button id="submitBtn" type="submit">Inschrijven</button>
+          <span class="note">Door op Inschrijven te klikken bevestig je je aanmelding.</span>
+        </div>
+
+        <div id="formMsg" class="msg" role="status" aria-live="polite"></div>
+      </form>
+
+      <p class="footer">Je gegevens worden veilig verzonden via Formspree.</p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const form = document.getElementById('nl-form');
+      const msg = document.getElementById('formMsg');
+      const btn = document.getElementById('submitBtn');
+      const consent = document.getElementById('consent');
+      const email = document.getElementById('email');
+      const honeypot = document.getElementById('website');
+
+      function showMessage(type, text) {
+        msg.className = 'msg ' + (type === 'ok' ? 'ok' : 'err');
+        msg.textContent = text;
+      }
+
+      function validEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value || "");
+      }
+
+      function toggleButton() {
+        btn.disabled = !consent.checked || !validEmail(email.value);
+      }
+      consent.addEventListener('change', toggleButton);
+      email.addEventListener('input', toggleButton);
+      toggleButton();
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        if (honeypot.value) {
+          showMessage('ok', 'Bedankt! Controleer je inbox voor bevestiging.');
+          form.reset();
+          toggleButton();
+          return;
+        }
+        if (!validEmail(email.value)) {
+          email.focus();
+          showMessage('err', 'Vul een geldig e-mailadres in.');
+          return;
+        }
+        if (!consent.checked) {
+          consent.focus();
+          showMessage('err', 'Vink het toestemmingsvakje aan om je in te schrijven.');
+          return;
+        }
+
+        btn.disabled = true;
+
+        try {
+          const formData = new FormData(form);
+          const res = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' }
+          });
+
+          if (res.ok) {
+            showMessage('ok', 'Bedankt! Ga naar je e-mail om je inschrijving te bevestigen.');
+            form.reset();
+          } else {
+            const data = await res.json().catch(() => ({}));
+            const errText = (data && data.errors && data.errors[0] && data.errors[0].message)
+              ? data.errors[0].message
+              : 'Er ging iets mis. Probeer het later opnieuw.';
+            showMessage('err', errText);
+          }
+        } catch (err) {
+          showMessage('err', 'Netwerkfout. Controleer je verbinding en probeer opnieuw.');
+        } finally {
+          toggleButton();
+        }
+      }, false);
+    })();
+  </script>
+</body>
+</html>

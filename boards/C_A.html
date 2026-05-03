@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cardiac Arrest</title>
+  <style>
+    :root { --bg:#000; --fg:#fff; --muted:#9aa0a6; --accent:#3b82f6; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--fg); min-height:100vh; display:grid; place-items:center; font-family:system-ui, sans-serif; }
+    main { width:min(520px, 92vw); background:#0b0b0b; border:1px solid #181818; border-radius:14px; padding:18px; box-shadow:0 10px 30px rgba(0,0,0,.5); }
+    h1 { margin:0 0 .25rem; font-size:1.25rem; }
+    p { margin:.25rem 0 .75rem; color:var(--muted); }
+    .actions { display:flex; gap:10px; }
+    button { flex:1; padding:.8rem 1rem; border:0; border-radius:12px; font-weight:600; cursor:pointer; }
+    #start { background:var(--accent); color:#fff; }
+    #stop  { background:#2a2c31; color:#e8eaed; }
+    #status { margin-top:.6rem; font-variant-numeric:tabular-nums; }
+    small { display:block; color:var(--muted); margin-top:.25rem; }
+
+    /* video’s netjes inline en responsief */
+    .video-grid { display:grid; gap:14px; margin-top:16px; }
+    .video-grid iframe { width:100%; aspect-ratio:16/9; border:0; border-radius:12px; }
+    figure { margin:1rem 0 0; }
+    figure img { width:100%; height:auto; display:block; border-radius:12px; }
+  </style>
+</head>
+<body>
+
+
+  <main>
+    <h1>Cardiac Arrest</h1><br><br>
+    <div class="actions">
+      <button id="start">Start</button>
+      <button id="stop" disabled>Stop</button>
+    </div>
+    <p id="status"></p>
+    <small></small>
+
+    <!-- afbeelding nu ook binnen het scherm -->
+    <figure>
+      <img src="cardi.jpg" alt="Rood-witte vormen in een raster" />
+    </figure>
+
+    <!-- video's inline in de pagina -->
+    <section class="video-grid" aria-label="Video’s">
+      <iframe
+        src="https://www.youtube.com/embed/8finMLXZZDY?rel=0&modestbranding=1"
+        title="YouTube video 1"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        playsinline></iframe>
+
+      <iframe
+        src="https://www.youtube.com/embed/v0lPas0y9Sg?rel=0&modestbranding=1"
+        title="YouTube video 2"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        playsinline></iframe>
+
+      <iframe
+        src="https://www.youtube.com/embed/xobqKDUNOAQ?rel=0&modestbranding=1"
+        title="YouTube video 3"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        playsinline></iframe>
+
+      <iframe
+        src="https://www.youtube.com/embed/U-uxY3oek-w?rel=0&modestbranding=1"
+        title="YouTube video 4"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        playsinline></iframe>
+
+      <iframe
+        src="https://www.youtube.com/embed/xjDCOqooTcg?rel=0&modestbranding=1"
+        title="YouTube video 5"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        playsinline></iframe>
+    </section>
+  </main>
+
+  <script>
+    // Vaste parameters
+    const FREQ_HZ   = 1000;   // vaste frequentie (sine)
+    const DURATION  = 600;    // seconden (10 minuten)
+    const VOLUME    = 0.20;   // eindvolume (pas desnoods aan in code)
+
+    let audioCtx, osc, gain, endTimer = null, countdown = null;
+
+    const $ = id => document.getElementById(id);
+    const startBtn = $("start");
+    const stopBtn  = $("stop");
+    const statusEl = $("status");
+
+    function getAudioCtx() {
+      if (!audioCtx || audioCtx.state === "closed") {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      return audioCtx;
+    }
+
+    function startTone() {
+      if (osc) return; // al bezig
+      const ctx = getAudioCtx();
+
+      osc  = ctx.createOscillator();
+      gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.value = FREQ_HZ;
+
+      const now = ctx.currentTime;
+      const attack  = 0.01; // korte fade-in tegen klik
+      const release = 0.05; // korte fade-out
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(VOLUME, now + attack);
+      gain.gain.setValueAtTime(VOLUME, now + DURATION - release);
+      gain.gain.linearRampToValueAtTime(0.0001, now + DURATION);
+
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + DURATION + 0.02);
+
+      // UI
+      startBtn.disabled = true;
+      stopBtn.disabled  = false;
+      startCountdown(DURATION * 1000);
+      endTimer = setTimeout(stopTone, (DURATION + 0.05) * 1000);
+    }
+
+    function stopTone() {
+      if (!osc) { resetUI(); return; }
+      const ctx = getAudioCtx();
+      const now = ctx.currentTime;
+      try {
+        gain.gain.cancelScheduledValues(now);
+        gain.gain.setTargetAtTime(0.0001, now, 0.02);
+        osc.stop(now + 0.05);
+      } catch {}
+      osc = null; gain = null;
+      if (endTimer) { clearTimeout(endTimer); endTimer = null; }
+      resetUI();
+    }
+
+    function startCountdown(msTotal) {
+      const t0 = performance.now();
+      clearInterval(countdown);
+      countdown = setInterval(() => {
+        const elapsed = performance.now() - t0;
+        const remain = Math.max(0, msTotal - elapsed);
+        const m = Math.floor(remain / 60000);
+        const s = Math.floor((remain % 60000) / 1000);
+        statusEl.textContent = `Speelt… ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} resterend.`;
+        if (remain <= 0) { clearInterval(countdown); statusEl.textContent = "Klaar."; }
+      }, 250);
+      statusEl.textContent = "Speelt… 10:00 resterend.";
+    }
+
+    function resetUI() {
+      startBtn.disabled = false;
+      stopBtn.disabled  = true;
+      if (countdown) { clearInterval(countdown); countdown = null; }
+      statusEl.textContent = "Gereed.";
+    }
+
+    $("start").addEventListener("click", startTone);
+    $("stop").addEventListener("click", stopTone);
+  </script>
+
+</body>
+</html>

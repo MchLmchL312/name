@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DUO RADIO</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            gap: 40px;
+        }
+
+        h1 {
+            font-size: 5vw;
+            letter-spacing: 12px;
+            font-weight: 100;
+            margin: 0;
+            opacity: 0.5;
+            transition: opacity 1s ease;
+        }
+
+        button {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            letter-spacing: 4px;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            border-color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        button.active {
+            border-color: white;
+            background: white;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 id="title">DUO RADIO</h1>
+    <button id="startBtn">START</button>
+
+    <!-- Console log voor mobiel debuggen -->
+    <div id="debug-console"
+        style="margin-top:20px; font-size: 10px; color: #aaa; text-align: left; max-width: 90%; font-family: monospace;">
+    </div>
+
+    <script>
+        const stations = [
+            'https://ewtn-ice.streamguys1.com/english-aac',
+            'https://stream.radiomaria.nl/mp3'
+        ];
+
+        const startBtn = document.getElementById('startBtn');
+        const debugConsole = document.getElementById('debug-console');
+
+        let audioContext = null;
+        let audioElements = [];
+        let sourceNodes = [];
+        let gainNodes = [];
+        let isPlaying = false;
+
+        function log(msg) {
+            console.log(msg);
+            debugConsole.innerHTML += `> ${msg}<br>`;
+            // Auto-scroll naar beneden
+            debugConsole.scrollTop = debugConsole.scrollHeight;
+        }
+
+        // Functie om audio te starten/stoppen
+        async function toggleRadio() {
+            if (!isPlaying) {
+                // STARTEN
+                log("Poging tot starten...");
+                try {
+                    // Maak AudioContext aan (moet binnen user gesture gebeuren)
+                    if (!audioContext) {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        log("AudioContext aangemaakt");
+                    }
+
+                    // Resume context als het suspended is (iOS vereist dit)
+                    if (audioContext.state === 'suspended') {
+                        await audioContext.resume();
+                        log("AudioContext resumed");
+                    }
+
+                    // Maak audio elements en verbind ze met Web Audio API
+                    stations.forEach((url, index) => {
+                        // Maak audio element
+                        const audio = new Audio();
+                        audio.crossOrigin = "anonymous"; // Nodig voor Web Audio API
+                        audio.src = url;
+                        audio.preload = "auto";
+
+                        // Error handling
+                        audio.onerror = (e) => {
+                            let errorMsg = `❌ Stream ${index + 1}: `;
+                            if (audio.error) {
+                                switch (audio.error.code) {
+                                    case 1: errorMsg += "ABORTED"; break;
+                                    case 2: errorMsg += "NETWORK ERROR"; break;
+                                    case 3: errorMsg += "DECODE ERROR"; break;
+                                    case 4: errorMsg += "SRC NOT SUPPORTED"; break;
+                                    default: errorMsg += "UNKNOWN"; break;
+                                }
+                            }
+                            log(errorMsg);
+                        };
+
+                        audio.onloadedmetadata = () => {
+                            log(`✓ Stream ${index + 1} metadata geladen`);
+                        };
+
+                        audio.oncanplay = () => {
+                            log(`✓ Stream ${index + 1} klaar`);
+                        };
+
+                        // Maak Web Audio nodes
+                        const source = audioContext.createMediaElementSource(audio);
+                        const gainNode = audioContext.createGain();
+
+                        // Verbind: source -> gain -> destination
+                        source.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+
+                        // Volume op 50% per stream zodat ze samen niet clippen
+                        gainNode.gain.value = 0.5;
+
+                        audioElements.push(audio);
+                        sourceNodes.push(source);
+                        gainNodes.push(gainNode);
+                    });
+
+                    log("Web Audio nodes aangemaakt");
+                    log("Starten van streams...");
+
+                    // Start alle audio elements
+                    const playPromises = audioElements.map((audio, i) => {
+                        return audio.play()
+                            .then(() => log(`▶ Stream ${i + 1} speelt`))
+                            .catch(err => log(`❌ Stream ${i + 1} play error: ${err.message}`));
+                    });
+
+                    await Promise.all(playPromises);
+
+                    log("✓ Beide streams actief!");
+
+                    // UI Update
+                    isPlaying = true;
+                    startBtn.textContent = "STOP";
+                    startBtn.classList.add('active');
+                    document.getElementById('title').style.opacity = "1";
+
+                } catch (err) {
+                    log("❌ CRITICAL ERROR: " + err.message);
+                    console.error(err);
+                }
+            } else {
+                // STOPPEN
+                log("Stoppen...");
+
+                // Stop alle audio
+                audioElements.forEach((audio, i) => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    log(`⏸ Stream ${i + 1} gestopt`);
+                });
+
+                // Disconnect nodes
+                sourceNodes.forEach(source => {
+                    try {
+                        source.disconnect();
+                    } catch (e) {
+                        // Al disconnected
+                    }
+                });
+
+                gainNodes.forEach(gain => {
+                    try {
+                        gain.disconnect();
+                    } catch (e) {
+                        // Al disconnected
+                    }
+                });
+
+                // Clear arrays
+                audioElements = [];
+                sourceNodes = [];
+                gainNodes = [];
+
+                // UI Update
+                isPlaying = false;
+                startBtn.textContent = "START";
+                startBtn.classList.remove('active');
+                document.getElementById('title').style.opacity = "0.5";
+
+                log("✓ Gestopt");
+            }
+        }
+
+        startBtn.addEventListener('click', toggleRadio);
+    </script>
+</body>
+
+</html>

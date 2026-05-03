@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redirect Links</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    :root {
+      --bg:#f4f4f4;
+      --card:#ffffff;
+      --primary-start:#0d6efd;
+      --primary-end:#0b5ed7;
+      --vrije-start:#db6e64;
+      --vrije-end:#c95e55;
+    }
+    * {box-sizing:border-box;}
+    body {
+      font-family: Arial, sans-serif;
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center; /* horizontaal centreren van container */
+      justify-content:center; /* verticaal centreren */
+      background:var(--bg);
+      text-align:center; /* centreer standaard tekst */
+    }
+    .container {
+      width:100%;
+      max-width:420px;
+      background:var(--card);
+      padding:30px 38px 40px;
+      border-radius:18px;
+      box-shadow:0 6px 28px -8px rgba(0,0,0,.15);
+      display:flex;
+      flex-direction:column;
+      align-items:center; /* centreer alle inhoud in container */
+      gap:10px;
+    }
+    h1 {margin:0; font-size:1.85rem; letter-spacing:.5px;}
+    p {margin:4px 0 14px; color:#555; font-size:.95rem;}
+    .links {width:100%; display:flex; flex-direction:column; align-items:center; gap:12px;}
+    .btn {
+      --grad:linear-gradient(135deg,var(--primary-start),var(--primary-end));
+      width:100%;
+      display:inline-flex;
+      justify-content:center;
+      align-items:center;
+      gap:.65em;
+      padding:14px 18px;
+      border-radius:10px;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.4px;
+      background:var(--grad);
+      color:#fff;
+      position:relative;
+      transition:transform .18s, box-shadow .18s, background .4s;
+    }
+    .btn:focus-visible {outline:3px solid #003f88; outline-offset:2px;}
+    .btn:hover {transform:translateY(-3px); box-shadow:0 10px 22px -6px rgba(13,110,253,.4);} 
+    .btn:active {transform:translateY(0); box-shadow:0 4px 14px -4px rgba(13,110,253,.35);} 
+    .btn i {font-size:1.15em; line-height:0;}
+    
+    /* Vrije Kunst – knoppen die passen bij de uitnodiging */
+    .btn.vrije-kunst{
+      --grad:linear-gradient(135deg,var(--vrije-start),var(--vrije-end));
+      color:#fff;
+    }
+    .btn.vrije-kunst:hover{box-shadow:0 10px 22px -6px rgba(219,110,100,.45);}
+    .btn.vrije-kunst:active{box-shadow:0 4px 14px -4px rgba(219,110,100,.4);}
+footer {margin-top:18px; font-size:.7rem; color:#999;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Machiel van Soest</h1>
+    <p>visual artist and docent</p>
+
+    <div class="links">
+      <a class="btn vrije-kunst" href="https://tinyurl.com/vrijekunstdelft" target="_blank" rel="noopener">
+        <i class="fas fa-link"></i>Vrije Kunst Delft
+      </a>
+      <a class="btn vrije-kunst" href="https://drive.google.com/file/d/1OFdbEN2zIvA2EBw60BgI4Sm9U9hfBWH6/view" target="_blank" rel="noopener">
+        <i class="fas fa-file-pdf"></i>Zaaltekst Vrije Kunst (PDF)
+      </a>
+
+      <a class="btn" href="https://home.deds.nl/~unbrad/website/painting_course_website.html" target="_blank" rel="noopener">
+        <i class="fas fa-laptop"></i>Online Lessen
+      </a>
+      <a class="btn" href="https://vak-delft.nl/docent/machiel-van-soest/" target="_blank" rel="noopener">
+        <i class="fas fa-chalkboard-teacher"></i>Cursussen Delft
+      </a>
+      <a class="btn" href="https://www.iacdenhaag.nl/" target="_blank" rel="noopener">
+        <i class="fas fa-chalkboard-teacher"></i>IAC Den Haag
+      </a>
+      <a class="btn" href="mailto:machielvansoest@outlook.com">
+        <i class="fas fa-envelope"></i>Mail for Workshops
+      </a>
+<a class="btn" href="https://home.deds.nl/~unbrad/website/nieuwsbrief.html"><i class="fas fa-envelope"></i>Nieuwsbrief</a></div>
+
+    <footer>&copy; <span id="y"></span> Machiel van Soest</footer>
+  </div>
+  <script>document.getElementById('y').textContent=new Date().getFullYear();</script>
+</body>
+</html>

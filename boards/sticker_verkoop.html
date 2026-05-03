@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vlag Stickers - €1 per stuk</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        .image-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-section img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .order-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .price-box {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .price {
+            font-size: 3em;
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .price-details {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .total {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 1.3em;
+        }
+
+        .total strong {
+            color: #2c3e50;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 40px;
+            background: #f8f9fa;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .feature h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .feature p {
+            color: #7f8c8d;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Premium Vlag Stickers</h1>
+            <p>Hoogwaardige kwaliteit - Duurzaam materiaal</p>
+            <span class="badge">✓ GRATIS VERZENDING</span>
+        </div>
+
+        <div class="content">
+            <div class="image-section">
+               <img src="vlPNL.JPG" alt="Vlag Stickers">
+            </div>
+
+            <div class="order-section">
+                <div class="price-box">
+                    <div class="price">€1,00</div>
+                    <div class="price-details">per sticker | Minimaal 10 stuks</div>
+                </div>
+
+                <form id="orderForm">
+                    <div class="form-group">
+                        <label for="quantity">Aantal stickers:</label>
+                        <input type="number" id="quantity" name="quantity" min="10" value="10" required>
+                        <div class="error" id="error">Minimale bestelling is 10 stickers</div>
+                    </div>
+
+                    <div class="total">
+                        Totaal: <strong id="totalPrice">€10,00</strong>
+                        <br><small>Inclusief gratis verzending</small>
+                    </div>
+
+                    <button type="submit" class="btn">🛒 Bestel Nu</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🚚</div>
+                <h3>Gratis Verzending</h3>
+                <p>Geen extra kosten bij elke bestelling</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⭐</div>
+                <h3>Topkwaliteit</h3>
+                <p>Duurzaam en weerbestendig materiaal</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">💯</div>
+                <h3>Scherpe Prijs</h3>
+                <p>Slechts €1 per sticker</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quantityInput = document.getElementById('quantity');
+        const totalPrice = document.getElementById('totalPrice');
+        const errorMsg = document.getElementById('error');
+        const orderForm = document.getElementById('orderForm');
+
+        function updateTotal() {
+            const quantity = parseInt(quantityInput.value) || 0;
+            
+            if (quantity < 10) {
+                errorMsg.style.display = 'block';
+                quantityInput.style.borderColor = '#e74c3c';
+            } else {
+                errorMsg.style.display = 'none';
+                quantityInput.style.borderColor = '#ddd';
+            }
+
+            const total = quantity * 1;
+            totalPrice.textContent = `€${total.toFixed(2)}`;
+        }
+
+        quantityInput.addEventListener('input', updateTotal);
+
+        orderForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const quantity = parseInt(quantityInput.value);
+            
+            if (quantity < 10) {
+                errorMsg.style.display = 'block';
+                quantityInput.style.borderColor = '#e74c3c';
+                return;
+            }
+
+            const total = quantity * 1;
+            const subject = encodeURIComponent('Bestelling Vlag Stickers');
+            const body = encodeURIComponent(
+                `Beste,\n\n` +
+                `Ik wil graag de volgende bestelling plaatsen:\n\n` +
+                `Aantal stickers: ${quantity}\n` +
+                `Prijs per stuk: €1,00\n` +
+                `Totaalbedrag: €${total.toFixed(2)}\n` +
+                `Verzendkosten: Gratis\n\n` +
+                `Met vriendelijke groet`
+            );
+            
+            window.location.href = `mailto:machielvansoest@gmail.com?subject=${subject}&body=${body}`;
+        });
+
+        updateTotal();
+    </script>
+</body>
+</html>

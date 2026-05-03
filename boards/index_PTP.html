@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Boards Gallery</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #000;
+    }
+
+    .header {
+      width: 100%;
+      background-color: #000;
+      padding: 10px 20px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      z-index: 1001;
+    }
+
+    .header .name {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px; /* ruimte tussen links en iconen */
+    }
+
+    .header-right .map-link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s;
+    }
+
+    .header-right .map-link:hover {
+      color: yellow;
+    }
+
+    .header .icon-link svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      stroke: #fff;
+      transition: stroke 0.3s;
+    }
+
+    .header .icon-link:hover svg {
+      stroke: yellow;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      cursor: pointer;
+      object-fit: cover;
+      border: 2px solid #000;
+      transition: transform 0.3s;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.02);
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.95);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 1000;
+    }
+
+    .overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .overlay img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="name">Machiel van Soest</div>
+    <div class="header-right">
+<a href="https://home.deds.nl/~mcs/" class="map-link">PTP</a>
+      <!-- Plus icoon -->
+      <a href="index-links.html" class="icon-link" target="_blank" rel="noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 24 24" fill="none" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </a>
+
+      <!-- Email icoon -->
+      <a href="mailto:machielvansoest@outlook.com" class="icon-link">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 24 24" fill="none" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0
+          1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2
+          2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="gallery" id="gallery"></div>
+
+  <div class="overlay" id="overlay">
+    <img src="" alt="Fullscreen Board" id="fullscreenImg">
+  </div>
+
+  <script>
+    // Sneller dynamisch laden: we laden in kleine batches parallel en stoppen bij het eerste ontbrekende nummer.
+    // Verwacht: /boards/board1.jpg, board2.jpg, board3.jpg, ... (opvolgend).
+    const BOARDS_DIR = 'boards';
+    const PREFIX = 'board';
+    const EXT = '.jpg';
+
+    // Veiligheidslimiet
+    const MAX_SCAN = 500;
+
+    // Hoeveel tegelijk laden (parallel) voor snelheid
+    const BATCH_SIZE = 8;
+
+    // Optioneel: voeg ?nocache toe aan de URL als je bestaande bestanden hebt vervangen
+    // (bijv. http://localhost/index.html?nocache)
+    const NO_CACHE = new URLSearchParams(location.search).has('nocache');
+    const BUST = NO_CACHE ? `?v=${Date.now()}` : '';
+
+    function randInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function loadImage(n) {
+      const url = `${BOARDS_DIR}/${PREFIX}${n}${EXT}${BUST}`;
+      return new Promise(resolve => {
+        const img = new Image();
+        img.alt = `${PREFIX}${n}`;
+        img.onload = () => resolve({ n, ok: true, img });
+        img.onerror = () => resolve({ n, ok: false, img: null });
+        img.src = url;
+      });
+    }
+
+    function insertRandomAfterFirst(galleryEl, imgEl) {
+      // board1 blijft bovenaan; de rest krijgt een willekeurige plek eronder
+      const count = galleryEl.children.length;
+      if (count <= 1) {
+        galleryEl.appendChild(imgEl);
+        return;
+      }
+      const pos = randInt(1, count); // 1..count
+      galleryEl.insertBefore(imgEl, galleryEl.children[pos] || null);
+    }
+
+    (async function initGallery() {
+      const gallery = document.getElementById('gallery');
+      const overlay = document.getElementById('overlay');
+      const fullscreenImg = document.getElementById('fullscreenImg');
+
+      // klein laadbericht
+      const loadingMsg = document.createElement('div');
+      loadingMsg.style.color = '#fff';
+      loadingMsg.style.padding = '20px';
+      loadingMsg.textContent = 'Boards laden…';
+      gallery.appendChild(loadingMsg);
+
+      let foundAny = false;
+      let n = 1;
+      let stop = false;
+
+      while (n <= MAX_SCAN && !stop) {
+        const batchNums = Array.from({ length: BATCH_SIZE }, (_, i) => n + i);
+        const results = await Promise.all(batchNums.map(loadImage));
+        results.sort((a, b) => a.n - b.n);
+
+        for (const r of results) {
+          if (!r.ok) {
+            stop = true;
+            break;
+          }
+
+          // eerste image (board1) bovenaan
+          if (!foundAny) {
+            // verwijder laadbericht zodra de eerste binnen is
+            gallery.innerHTML = '';
+            gallery.appendChild(r.img);
+            foundAny = true;
+          } else {
+            insertRandomAfterFirst(gallery, r.img);
+          }
+        }
+
+        n += BATCH_SIZE;
+      }
+
+      if (!foundAny) {
+        gallery.innerHTML = '';
+        const msg = document.createElement('div');
+        msg.style.color = '#fff';
+        msg.style.padding = '20px';
+        msg.textContent = 'Geen boards gevonden in /boards (verwacht: board1.jpg, board2.jpg, …).';
+        gallery.appendChild(msg);
+        return;
+      }
+
+      // Overlay functionaliteit
+      gallery.addEventListener('click', e => {
+        if (e.target && e.target.tagName === 'IMG') {
+          fullscreenImg.src = e.target.src;
+          overlay.classList.add('show');
+        }
+      });
+
+      overlay.addEventListener('click', () => {
+        overlay.classList.remove('show');
+        fullscreenImg.src = '';
+      });
+    })();
+  </script>
+
+</body>
+</html>

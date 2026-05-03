@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Woord-flits — strak</title>
+  <style>
+    :root { --word-duration: 220ms; }
+
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    .stage {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 5vmin;
+      box-sizing: border-box;
+      cursor: none;
+    }
+    #word {
+      /* Strak: geen animaties of transforms */
+      transition: none;
+      opacity: 1;
+      transform: none;
+
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: .01em;
+      font-size: clamp(28px, 10vw, 120px);
+      /* voorkom kleine verschuivingen door ligaturen/hinting */
+      font-variant-ligatures: none;
+      text-rendering: geometricPrecision;
+
+      /* Houd ruimte stabiel zodat niets “stuitert” */
+      display: inline-block;
+      min-height: 1em; /* reserveer hoogte van één regel */
+      text-wrap: balance;
+    }
+    /* Geen afterglow */
+    #word::after { content: none; }
+
+    #hint {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #aaa;
+      font-size: 13px;
+      letter-spacing: .02em;
+      opacity: .7;
+      user-select: none;
+    }
+    #hint.hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage" aria-live="polite" aria-atomic="true">
+    <div id="word" role="text" aria-label="Flitsend woord"></div>
+  </div>
+  <div id="hint">Snelheid: <code>?speed=220</code> in de URL • Spatie = pauze/hervat • f = fullscreen</div>
+
+  <!-- Brontekst (ongewijzigd overnemen) -->
+  <script id="source" type="text/plain">
+smeltend vet vloeit uiteen stolt op grond verterend vuur in lucht geschreven valt as gedachte vorm eenmaal uitgesproken niet meer tegenwoordig is langs ongrond waarin brein drijft eindeloos reflecterend terug naar beeldloos spiegelpunt haard waar witte hitte ontvlamt voortstuwende brand zich weg baant door gangenstelsel van vertakkende aderen tot in kleinst denkbare tot in schroeiend hart zenuweinden breken ruimte bezeten pijn beweegt ontwrichte ledematen tasten rond reiken rekkende ruimte bekneld meebewogen ingekapseld gebeuren geleegd in moment hecht zich aan plaats opperlaag tweeslachtig vlak gebonden in verre leegte doordringend duister waar onderscheidend zicht in hoorbaar rillende regelmaat oogloos achterover slaat getrokken tong (door gat in keel) vanuit hoorbare verte suizende overdracht stemt toon ineen in het vlees gekeerde ster kolkend rad rond bodemloos moment zijn gedachten stofloos waar ieder spreekt elkaars gelijke naam gespreide vingers onthechte pezen gespleten handen krommen vanuit pols trekken over wond vel strak nagels krassen rood omrande mond rond tong aanliggende spieren schuren tussenweefsel rasters van pijnpunten vernauwen reikwijdte zoon denkt vader buiten eigen vlees ingekeerde autopsie op negatieve ruimte vingers bewegen richting gelijk arm vanuit gewricht naar ongekende hoogte reikt door het vlak gezonken trekt spiegel strak gehecht trilt lichtkleur het vlies nevel van ontbinding herneemt vergetelheid onderhuiden rondom benenstelsel bergen organen ontkleedt en beleeft in het vlees worden ruggenwervels bloot gelegd beenderen gespreid gelegd in onmogelijke positie slag in ruis verdicht moment trilt het vlies schokt het vlees breekt de huid ontspringt vonk bloedt splijtende lijn vastgesnoerde romp omzwachteld gaas verwijderde hand beschilderd aangezicht zwarte schedel getrokken tanden onttrokken water open neusholte open vliezen ronde tong ingegroeid weefsel verteert geankerd het lichaam geschreeuwde lucht trilt oneindig gedeeld over ijle vlaktes schaduwgestalte werpt schim over berg doorlopen pad gewoelde grond afrasteringen kruisen schemerwolken geulen doorsnijden innige aarde wervelwinden golfslagen sidderen lucht rust verwoesting schept wijde massa gebogen zwaartekracht brengt onbalans krachten buiten weefsel deelt cel terug naar herbegin bloedende organen doorschijnen de huid doorstroomt angst als gekleurd as alle fasen deze toestanden van het vlees van vorming tot in leven ontbonden zijn plaatsgevonden voedsel doorgroeit weefsel herleeft één wordend snijdt beide borsten los met lange halen hang naastzij diep kantel trek hoofd achterwaarts neus oren wijde kaken tanden rondom schreeuw hol ogen uit trek bloedlijn over ruggengraat tot onderrand schedel beide handpalmen aan weerszijden druk met vol gewicht verticale lijn uiteen spreidt open stoot draai armen rugwaarts uit kom leg voeten hoofd in schaduw gesloten hand buiten licht open hand ontveld breek mijn schouder buig metaal om romp naai ijzerdraad rond ingewanden bevestig aan zelf trek draden strak lijn romp met muur trek wereld oogkas in bevlees de objecten behang de ruimtes met vel vul de kamers met bloed verwarm de woning vervang lucht door uitademing trek zenuwen door aderen doorsteek spier met takken beschilder bot éénkleurig versmelt kleding met huid val achterover schaduw glijdt van muur tril het vlies tot stille toon de vloer een korst tussenmuren gevuld met vet gescheiden kou lak omlijste ramen betonnen ritme skelet waarachter als in water drijvende silhouetten handelingen verrichtend schijnsels achter gesloten glas door beslagen vlak heen voorwerpen in plastic verpakt verschroeid weefsel door ziedende zon gebroken schitterend op golven stuwende massa zware horizontale zee drijvend daar het matras waarop lijf zich spectrum doorbloedend in dekens omwikkeld zacht op kussens toegedekt vastgehouden beschenen door zilver goud fonkelend gesternte zijnde weerkaatsingen van enkelvoud gelijke stem klinkt in ieder overal het ene durende weerklinkt zich als alle klanken bestaande uit zenuwprikkels omgeven behoudt ruis ondenkbaar raster licht breekt onderlagen in kleurdieptes ontbonden massa vindt uitgestrekt over veld gelijke trilling brandpunt ooglens trekt tijdspoor in oorzaakloze omgeven door lichtloosheid weerschijnt zon in helderheid patroon gevormd in snijpunten lichtgolven raster verschijnselen vertakkende woordbeelden vanuit geluidloze holte verinnerlijken gebeuren vormen omhulsel aardkorst oceaan gezicht gezicht gedeeld moment gesneden zenuw slag botbreuk gezicht neer achter staande lichtend hart spankracht gordijn van vuur herstel opdeling ontlaadt geheel schedel schaduwholte indirect wereldzicht zicht op zon verloren ingekapselde hersenschorsen vervellen millennia heen tot aan toekomst geketende kern in ieders cel (inter urinas et faeces nascimur) lippen verbeten rood gestift zwart spiegelende ogen koud bot onder dunne huid gelaagd hersenschors uitgepunt bleek warm weefsel lichaam van lichaam tussen urine en bloed gescheiden in licht gesneden van melk en zuurstof onthouden in tweeën gesplitst (aanwezigheid van het afwezige) kramp ingehouden adem tussenruimte het ongezegde het afwezige beweegt in volheid van het moment vallende buiten helderheid de donkerte in kern schemering slagschaduw van het aanwezige de onscherpte in wat is het continuüm van leegte is grond aanwezigheid het uitgesproken denkbeeld bepaalt het uitgeslotene schijnvormen aan opzwellend firmament verdiepingen gestapelde gesteente verzonken in aardlagen bewogen versteende legers van lichamen in kiezels verspreid vuist onder water breekt arm tot kruis armen diagonaal gespreid trekken gewicht mens op los van aarde onder luchtstromen die grensvlakken bewegen van geladen kleur zoekt onmens gebonden aan elkaars enkels zwaarte in staatslichaam doodslag over verloren tijd vanuit inwendige doorboord gebroken weerstand ongeborene na doodse herrezen geurend lichaam afgedaan reflex herstelt onbalans terugslag ontlading ontketende rust samentrekking spier trekt pees van bot angstgreep verliest evenwicht langs rand lavameer zwart as verkoold lichaam in glas gegoten vanuit in deze volheid negatieve ruimte wordt woord ontnomen tot begin gemaakt van wereld gevangen licht beweegt contour in kamer achterstaande muur kromt rug spant spieren zenuwuiteinden tasten ruimte af draait mee kamer buigt in lichaam afstand is leegte vormreductie grijpt in op organische brand knisperende overdracht levensstroom kniel hoog rijzend samengestelde denkvorm afdruk door eigen ruimte heen van hoop op herstel onvolledigheid zonnewiel in diamant gekooid flitst schitteringspatroon binnen hersenvlies dreunend vibrerend uit denktijd gerukt weerkaatst in kind zelf niet ziend oog hangt bevend aan zenuw ongeladen impulsen trekken voorbij trillende hand vervloeit warmte in krachteloze grip knoop trekt beleving strak tot gesloten cirkelgang tijdslijnen gevouwen in vergelijking legt gebeurtenis open het moment breekt als doorgang naar verleden wij bewegen achterwaarts ons denken sluit de gang wij zijn kristal dat zich van alle kanten belicht ketting valt trekt strak om hals beweeg neerwaarts buig diep mee! lichaamsgeur verwaait in richting beweegt zand golft water trilt stem tot één kleur zegt ja ketting trekt zo kort dat zicht ontvalt ruimte beweegt in gelijk vlak zonder diepte ontzenuwd object weerkaatst in vormende wolk vlag doorbloedt pigment drumslag slaat neer fakkels lichten huis na huis naakt wit opgesteld in rijen ruggenwervels krullen op ribben knappen dood vrijheid sterf en wordt! nevel van verlossing omhult steenkoude gehaald van laagte ontkleed ontveld overgebracht naar ruimte van licht waar behangen met loshangend vel brandend in durend bestaan leven wordt gerekt haar schaduwruimte ontnomen onderbroken in val longen gevuld met gestokte inademing / zwevende al ademend water / met aarde gevulde maag aangezicht neerwaarts tot stilstand gekomen oogloze leegte brandt door in de dingen as stroomt in zee tijd trilt beeft aarde wat komt schuift over onwaarheid dat het vlees ontbeent ruistoon echoot rimpelloos gas trekt longblaas vacuüm spiegellijn deelt 2 naar 0 in moment van val gedachteloos inademing afgekapte schreeuw staande uit angst te vallen afstanden verkleinen in lichaam tot oneindigheid omvat in vlees onthoofd het hart ontrukt gecastreerd grijzend kleur ontneemt omgevingswarmte foetus groeit los bindt los van wereld kleurend door vuur warmte dringt plaatselijk binnen vervloeit bloed beadert het stof afstanden versnellen tot punt keert naar puntloos centrum uitwaartse kolk koude in gebeurtenis verwezenlijkt als gedachte verplaatsend object: haar lichaam schuift in delen onder aarde valt brekende bewegingen schuurt huidvlaktes wit mengt met kalk komt tot stilstand achter loden muren dode kamer trilloze lijn echobron verdoofd ongekende ruimte kromt rondom staande in vormloosheid gegoten symmetrische groeivorm oorzaakloos begin vrij krachten te ervaren als meegaande tegendruk ruis van ontbeelding ontneemt naam verlost vorm schaduw vergetelheid trekt over herkenning woordloos impuls doorbloed woordbeeld licht op in kleur gelaagd tot huid dat in onkleur verblindt splitsing ontvouwt kleurverdeeldheid regelmatige stilstand zet beweging tot uitstorting kleur nacht vanuit heelal gevuurd keert stil in zinloos gewelf daghitte trilt toon in elk een klank een stem geheugen bindt object ik denk mijn naam stofloos de wereld zoals die gezien de ruimte die ontnomen wordt wolken hervoelen landschap tot één ritme gelijk boom vertakt aders waait volume tussenruimtes stuwen massa scheidslijn trekt een vacuüm horizon klapt ineen nulpunt tot perspectief neerslag waait door hart doorlicht het inwendig glas gegoten om bot en orgaan voorovervallend staande hangen kleding en spieren in flarden golem zinkt in klei het nabeeld vriest ijskap deze wonden toegebracht uit gewoonte tot uitputting geslagen met koord om nek voortgesleept door stratenplan afgelegd in bloedvuur in wijk in aanbouw schijnbeelden bewerkte romp ontkleed in conjunctie met woord en tijd beweegt een object haar talloze reflecties in spiegel en oog geschreven lichaam in rechthoek versteend in verhaal geleefde duur in zich vergaan zintuiglijke massa donker gloeiend in uitgeholde aarde richtloze groei door buitenzinnelijke wetmatigheden bedwongen vouwt uiteen splitst richt op in oog in oogholte waar focus ontsprongen vanuit snijpunt lichtstraal omklapt weerkaatst op raamloos venster schijnsel focus geleidelijk rondom vervormt vervaagt oplost buiten zinnen valt achter hoofdeloze horizon brandt eruit gezwel uit eigen drang gezien langs laag doorschijnend huid waarin luchtlagen wolken verkleuring elektriciteit als vuurregen neerslaat uit gesloten oog beweegt geest voort over brug boven grondeloos water grijze nevel verteert echo uitgestrekt duister rondom oogkassen belichten brein zwijgend ongedacht zwarte tong gebeten tanden knikkend hoofd gehurkt wordt schedel gelicht uit het ongeborene rondom in flits belicht stadia van vorming en ontbinding inéén in kennend vlies spectrum kleurverval afwezigheid licht kracht in onbalans schicht herstel invallend zicht geborgen in het vormloze ongeboren totdat inwendige uitwendig wordt vormend vlies in oogkas omsluit object tot kern gemaakt lichtsubstantie omgeven onscherpte achter focuspunt terugval in vormloze eigen zicht snijdt in beeld doorschijnend vlak der dingen smelt spectrum botsing dreunt galmt verschijningen geraamte stapt uit vlees object opengeschroefd tape en etiket folie verwijderd gedeeld kloppend hart beweegt moment doorsnijding pols wind golft hangende zwaarte val in diepte pil dooft oogholte vult zich als al dat is omzwachteld in membraan staart zichtloosheid buiten tijden vierkant leeg inwendig brandt punt ineen cirkel volstaat het landschap verticaal doorsneden lichtend gas vervalt in schaduwbeelden cardiac arrest gen nation self state solar system unborn not me death flash us or them drumbeat of death burned flesh plastic GAS GEN in schijnsel huidlichaam ontbindt ruis ruimte geboren belichaamd object vlees licht uiteengevallen opgedeeld kleur in vlies lichtlichaam huid pijnlichaam ontbinding ruis spiegeling lichtvlies zintuig vereenzelviging ontbinding straling uitgeworpen spectrum tot stof ontbonden nabeeld ruis: deeltjes / materie / tijd / ruimte: spiegeling: waarneming / ervaring: naam vorm geen centrum achtergrond draagt beeld verwonding opening zonlicht in stofloos ongrond vormloos ongrond naamloos rood wit zwart blut skin soil form flash fade noise tone flash zon ontvouwt zich in zich samenvallend stof durende lichtflits weerspiegelde reflectie opgelost nabeeld on- bot vlees bloed vlies vorm ontbinding ruimte = 0 ongeboren onzijn A = B = 1 = 0 (noise) no signal no pattern no form in love out of fear out of pain sense of pressure sense of pain out of pain light being matter sealed in skin embodied shadow shines skin reflection on skin skin shade embodied sealed image fade noise object soil paint fragment whole godhead circle square cross senses word konflikt (entropy) here now now here close open open close out in in out mirror clothing food DNA soil flag symbol language noise flash afterimage fade in as is trauma mind out blind volheid te zien door spiegel heen belichaming object als voor werkelijk duisternis gloeit licht is duister als geen object tot het voedsel wordt licht kleurschittering op sensitieve huid licht radiatie materie dat licht is beeld reflectie schaduw op doorschijnend vlies licht dat materie is lichtdruppels in vlees in geest in lijk in wereld dat al is werpt spectrum echo maakt zichtbaar brandt in weefsel opgaand in lichtschittering en gas is het lichaam vloeibaar en huid opgedroogd vlees de beweging van gewaarwording in ongedeelde totaliteit het licht dat uit zichzelf ontstaat de reflectie weer in zich oplost een zichzelf vormende werkelijkheid die gekend wordt tot beeld ontbindt en ongeboren blijft algeheel al is staat niet los van vlies vlakpunt tot ruimte is nul reflectie beeldvlak eenzelfde licht as aarde melk water bloed inkt zout alcohol brood chloor benzine steen gas suiker hout belichaamd zich kennend object verblind uit het schijnsel in spiegeling nabeeld verdubbeling licht samenvallend beeld vlies membraan kennend vlak geborenen punt het al invalt het al tot punt spreidt ruimte waarin afstand nul is wereld oplicht corpus naakt zwak open vel getrokken over stelsel van been sensitief vlak vatbaar waar schroeiplekken van weerschijn geheeld trauma littekens achterlaat langs onderlagen heen doorgang legt naar gewezen beeld gekapseld in het vlees meedraaiend gewricht binnen ongekende ruimte doorsneden opengelegde lagen gelijnd in nieuwe orde blijft het gebeuren behouden in het vlees (substantie of de toestand van geheeld weefsel) transparante wolken van kleur verwaaien in lucht als arm neerhaalt golft wat komt de alle hoedanigheden gestolde groei stadia van het bloed lichten lichaam op bloedt het beeld smeltende massa uiteen gedreven trilt kleurende hitte verworden tot vluchtig gas in koude tot stilstand gebracht zo opgeheven onhoorbare toon in het denken weerkaatst lost een eindeloze echo laag over laag in staat van blindheid doorleefd in geest buiten zinnen gelegd in de nacht waar pijnloze ingewanden naamloos geborgen trauma’s behouden zijn in het hersenvlies waar op het vlak gelegen beelding uiteen valt in stralend schijnsel het direct werkelijke dichtstbij zijnde meest kwetsbare overgaat in spiegelende beving kreten en alle aangenomen beelden vullen holle ruimte lichtend gas brandt het spectrum slaat over op de levensorganen ontvlammen het skelet spieren trekken samen in afwisseling bewogen overgenomen door buiteneigenlijke krachten schaduw trekt in het gezicht het koord trekt strak snaar klinkt steeds hogere toon knapt in het vlees beweging in en uit en in prikkelt dunne rode huid geurende afscheiding schuurt tot onhoudbare hitte het zachte vochtige weefsel gesteund door bot beweegt onder vol gewicht zwelt inwendig het bloed welvende lichamen in eenzaam gevecht waar het vormloos vlees onder hoge druk onhoudbaar exploderende dichtheid ontsnapt het licht ongekende tijd en onreikbare ruimte flitst ontbonden gespiegeld gehouden opgedeeld scheurt ontvouwt het geboortevlies verbindt het placenta gebracht uit vergetelheid de tweeling uit enige wond voedt en spreidt onhoudbare krachten geboorte tussen bloed en faeces dode spiertrekkingen doorsneden streng opent oog gezien uit twee het gedeelde bloed koelt af stolt tot korst zo huid werd eens geschonden lichaam rondom ingewanden krimpt ineen trauma zijn geur kreeg de moeder het leven liet en zo kind werd het ingenomen voedsel verdwijnt tot vlees leeft door in lichaam waarover het glanzend vlies van de anders kleed wiens vormend oog ziet (gekanteld) gehecht aan plaats geleegd in moment worden gebeurtenissen gedragen door eigen doorzenuwd lichaam eenmalig uitgesproken de in kristal gedachte vorm splintert als niet meer tegenwoordig is verdicht de tijd tot slag in ruis trilt het vlies schokt het vlees breekt de huid spreidt uiteen onderbreekt en vormt twee is daar dubbeling gezien in geest maar door het vlak gezonken verstikt onder niets dan schaduw (schokkend overgegaan) geborgen in water het denkbeeld dat huid gevild als ongebonden scheiding tussen twee ziet losgesneden en onthecht getrokken los van zenuw los van ruggengraat en hersenstam niets gewaar ongedacht geofferd en ontbonden zelfstandig staand zo horizon vertikaal legt ruimte opheft en lijn tot punt zet onhoudbaar gevoelloos ingevouwen los van het moment gewaar geheel van lichtend gas waar ribbelingen uit vormloosheid tot lichaam stollen opgebracht en ontleed naar vlees spier verkrampt rond been bespannen skelet gelegd tot vierkant bloed schrijft in het vlees het beeld schijnt versplinterd door bevroren huid heen van dier en diermens wiens rauw keelgeluid ongeduide emotie grond vindt in schreeuw gedurende val spant ruimte nauw omsluitend rond opening borstkas waarin het ongeborene onbelicht bewogen zich uitvouwt en kopieert handelingen overneemt door ogen meekijkt en luistert zijn reflecties door lagen vliezen deelt patronen vormt van kleur en trilling op vlies-wand van oorsprong verbeelding uit eigen weefsel uitdijende spiraal vanuit vormloze rust geworpen vlammenschijnsel trilt schaduwrand zwakkere weerschijn door schaduwen heen rondom kern lichtloos brandpunt uitgedoofde materie koud in gloed gelegen gewezen schittering ongedachte schepping stofloos echobeeld samengesteld geraamte omvat grondvorm afgeleide van ander neemt wezen over beiden even kwetsbaar gebroken weerstand delen infectie stukken afgestoten resten slijmvlies van wand verwaterd kleur de zintuiglijke wand waartegen trillagen structuren vormen verenigen elementen van het ene lichaam zich naar constructie gehangen aan ledematen aan touwen gebonden verbinden fragmenten zich naar gedachte staketsel het raamwerk waarin het geslachte dier gehangen skelet buiten het gepresenteerde vlees binnenstebuiten gekeerd lichaam van spier en orgaan onontkoombaar gekruisigd in vierkant gedragen vlak van verleden pijn doorschijnt als omgevingsruis in beweging tijd en denken beweging
+  </script>
+
+  <script>
+    // URL-parameter ?speed=... (ms per woord)
+    function getSpeedFromURL(defaultMs) {
+      const params = new URLSearchParams(window.location.search);
+      const s = parseInt(params.get("speed"), 10);
+      return Number.isFinite(s) && s > 0 ? s : defaultMs;
+    }
+
+    const DURATION = getSpeedFromURL(220);
+    const source = document.getElementById('source').textContent.trim();
+    const words = source.match(/\S+/g) || [];
+    const wordEl = document.getElementById('word');
+    const hintEl = document.getElementById('hint');
+
+    let i = 0;
+    let paused = false;
+    let intervalId = null;
+
+    function tick() {
+      // direct, zonder animatie
+      wordEl.textContent = words[i] || '';
+      i = (i + 1) % words.length;
+    }
+
+    function start() {
+      clearInterval(intervalId);
+      paused = false;
+      tick();
+      intervalId = setInterval(tick, DURATION);
+    }
+
+    function pause() {
+      paused = true;
+      clearInterval(intervalId);
+    }
+
+    function togglePause() {
+      if (paused) start(); else pause();
+    }
+
+    // Controls
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') { e.preventDefault(); togglePause(); hintEl.classList.add('hidden'); }
+      if (e.key.toLowerCase() === 'f') {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+        else document.exitFullscreen().catch(()=>{});
+      }
+    });
+    document.getElementById('stage').addEventListener('pointerdown', () => {
+      togglePause();
+      hintEl.classList.add('hidden');
+    });
+
+    // Start meteen
+    start();
+  </script>
+</body>
+</html>

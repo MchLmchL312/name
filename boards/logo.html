@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hotspot vlakken</title>
+<style>
+  :root{ --header-h: 52px; }
+
+  html,body{
+    margin:0; height:100%; background:#111; color:#eee;
+    font-family:sans-serif; overflow:hidden;
+  }
+  body{ padding-top: var(--header-h); box-sizing: border-box; }
+
+  .wrap{
+    position:relative;
+    width:100%; height: calc(100vh - var(--header-h));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .base{
+    max-width:100%;
+    max-height:100%;
+    width:auto; height:auto;
+    display:block;
+  }
+  .zone{
+    position:absolute;
+    cursor:pointer;
+    background:rgba(255,255,255,0.05);
+    transition: background .2s;
+    box-sizing:border-box;
+  }
+  .zone:hover{ background:rgba(255,255,255,0.15); }
+
+  /* Preview: vaste maat zodat positionering direct klopt */
+  .preview{
+    position:absolute;
+    width:220px; height:220px;
+    background:#000; border:1px solid #fff6;
+    display:none; z-index:5; pointer-events:none;
+    box-shadow:0 6px 18px rgba(0,0,0,.4);
+  }
+  .preview img{
+    width:100%; height:100%; object-fit:contain; display:block;
+  }
+
+  .overlay{
+    position:fixed; inset:0;
+    display:none; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.9);
+    z-index:2000; cursor:zoom-out;
+  }
+  .overlay img{ max-width:95vw; max-height:95vh; object-fit:contain; }
+
+  /* TEKST-knop in overlay (geen nieuwe tab) */
+  .text-link{
+    position:absolute;
+    top:16px; right:16px;
+    color:#fff;
+    text-decoration:none;
+    border:1px solid #fff6;
+    padding:8px 12px;
+    background:rgba(0,0,0,0.55);
+    display:none;
+    z-index:2100;
+    cursor:pointer;
+    user-select:none;
+  }
+  .text-link:hover{ color: yellow; }
+
+  /* Rechter "frame"/drawer voor tekst */
+  .text-drawer{
+    position:absolute;
+    top:0; right:0; bottom:0;
+    width:min(560px, 92vw);
+    background:#000;
+    color:#fff;
+    border-left:1px solid #fff6;
+    box-shadow:-10px 0 28px rgba(0,0,0,0.55);
+    transform:translateX(100%);
+    transition:transform .22s ease;
+    z-index:2200;
+    cursor:auto;
+    display:flex;
+    flex-direction:column;
+  }
+  .text-drawer.open{ transform:translateX(0); }
+
+  .text-drawer .bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:10px 12px;
+    border-bottom:1px solid #fff3;
+    background:#000;
+    flex:0 0 auto;
+  }
+  .text-drawer .bar .title{
+    font-weight:700;
+    letter-spacing:0.02em;
+    opacity:0.95;
+  }
+  .text-drawer .bar .meta{
+    font-size:0.85rem;
+    opacity:0.75;
+    max-width: 55%;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .text-drawer .close{
+    border:1px solid #fff6;
+    background:transparent;
+    color:#fff;
+    width:34px; height:34px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:18px;
+    line-height:30px;
+  }
+  .text-drawer .close:hover{ color: yellow; border-color:#fff9; }
+
+  .text-drawer .content{
+    padding:12px;
+    overflow:auto;
+    flex:1 1 auto;
+  }
+  .text-drawer pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-break:break-word;
+    line-height:1.45;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size:0.95rem;
+    color:#fff;
+  }
+  .text-drawer iframe{
+    width:100%;
+    height:100%;
+    border:0;
+    background:#000;
+    display:none;
+  }
+  .text-drawer .hint{
+    margin-top:10px;
+    font-size:0.85rem;
+    opacity:0.75;
+  }
+
+  .header{
+    position:fixed;
+    top:0; left:0; right:0;
+    height: var(--header-h);
+    background:#000;
+    padding: 10px 20px;
+    box-sizing:border-box;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    color:#fff;
+    z-index: 1000;
+  }
+  .header .name{
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .header .name .sub{
+    display:block;
+    font-size:0.75rem;
+    font-weight:normal;
+    opacity:0.8;
+    margin-top:2px;
+    letter-spacing:0.02em;
+  }
+  .header-right{
+    display:flex;
+    align-items:center;
+    gap: 20px;
+  }
+  .header-right .map-link{
+    color:#fff;
+    text-decoration:none;
+    font-size: 1rem;
+    transition: color .3s;
+  }
+
+  .header-right .map-link .sub{
+    display:block;
+    font-size:0.75rem;
+    font-weight:normal;
+    opacity:0.8;
+    margin-top:2px;
+    letter-spacing:0.02em;
+  }
+  .header-right .map-link:hover{ color: yellow; }
+</style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="name">Machiel van Soest<span class="sub">logo</span></div>
+    <div class="header-right">
+      <a href="index.html" class="map-link">boards</a>
+    </div>
+  </div>
+
+  <div class="wrap" id="wrap">
+    <!-- Basistekening -->
+    <img src="tekening.jpg" alt="basis" class="base" id="baseImage">
+
+    <!-- Preview rechts/links naast de tekening -->
+    <div class="preview" id="preview"><img alt=""></div>
+  </div>
+
+  <!-- Klik-voor-groot + TEKST in drawer -->
+  <div class="overlay" id="overlay">
+    <a id="textLink" class="text-link" href="#">ABOUT</a>
+    <img id="big" alt="">
+
+    <div class="text-drawer" id="textDrawer" aria-hidden="true">
+      <div class="bar">
+        <div style="display:flex; flex-direction:column; gap:2px; min-width:0;">
+          <div class="title">About</div>
+          <div class="meta" id="textMeta">—</div>
+        </div>
+        <button class="close" id="textClose" type="button" aria-label="Sluit tekst">×</button>
+      </div>
+      <div class="content" id="textContentWrap">
+        <pre id="textContent">—</pre>
+        <iframe id="textFrame" title="Tekstframe"></iframe>
+        <div class="hint" id="textHint" style="display:none;">
+          Als dit via file:/// geopend is, kan je browser het laden blokkeren. Open via http(s):// (Netlify/localhost/IIS).
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const zones = [
+  // bovenrij
+  {x:0,   y:0,   w:33.3, h:33.3, file:"boards-logo/board1.jpg"},
+  {x:33.3,y:0,   w:33.3, h:33.3, file:"boards-logo/board2.jpg"},
+  {x:66.6,y:0,   w:33.4, h:33.3, file:"boards-logo/board3.jpg"},
+  // middenrij
+  {x:0,   y:33.3,w:33.3, h:33.3, file:"boards-logo/board4.jpg"},
+  {x:33.3,y:33.3,w:33.3, h:33.3, file:"boards-logo/board5.jpg"},
+  {x:66.6,y:33.3,w:33.4, h:33.3, file:"boards-logo/board6.jpg"},
+  // onderrij
+  {x:0,   y:66.6,w:33.3, h:33.4, file:"boards-logo/board7.jpg"},
+  {x:33.3,y:66.6,w:33.3, h:33.4, file:"boards-logo/board8.jpg"},
+  {x:66.6,y:66.6,w:33.4, h:33.4, file:"boards-logo/board9.jpg"}
+];
+
+
+
+const aboutLinks = {
+  1: "https://home.deds.nl/~mcs/1/",
+  2: "https://home.deds.nl/~mcs/2/",
+  3: "https://home.deds.nl/~mcs/3/index.html",
+  4: "https://home.deds.nl/~mcs/4/",
+  5: "https://home.deds.nl/~mcs/5/",
+  6: "https://home.deds.nl/~mcs/6/",
+  7: "https://home.deds.nl/~mcs/7/",
+  8: "https://home.deds.nl/~mcs/8/",
+  9: "https://home.deds.nl/~mcs/9/"
+};
+
+const baseImage = document.getElementById('baseImage');
+const preview   = document.getElementById('preview');
+const prevImg   = preview.querySelector('img');
+const overlay   = document.getElementById('overlay');
+const big       = document.getElementById('big');
+const textLink  = document.getElementById('textLink');
+const wrap      = document.getElementById('wrap');
+
+const textDrawer = document.getElementById('textDrawer');
+const textClose  = document.getElementById('textClose');
+const textContent= document.getElementById('textContent');
+const textFrame  = document.getElementById('textFrame');
+const textMeta   = document.getElementById('textMeta');
+const textHint   = document.getElementById('textHint');
+
+// marge binnen elke hotspot (in % van de afbeelding)
+const marginPercentage = 2.5;
+
+let currentTextHref = null;
+
+function positionHotspots(){
+  const imageRect = baseImage.getBoundingClientRect();
+  const wrapRect  = wrap.getBoundingClientRect();
+
+  // verwijder oude zones
+  document.querySelectorAll('.zone').forEach(z => z.remove());
+
+  zones.forEach(z=>{
+    const d = document.createElement('div');
+    d.className = 'zone';
+    d.dataset.file = z.file;
+
+    // nieuwe maat + positie met marge
+    const newW = z.w - (2*marginPercentage);
+    const newH = z.h - (2*marginPercentage);
+    const newX = z.x + marginPercentage;
+    const newY = z.y + marginPercentage;
+
+    d.style.left   = (imageRect.left - wrapRect.left) + (imageRect.width  * (newX/100)) + 'px';
+    d.style.top    = (imageRect.top  - wrapRect.top)  + (imageRect.height * (newY/100)) + 'px';
+    d.style.width  = (imageRect.width  * (newW/100)) + 'px';
+    d.style.height = (imageRect.height * (newH/100)) + 'px';
+
+    // Hover: preview rechts van de tekening, verticaal op midden van hotspot
+    d.addEventListener('mouseenter', (e)=>{
+      prevImg.src = z.file;
+      preview.style.display = 'block';
+
+      const imgRect   = baseImage.getBoundingClientRect();
+      const zoneRect  = e.currentTarget.getBoundingClientRect();
+      const wrapRect2 = wrap.getBoundingClientRect();
+
+      // gewenste X: rechts naast tekening
+      let desiredLeftViewport = imgRect.right + 16;
+
+      // als rechts geen plek is, zet 'm links naast de tekening
+      if (desiredLeftViewport + preview.offsetWidth > window.innerWidth - 8) {
+        desiredLeftViewport = imgRect.left - preview.offsetWidth - 16;
+        if (desiredLeftViewport < 8) desiredLeftViewport = 8;
+      }
+      const desiredLeft = desiredLeftViewport - wrapRect2.left;
+
+      // gewenste Y: midden van hotspot
+      let desiredTopViewport = (zoneRect.top + zoneRect.height/2) - (preview.offsetHeight/2);
+      const minTopV = 8;
+      const maxTopV = window.innerHeight - preview.offsetHeight - 8;
+      if (desiredTopViewport < minTopV) desiredTopViewport = minTopV;
+      if (desiredTopViewport > maxTopV) desiredTopViewport = maxTopV;
+
+      const desiredTop = desiredTopViewport - wrapRect2.top;
+
+      preview.style.left = desiredLeft + 'px';
+      preview.style.top  = desiredTop  + 'px';
+    });
+
+    d.addEventListener('mouseleave', ()=>{
+      preview.style.display = 'none';
+      prevImg.removeAttribute('src');
+    });
+
+    // Klik: groot weergeven + tekst-href instellen
+    d.addEventListener('click', ()=>{
+      big.src = z.file;
+
+      // ABOUT-link per board (extern)
+      const m = z.file.match(/(^|\/)(?:board)(\d+)\.(jpe?g|png|webp)$/i);
+      const num = m ? Number(m[2]) : null;
+
+      const href = (num && aboutLinks[num])
+        ? aboutLinks[num]
+        : z.file.replace(/\.(jpe?g|png|webp)$/i, '.txt');
+
+      currentTextHref = href;
+      textLink.href = href;
+      textLink.style.display = 'block';
+
+      closeTextDrawer(true); // reset inhoud bij nieuw beeld
+      overlay.style.display = 'flex';
+    });
+
+    wrap.appendChild(d);
+  });
+}
+
+function sameOrigin(urlStr){
+  try{
+    const u = new URL(urlStr, window.location.href);
+    return u.origin === window.location.origin;
+  }catch{
+    return false;
+  }
+}
+
+async function loadTextIntoDrawer(href){
+  textMeta.textContent = href;
+  textHint.style.display = 'none';
+
+  // reset
+  textContent.textContent = 'Laden…';
+  textContent.style.display = 'block';
+  textFrame.style.display = 'none';
+  textFrame.removeAttribute('src');
+
+  // Als het geen tekstbestand is: toon als pagina (niet als broncode)
+  // (bv. map-URL's zoals .../1/ of .../index.html)
+  if (!/\.txt(\?.*)?$/i.test(href)) {
+    textContent.style.display = 'none';
+    textFrame.style.display = 'block';
+    textFrame.src = href;
+    return;
+  }
+
+// Extern: iframe (vaak CORS-block bij fetch)
+  if (!sameOrigin(href)) {
+    textContent.style.display = 'none';
+    textFrame.style.display = 'block';
+    textFrame.src = href;
+    return;
+  }
+
+  // Zelfde origin: fetch en tonen als tekst
+  try{
+    const res = await fetch(href, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const txt = await res.text();
+    textContent.textContent = txt || '(leeg bestand)';
+  }catch(err){
+    textContent.textContent =
+      'Kon tekst niet laden.\n' +
+      'Bestand: ' + href + '\n' +
+      'Fout: ' + (err && err.message ? err.message : err);
+    if (window.location.protocol === 'file:') {
+      textHint.style.display = 'block';
+    }
+  }
+}
+
+function openTextDrawer(){
+  if (!currentTextHref) return;
+  textDrawer.classList.add('open');
+  textDrawer.setAttribute('aria-hidden','false');
+  loadTextIntoDrawer(currentTextHref);
+}
+
+function closeTextDrawer(hardReset=false){
+  textDrawer.classList.remove('open');
+  textDrawer.setAttribute('aria-hidden','true');
+  if (hardReset){
+    textMeta.textContent = '—';
+    textContent.textContent = '—';
+    textFrame.removeAttribute('src');
+    textHint.style.display = 'none';
+  }
+}
+
+baseImage.onload = positionHotspots;
+window.addEventListener('resize', positionHotspots);
+if (baseImage.complete) positionHotspots();
+
+/* ABOUT knop: toggle drawer (plain click), maar href blijft bruikbaar */
+textLink.addEventListener('click', (e)=>{
+  // Alt/Ctrl/Cmd/Shift: laat browser het link-gedrag doen
+  e.stopPropagation();
+  if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+
+  e.preventDefault();
+  if (textDrawer.classList.contains('open')) closeTextDrawer();
+  else openTextDrawer();
+});
+
+/* Sluitknop in drawer */
+textClose.addEventListener('click', (e)=>{
+  e.preventDefault();
+  e.stopPropagation();
+  closeTextDrawer();
+});
+
+/* Klikken in drawer mag overlay niet sluiten */
+textDrawer.addEventListener('click', (e)=> e.stopPropagation());
+
+/* Klik op overlay (buiten beeld/drawer) sluit alles */
+overlay.addEventListener('click', ()=>{
+  overlay.style.display = 'none';
+  big.removeAttribute('src');
+  textLink.style.display = 'none';
+  currentTextHref = null;
+  closeTextDrawer(true);
+});
+
+/* Escape sluit (drawer eerst, anders overlay) */
+window.addEventListener('keydown', (e)=>{
+  if (e.key !== 'Escape') return;
+  if (overlay.style.display === 'flex') {
+    if (textDrawer.classList.contains('open')) closeTextDrawer();
+    else overlay.click();
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Random YouTube Video</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    iframe {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(100vw, 177.78vh);   /* 16:9 verhouding */
+      height: min(56.25vw, 100vh);
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="ytplayer"
+    src=""
+    title="YouTube video"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+    allowfullscreen>
+  </iframe>
+
+  <script>
+    // Willekeurige achtergrondkleur (rood of blauw)
+    const colors = ["red", "blue"];
+    document.body.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+    // Je drie video-ID’s
+    const videos = [
+      "Iyt9cxYpxHM",
+      "qLdotrvD6sA",
+      "_-VFOB3iXnQ"
+    ];
+
+    // Kies willekeurige video
+    const randomId = videos[Math.floor(Math.random() * videos.length)];
+
+    // Bouw de embed-URL met autoplay en mute
+    const params = new URLSearchParams({
+      rel: "0",
+      modestbranding: "1",
+      autoplay: "1",
+      mute: "1"
+    });
+
+    document.getElementById("ytplayer").src =
+      "https://www.youtube.com/embed/" + randomId + "?" + params.toString();
+  </script>
+</body>
+</html>

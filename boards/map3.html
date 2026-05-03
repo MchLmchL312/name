@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Grid hover + fullscreen</title>
+  <style>
+    :root{
+      --preview-w: 260px;
+      --gap: 10px;
+    
+      --header-h: 52px;
+    }
+
+    body{
+      margin:0;
+      padding: calc(var(--header-h) + 24px) 24px 24px;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:#111;
+      color:#eee;
+    }
+
+    .wrap{
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .stage{
+      position: relative;
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,.45);
+      background: #222;
+    }
+
+    .bg{
+      display:block;
+      width:100%;
+      height:auto;
+      user-select:none;
+      -webkit-user-drag: none;
+    }
+
+    /* Grid-overlay exact over de afbeelding */
+    .grid{
+      position:absolute;
+      inset:0;
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      pointer-events:auto;
+    }
+
+    .cell{
+      /* onzichtbaar vlak */
+      background: transparent;
+      cursor: pointer;
+
+      /* Debug? Zet de volgende regel aan */
+      /* outline: 1px dashed rgba(255,255,255,.25); */
+    }
+
+    /* Hover preview */
+    .preview{
+      position: fixed;
+      z-index: 50;
+      width: var(--preview-w);
+      max-width: min(var(--preview-w), calc(100vw - 24px));
+      background: rgba(20,20,20,.92);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 10px;
+      padding: 8px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.55);
+      display: none;
+      pointer-events: none; /* zodat hover niet “breekt” */
+      backdrop-filter: blur(6px);
+    }
+    .preview img{
+      display:block;
+      width:100%;
+      height:auto;
+      border-radius: 6px;
+    }
+
+    /* Fullscreen modal */
+    .modal{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      cursor: zoom-out;
+    }
+    .modal img{
+      max-width: 96vw;
+      max-height: 92vh;
+      width: auto;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 20px 70px rgba(0,0,0,.7);
+    }
+
+    .hint{
+      margin-top: 12px;
+      font-size: 14px;
+      opacity: .85;
+      line-height: 1.4;
+    }
+    .hint code{ background: rgba(255,255,255,.08); padding:2px 6px; border-radius:6px; }
+  
+    .header{
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      background: #000;
+      padding: 10px 20px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      z-index: 1000;
+    }
+    .header .name{
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    .header-right{
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .header-right .map-link{
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s;
+    }
+    .header-right .map-link:hover{
+      color: yellow;
+    }
+
+</style>
+</head>
+<body>
+  
+  <div class="header">
+    <div class="name">Machiel van Soest</div>
+    <div class="header-right">
+      <a href="index.html" class="map-link">BOARDS</a>
+    </div>
+  </div>
+
+<div class="wrap">
+    <div class="stage" id="stage">
+      <!-- achtergrond -->
+      <img class="bg" src="background-painting.jpg" alt="achtergrond" />
+
+      <!-- 20 onzichtbare vlakken (5 x 4) -->
+      <div class="grid" id="grid" aria-label="Hotspot grid"></div>
+    </div>
+
+    <div class="hint">
+    </code>.
+    </div>
+  </div>
+
+  <!-- hover preview -->
+  <div class="preview" id="preview" aria-hidden="true">
+    <img id="previewImg" alt="preview" />
+  </div>
+
+  <!-- fullscreen -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <img id="modalImg" alt="fullscreen" />
+  </div>
+
+  <script>
+    const grid = document.getElementById('grid');
+    const preview = document.getElementById('preview');
+    const previewImg = document.getElementById('previewImg');
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modalImg');
+
+    const COLS = 5;
+    const ROWS = 4;
+    const TOTAL = COLS * ROWS;
+
+    // Bouw pad met encodeURI zodat spaties netjes %20 worden
+    function imgPath(i){
+      return encodeURI(`shows/showsMchL (${i}).jpg`);
+    }
+
+    // Maak 20 cellen
+    for(let i=1; i<=TOTAL; i++){
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.index = String(i);
+      grid.appendChild(cell);
+    }
+
+    // (Optioneel) preload voor vlot hoveren
+    const preload = [];
+    for(let i=1; i<=TOTAL; i++){
+      const im = new Image();
+      im.src = imgPath(i);
+      preload.push(im);
+    }
+
+    let hoveringIndex = null;
+
+    function showPreview(i){
+      hoveringIndex = i;
+      previewImg.src = imgPath(i);
+      preview.style.display = 'block';
+      preview.setAttribute('aria-hidden', 'false');
+    }
+
+    function hidePreview(){
+      hoveringIndex = null;
+      preview.style.display = 'none';
+      preview.setAttribute('aria-hidden', 'true');
+      // previewImg.src laten staan is ok (sneller)
+    }
+
+    function positionPreview(clientX, clientY){
+      const gap = 12;
+      const rect = preview.getBoundingClientRect();
+      let x = clientX + gap;
+      let y = clientY + gap;
+
+      // binnen scherm houden
+      const maxX = window.innerWidth - rect.width - 10;
+      const maxY = window.innerHeight - rect.height - 10;
+      if(x > maxX) x = clientX - rect.width - gap;
+      if(y > maxY) y = clientY - rect.height - gap;
+
+      preview.style.left = `${Math.max(10, x)}px`;
+      preview.style.top  = `${Math.max(10, y)}px`;
+    }
+
+    function openModal(i){
+      modalImg.src = imgPath(i);
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden', 'false');
+      hidePreview();
+    }
+
+    function closeModal(){
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      modalImg.src = '';
+    }
+
+    // Event handling op grid (event delegation)
+    grid.addEventListener('mousemove', (e) => {
+      if(preview.style.display === 'block'){
+        positionPreview(e.clientX, e.clientY);
+      }
+    });
+
+    grid.addEventListener('mouseover', (e) => {
+      const cell = e.target.closest('.cell');
+      if(!cell) return;
+
+      // Als modal open is: geen preview
+      if(modal.style.display === 'flex') return;
+
+      const i = Number(cell.dataset.index);
+      showPreview(i);
+      positionPreview(e.clientX, e.clientY);
+    });
+
+    grid.addEventListener('mouseout', (e) => {
+      const fromCell = e.target.closest('.cell');
+      const toCell = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest('.cell') : null;
+
+      // Enkel verbergen als we effectief de grid/cel verlaten (niet naar een andere cel)
+      if(fromCell && !toCell){
+        hidePreview();
+      }
+    });
+
+    grid.addEventListener('click', (e) => {
+      const cell = e.target.closest('.cell');
+      if(!cell) return;
+      const i = Number(cell.dataset.index);
+
+      // Toggle modal
+      if(modal.style.display === 'flex'){
+        closeModal();
+      } else {
+        openModal(i);
+      }
+    });
+
+    // Klik op modal sluit
+    modal.addEventListener('click', () => closeModal());
+
+    // ESC sluit
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && modal.style.display === 'flex'){
+        closeModal();
+      }
+    });
+
+    // Als je het venster resized: preview kan even “fout” staan, dus verberg
+    window.addEventListener('resize', () => hidePreview());
+  </script>
+</body>
+</html>

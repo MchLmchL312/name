@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Beeldvullend – zwarte achtergrond</title>
+  <style>
+    /* Volledig zwart canvas zonder scroll */
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #000;
+      overflow: hidden;
+    }
+    /* Afbeelding midden, volledig zichtbaar binnen venster */
+    .frame {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+    }
+    img {
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;   /* geen cropping; gebruik 'cover' voor uitsnijden */
+      object-position: center center;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <img
+      src="coc-wd4x-v01-eng-condensedDobleS.jpg"
+      alt="WD4X Code of Conduct – condensed / practices feeling"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+</body>
+</html>

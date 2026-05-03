@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Boards Gallery</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #000;
+    }
+
+    .header {
+      width: 100%;
+      background-color: #000;
+      padding: 10px 20px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      z-index: 1001;
+    }
+
+    .header .name {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px; /* ruimte tussen links en iconen */
+    }
+
+    .header-right .map-link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s;
+    }
+
+    .header-right .map-link:hover {
+      color: yellow;
+    }
+
+    .header .icon-link svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      stroke: #fff;
+      transition: stroke 0.3s;
+    }
+
+    .header .icon-link:hover svg {
+      stroke: yellow;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      cursor: pointer;
+      object-fit: cover;
+      border: 2px solid #000;
+      transition: transform 0.3s;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.02);
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.95);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 1000;
+    }
+
+    .overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .overlay img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="name">Machiel van Soest</div>
+    <div class="header-right">
+      <a href="map3.html" class="map-link" target="_blank" rel="noopener noreferrer">map</a>
+      <a href="logo.html" class="map-link" target="_blank" rel="noopener noreferrer">logo</a>
+      <!-- Plus icoon -->
+      <a href="index-links.html" class="icon-link" target="_blank" rel="noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 24 24" fill="none" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </a>
+
+      <!-- Email icoon -->
+      <a href="mailto:machielvansoest@outlook.com" class="icon-link">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 24 24" fill="none" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0
+          1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2
+          2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="gallery" id="gallery"></div>
+
+  <div class="overlay" id="overlay">
+    <img src="" alt="Fullscreen Board" id="fullscreenImg">
+  </div>
+
+  <script>
+    // Verwacht bestandsnamen: boards/board1.jpg t/m boards/board34.jpg
+    const totalBoards = 34;
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    // Shuffle board2..board34 (board1 blijft als eerste)
+    const numbers = [];
+    for (let i = 2; i <= totalBoards; i++) numbers.push(i);
+    shuffle(numbers);
+
+    const gallery = document.getElementById('gallery');
+
+    // Eerst board1
+    const board1 = document.createElement('img');
+    board1.src = 'boards/board1.jpg';
+    board1.alt = 'board1';
+    gallery.appendChild(board1);
+
+    // Daarna de rest (geshuffeld)
+    numbers.forEach(n => {
+      const img = document.createElement('img');
+      img.src = `boards/board${n}.jpg`;
+      img.alt = `board${n}`;
+      gallery.appendChild(img);
+    });
+
+    // Overlay functionaliteit
+    const overlay = document.getElementById('overlay');
+    const fullscreenImg = document.getElementById('fullscreenImg');
+
+    gallery.addEventListener('click', e => {
+      if (e.target.tagName === 'IMG') {
+        fullscreenImg.src = e.target.src;
+        overlay.classList.add('show');
+      }
+    });
+
+    overlay.addEventListener('click', () => {
+      overlay.classList.remove('show');
+      fullscreenImg.src = '';
+    });
+  </script>
+</body>
+</html>

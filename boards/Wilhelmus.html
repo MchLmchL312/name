@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tekstviewer</title>
+  <style>
+    :root {
+      --gap: 14px;
+      --ctrl-width: 56px;
+      --bg: #0f172a;
+      --panel: #111827;
+      --ink: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body { font-family: sans-serif; color: var(--ink); background: var(--bg); }
+
+    .app {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr var(--ctrl-width) 1fr;
+      gap: var(--gap);
+      padding: 10px;
+    }
+
+    header {
+      grid-column: 1 / -1;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+    }
+
+    label.btn, button.btn {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--muted);
+      background: #0b1220;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    input[type="file"] { display: none; }
+
+    .panel {
+      height: calc(100% - 50px);
+      background: var(--panel);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .scrollbox {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+
+    .scrollbox::-webkit-scrollbar { width: 0; height: 0; }
+    .scrollbox { scrollbar-width: none; }
+
+    pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+    .placeholder { color: var(--muted); }
+
+    .control {
+      display: flex; justify-content: center; align-items: center;
+      background: rgba(56,189,248,0.1);
+      border-radius: 8px;
+      height: calc(100% - 50px);
+    }
+
+    input[type="range"].vslider {
+      writing-mode: bt-lr;
+      -webkit-appearance: slider-vertical;
+      width: 26px;
+      height: 95%;
+      background: transparent;
+      direction: rtl;
+    }
+
+    input[type="range"].vslider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: white;
+      border: 2px solid var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header><div><strong>Tekstviewer</strong></div></header>
+    <section class="panel"><div class="scrollbox" id="leftBox"><pre id="leftText">Wilhelmus van Nassouwe
+ben ik, van Duitsen bloed,
+den vaderland getrouwe
+blijf ik tot in den dood.
+Een Prinse van Oranje
+ben ik, vrij, onverveerd,
+den Koning van Hispanje
+heb ik altijd geëerd.
+
+In Godes vrees te leven
+heb ik altijd betracht,
+daarom ben ik verdreven,
+om land, om luid gebracht.
+Maar God zal mij regeren
+als een goed instrument,
+dat ik zal wederkeren
+in mijnen regiment.
+
+Lijdt u, mijn onderzaten
+die oprecht zijt van aard,
+God zal u niet verlaten,
+al zijt gij nu bezwaard.
+Die vroom begeert te leven,
+bidt God nacht ende dag,
+dat Hij mij kracht zal geven,
+dat ik u helpen mag.
+
+Lijf ende goed tezamen
+heb ik u niet verschoond,
+mijn broeders, hoog van namen
+hebben 't u ook vertoond
+Graaf Adolf is gebleven
+in Friesland in den slag,
+zijn ziel in 't eeuwig leven
+verwacht den jongsten dag.
+
+Edel en hooggeboren,
+van keizerlijken stam,
+een vorst des rijks verkoren,
+als een vroom christenman,
+voor Godes woord geprezen,
+heb ik, vrij onversaagd,
+als een held zonder vrezen
+mijn edel bloed gewaagd.
+
+Mijn schild ende betrouwen
+zijt Gij, o God mijn Heer,
+op U zo wil ik bouwen,
+Verlaat mij nimmermeer.
+Dat ik doch vroom mag blijven,
+uw dienaar t'aller stond,
+de tirannie verdrijven
+die mij mijn hart doorwondt. 
+
+</pre></div></section>
+    <section class="control"><input id="vSlider" class="vslider" type="range" min="0" max="100" value="100" step="0.1" /></section>
+    <section class="panel"><div class="scrollbox" id="rightBox"><pre id="rightText">Doorwondt den Verwacht
+zal al, des Gewaagd vroom,
+dat wilhelmus getrouwe
+bloed ik heb uw heb bidt.
+Van Mijnen god Vrezen
+een in, mijn, wederkeren,
+die Prinse zal Verkoren
+dat te zonder kracht.
+
+In Geven namen in blijf
+een en altijd verlaten,
+hebben een ik vaderland,
+ik niet, ik zijn jongsten.
+Dood Gij dat van verlaat
+heb gij stam onverveerd,
+heb om van instrument
+ik oranje bezwaard.
+
+Bloed t, mijn verdrijven
+van dienaar goed hij luid,
+Van tot o edel vertoond,
+ik hoog den ik gebleven.
+Die lijdt blijven is rijks,
+ziel Ben vorst mijn als,
+god Ook van schild mij stond,
+wil te u eeuwig mij.
+
+Land mijn zijt t'aller
+god ik u lijf onderzaten,
+maar betracht, goed zal vrees
+geëerd 'u u die regiment
+Leven Vroom de broeders
+in Betrouwen ik ben mijn,
+held vrij ik 't altijd adolf
+hispanje als nassouwe mag.
+
+Vrij in hooggeboren,
+mij keizerlijken ende,
+mag nacht den leven tirannie,
+den een woord christenman,
+zijt Graaf leven gebracht,
+dag ik, edel nimmermeer,
+zal god ende helpen koning
+mijn aard vroom regeren.
+
+Voor bouwen doch verdreven
+hart Den, u Een heer Niet,
+op U om dag zo daarom,
+Begeert mij onversaagd.
+Dat in ende godes ben tezamen,
+ik duitsen oprecht godes,
+nu geprezen verschoond
+van als slag zijt friesland. 
+
+
+
+</pre></div></section>
+  </div>
+  
+        <script>
+          const leftBox  = document.getElementById('leftBox');
+          const rightBox = document.getElementById('rightBox');
+          const vSlider  = document.getElementById('vSlider');
+
+          function applyScrollFromSlider() {
+            const p = 1 - (parseFloat(vSlider.value) / 100);
+            [leftBox, rightBox].forEach(box => {
+              const max = box.scrollHeight - box.clientHeight;
+              box.scrollTop = max * p;
+            });
+          }
+
+          function syncFromPanels() {
+            const perc = [leftBox, rightBox].map(box => {
+              const max = Math.max(1, box.scrollHeight - box.clientHeight);
+              return (box.scrollTop / max) * 100;
+            });
+            const avg = (perc[0] + perc[1]) / 2;
+            vSlider.value = (100 - avg).toFixed(2);
+          }
+
+          vSlider.addEventListener('input', applyScrollFromSlider);
+          leftBox.addEventListener('scroll', syncFromPanels);
+          rightBox.addEventListener('scroll', syncFromPanels);
+
+          // Initialiseer de slider en scrollpositie bij het laden
+          vSlider.value = 100;
+          applyScrollFromSlider();
+          
+          // Verwijder placeholders als er tekst is
+          const leftTextEl = document.getElementById('leftText');
+          const rightTextEl = document.getElementById('rightText');
+          if (leftTextEl.textContent.trim() === '<span class="placeholder">⟵ Geen tekst geladen.</span>' || leftTextEl.textContent.trim() === '') {
+            leftTextEl.innerHTML = '<span class="placeholder">⟵ Geen tekst geladen.</span>';
+          } else {
+            leftTextEl.classList.remove('placeholder');
+          }
+          if (rightTextEl.textContent.trim() === '<span class="placeholder">Geen tekst geladen ⟶</span>' || rightTextEl.textContent.trim() === '') {
+            rightTextEl.innerHTML = '<span class="placeholder">Geen tekst geladen ⟶</span>';
+          } else {
+            rightTextEl.classList.remove('placeholder');
+          }
+
+        </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redirect Links</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    :root {
+      --bg:#f4f4f4;
+      --card:#ffffff;
+      --primary-start:#0d6efd;
+      --primary-end:#0b5ed7;
+    }
+    * {box-sizing:border-box;}
+    body {
+      font-family: Arial, sans-serif;
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center; /* horizontaal centreren van container */
+      justify-content:center; /* verticaal centreren */
+      background:var(--bg);
+      text-align:center; /* centreer standaard tekst */
+    }
+    .container {
+      width:100%;
+      max-width:420px;
+      background:var(--card);
+      padding:30px 38px 40px;
+      border-radius:18px;
+      box-shadow:0 6px 28px -8px rgba(0,0,0,.15);
+      display:flex;
+      flex-direction:column;
+      align-items:center; /* centreer alle inhoud in container */
+      gap:10px;
+    }
+    h1 {margin:0; font-size:1.85rem; letter-spacing:.5px;}
+    p {margin:4px 0 14px; color:#555; font-size:.95rem;}
+    .links {width:100%; display:flex; flex-direction:column; align-items:center; gap:12px;}
+    .btn {
+      --grad:linear-gradient(135deg,var(--primary-start),var(--primary-end));
+      width:100%;
+      display:inline-flex;
+      justify-content:center;
+      align-items:center;
+      gap:.65em;
+      padding:14px 18px;
+      border-radius:10px;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.4px;
+      background:var(--grad);
+      color:#fff;
+      position:relative;
+      transition:transform .18s, box-shadow .18s, background .4s;
+    }
+    .btn:focus-visible {outline:3px solid #003f88; outline-offset:2px;}
+    .btn:hover {transform:translateY(-3px); box-shadow:0 10px 22px -6px rgba(13,110,253,.4);} 
+    .btn:active {transform:translateY(0); box-shadow:0 4px 14px -4px rgba(13,110,253,.35);} 
+    .btn i {font-size:1.15em; line-height:0;}
+    footer {margin-top:18px; font-size:.7rem; color:#999;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Machiel van Soest</h1>
+    <p>visual artist and docent</p>
+    <div class="links">
+      <a class="btn" href="https://mchlmchl312.github.io/name/neuropa/" target="_blank" style="background:linear-gradient(135deg,#f97316,#ea580c);"><i class="fas fa-portrait"></i>Actueel</a>
+      <a class="btn" href="https://home.deds.nl/~unbrad/website/" target="_blank"><i class="fas fa-globe"></i>Recent Work</a>
+      <a class="btn" href="https://home.deds.nl/~unbrad/website/courses_redirect_page.html" target="_blank"><i class="fas fa-chalkboard-teacher"></i>Cursussen</a>
+    </div>
+    <footer>&copy; <span id="y"></span> Machiel van Soest</footer>
+  </div>
+  <script>document.getElementById('y').textContent=new Date().getFullYear();</script>
+</body>
+</html>
