@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Raam Laakkwartier</title>
+  <style>
+    :root {
+      --bg: #080809;
+      --panel: #151516;
+      --text: rgba(255,255,255,.94);
+      --muted: rgba(255,255,255,.64);
+      --line: rgba(255,255,255,.14);
+      --maxw: 1180px;
+      --pad: clamp(14px, 3vw, 24px);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--line);
+      background: rgba(8,8,9,.82);
+      backdrop-filter: blur(12px);
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 var(--pad);
+    }
+
+    .topbar {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(23px, 4vw, 42px);
+      line-height: 1.05;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .count {
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    main {
+      padding: var(--pad) 0 48px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      gap: clamp(10px, 2vw, 18px);
+      align-items: start;
+    }
+
+    figure {
+      margin: 0;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    button.photo {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: #000;
+      cursor: zoom-in;
+      color: inherit;
+    }
+
+    button.photo:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 3px;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .thumb {
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      transition: transform 160ms ease, opacity 160ms ease;
+    }
+
+    button.photo:hover .thumb {
+      transform: scale(1.015);
+      opacity: .92;
+    }
+
+    figcaption {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .filename {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .date {
+      flex: 0 0 auto;
+    }
+
+    .empty {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0,0,0,.94);
+      cursor: zoom-out;
+    }
+
+    .overlay.show {
+      display: flex;
+    }
+
+    .overlay img {
+      width: auto;
+      max-width: 100%;
+      max-height: 100%;
+      box-shadow: 0 18px 70px rgba(0,0,0,.55);
+    }
+
+    @media (max-width: 560px) {
+      .topbar {
+        min-height: 76px;
+        align-items: flex-start;
+        justify-content: center;
+        flex-direction: column;
+        padding: 14px 0;
+      }
+
+      .count {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="topbar">
+        <h1>Raam Laakkwartier</h1>
+        <div class="count" id="count">Foto's laden...</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <section class="gallery" id="gallery" aria-label="Foto's"></section>
+    </div>
+  </main>
+
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <img src="" alt="" id="overlayImage">
+  </div>
+
+  <script src="photos.js"></script>
+  <script>
+    const photos = Array.isArray(window.RAAM_LAAKKWARTIER_PHOTOS)
+      ? window.RAAM_LAAKKWARTIER_PHOTOS
+      : [];
+
+    const gallery = document.getElementById('gallery');
+    const count = document.getElementById('count');
+    const overlay = document.getElementById('overlay');
+    const overlayImage = document.getElementById('overlayImage');
+
+    const dateFormatter = new Intl.DateTimeFormat('nl-NL', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+
+    function formatDate(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      return dateFormatter.format(date);
+    }
+
+    function showEmptyMessage() {
+      count.textContent = '0 foto\'s';
+      const message = document.createElement('div');
+      message.className = 'empty';
+      message.textContent = 'Nog geen foto\'s gevonden. Zet foto\'s in deze map en voer update-photos.ps1 opnieuw uit.';
+      gallery.appendChild(message);
+    }
+
+    function openOverlay(photo) {
+      overlayImage.src = photo.src;
+      overlayImage.alt = photo.name || 'Foto';
+      overlay.classList.add('show');
+      overlay.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeOverlay() {
+      overlay.classList.remove('show');
+      overlay.setAttribute('aria-hidden', 'true');
+      overlayImage.src = '';
+      overlayImage.alt = '';
+    }
+
+    function renderGallery() {
+      if (!photos.length) {
+        showEmptyMessage();
+        return;
+      }
+
+      count.textContent = `${photos.length} foto${photos.length === 1 ? '' : '\'s'}`;
+
+      photos.forEach(photo => {
+        const figure = document.createElement('figure');
+        const button = document.createElement('button');
+        const image = document.createElement('img');
+        const caption = document.createElement('figcaption');
+        const filename = document.createElement('span');
+        const date = document.createElement('span');
+
+        button.type = 'button';
+        button.className = 'photo';
+        button.setAttribute('aria-label', `Open ${photo.name || 'foto'}`);
+
+        image.className = 'thumb';
+        image.src = photo.src;
+        image.alt = photo.name || 'Foto';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+
+        filename.className = 'filename';
+        filename.textContent = photo.name || '';
+        date.className = 'date';
+        date.textContent = formatDate(photo.date);
+
+        button.appendChild(image);
+        caption.append(filename, date);
+        figure.append(button, caption);
+        gallery.appendChild(figure);
+
+        button.addEventListener('click', () => openOverlay(photo));
+      });
+    }
+
+    overlay.addEventListener('click', closeOverlay);
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeOverlay();
+    });
+
+    renderGallery();
+  </script>
+</body>
+</html>
