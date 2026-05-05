@@ -86,21 +86,20 @@ $photos = Get-ChildItem -LiteralPath $scriptDir -File |
     }
 
     [PSCustomObject]@{
-      Name = $_.Name
       Src = './' + ([Uri]::EscapeDataString($_.Name) -replace '%2F', '/')
       Date = $date
       Sort = $date.ToUnixTimeMilliseconds()
       Source = if ($null -ne $exifDate) { 'metadata' } else { 'file' }
+      NameForSort = $_.Name
     }
   } |
-  Sort-Object -Property @{ Expression = 'Sort'; Descending = $true }, @{ Expression = 'Name'; Descending = $false }
+  Sort-Object -Property @{ Expression = 'Sort'; Descending = $true }, @{ Expression = 'NameForSort'; Descending = $false }
 
 $lines = @()
 $lines += 'window.RAAM_LAAKKWARTIER_PHOTOS = ['
 foreach ($photo in $photos) {
-  $lines += ('  {{ src: {0}, name: {1}, date: {2}, sort: {3}, source: {4} }},' -f
+  $lines += ('  {{ src: {0}, date: {1}, sort: {2}, source: {3} }},' -f
     (ConvertTo-JsString $photo.Src),
-    (ConvertTo-JsString $photo.Name),
     (ConvertTo-JsString $photo.Date.ToString('o')),
     $photo.Sort,
     (ConvertTo-JsString $photo.Source)

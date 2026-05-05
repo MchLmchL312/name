@@ -171,14 +171,14 @@ def build_manifest(script_dir: Path) -> list[dict[str, object]]:
         photos.append(
             {
                 "src": "./" + quote(path.name),
-                "name": path.name,
                 "date": date.isoformat(),
                 "sort": sort,
                 "source": source,
+                "_name": path.name,
             }
         )
 
-    photos.sort(key=lambda photo: (-int(photo["sort"]), str(photo["name"]).lower()))
+    photos.sort(key=lambda photo: (-int(photo["sort"]), str(photo["_name"]).lower()))
     return photos
 
 
@@ -188,10 +188,9 @@ def write_manifest(script_dir: Path, photos: list[dict[str, object]]) -> None:
 
     for photo in photos:
         lines.append(
-            "  { src: %s, name: %s, date: %s, sort: %s, source: %s },"
+            "  { src: %s, date: %s, sort: %s, source: %s },"
             % (
                 json.dumps(photo["src"], ensure_ascii=False),
-                json.dumps(photo["name"], ensure_ascii=False),
                 json.dumps(photo["date"], ensure_ascii=False),
                 photo["sort"],
                 json.dumps(photo["source"], ensure_ascii=False),
