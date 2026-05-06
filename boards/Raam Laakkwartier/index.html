@@ -186,6 +186,7 @@
       max-width: 100%;
       max-height: 100%;
       box-shadow: 0 18px 70px rgba(0,0,0,.55);
+      cursor: e-resize;
     }
 
     .overlay-date {
@@ -206,29 +207,43 @@
     .nav-zone {
       position: fixed;
       z-index: 2;
-      top: 0;
-      bottom: 0;
-      width: 38%;
+      top: 50%;
+      width: 48px;
+      height: 96px;
       border: 0;
+      border-radius: 0;
       padding: 0;
       background: transparent;
-      color: transparent;
+      color: rgba(255,255,255,.42);
+      font-size: 52px;
+      font-weight: 200;
+      line-height: 1;
       cursor: pointer;
+      transform: translateY(-50%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .nav-zone.prev {
-      left: 0;
+      left: 14px;
       cursor: w-resize;
     }
 
     .nav-zone.next {
-      right: 0;
+      right: 14px;
       cursor: e-resize;
+    }
+
+    .nav-zone:hover,
+    .nav-zone:focus-visible {
+      color: rgba(255,255,255,.9);
+      background: transparent;
     }
 
     .nav-zone:focus-visible {
       outline: 2px solid #fff;
-      outline-offset: -8px;
+      outline-offset: 2px;
     }
 
     @media (max-width: 560px) {
@@ -273,9 +288,9 @@
   </main>
 
   <div class="overlay" id="overlay" aria-hidden="true">
-    <button class="nav-zone prev" type="button" id="prevPhoto" aria-label="Vorige foto">Vorige</button>
+    <button class="nav-zone prev" type="button" id="prevPhoto" aria-label="Vorige foto">&lsaquo;</button>
     <img src="" alt="" id="overlayImage">
-    <button class="nav-zone next" type="button" id="nextPhoto" aria-label="Volgende foto">Volgende</button>
+    <button class="nav-zone next" type="button" id="nextPhoto" aria-label="Volgende foto">&rsaquo;</button>
     <div class="overlay-date" id="overlayDate"></div>
   </div>
 
@@ -381,7 +396,11 @@
     }
 
     overlay.addEventListener('click', event => {
-      if (event.target === overlay || event.target === overlayImage) goNext();
+      if (event.target === overlay) closeOverlay();
+    });
+    overlayImage.addEventListener('click', event => {
+      event.stopPropagation();
+      goNext();
     });
     prevPhoto.addEventListener('click', event => {
       event.stopPropagation();
