@@ -2,13 +2,19 @@ from __future__ import annotations
 
 import json
 import struct
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote
+
+from PIL import Image, ImageOps
 
 
 PHOTO_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
 EXIF_DATE_TAGS = {0x9003, 0x9004, 0x0132}
+WEB_DIR = "web"
+DATA_FILE = "photos-data.json"
+MAX_IMAGE_EDGE = 1600
+JPEG_QUALITY = 82
 EXIF_FORMATS = (
     "%Y:%m:%d %H:%M:%S",
     "%Y-%m-%d %H:%M:%S",
@@ -159,26 +165,118 @@ def photo_date(path: Path) -> tuple[datetime, str]:
     return datetime.fromtimestamp(timestamp).astimezone(), "file"
 
 
+def make_web_image(path: Path, output_dir: Path) -> Path:
+    output_dir.mkdir(exist_ok=True)
+    output_path = output_dir / path.name
+
+    with Image.open(path) as original:
+        exif = original.getexif()
+        image = ImageOps.exif_transpose(original)
+        image.thumbnail((MAX_IMAGE_EDGE, MAX_IMAGE_EDGE), Image.Resampling.LANCZOS)
+
+        if image.mode not in ("RGB", "L"):
+            image = image.convert("RGB")
+
+        save_kwargs = {
+            "format": "JPEG",
+            "quality": JPEG_QUALITY,
+            "optimize": True,
+            "progressive": True,
+        }
+
+        if exif:
+            # The pixels are already rotated above, so reset orientation while keeping date metadata.
+            exif[0x0112] = 1
+            save_kwargs["exif"] = exif.tobytes()
+
+        image.save(output_path, **save_kwargs)
+
+    return output_path
+
+
+def load_photo_data(script_dir: Path) -> dict[str, dict[str, object]]:
+    data_path = script_dir / DATA_FILE
+    if not data_path.exists():
+        return {}
+
+    try:
+        raw_data = json.loads(data_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+    if not isinstance(raw_data, dict):
+        return {}
+
+    return {
+        str(name): entry
+        for name, entry in raw_data.items()
+        if isinstance(entry, dict)
+    }
+
+
+def write_photo_data(script_dir: Path, photo_data: dict[str, dict[str, object]]) -> None:
+    data_path = script_dir / DATA_FILE
+    data_path.write_text(
+        json.dumps(photo_data, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+
 def build_manifest(script_dir: Path) -> list[dict[str, object]]:
-    photos = []
+    output_dir = script_dir / WEB_DIR
+    photo_data = load_photo_data(script_dir)
 
     for path in script_dir.iterdir():
         if not path.is_file() or path.suffix.lower() not in PHOTO_EXTENSIONS:
             continue
 
         date, source = photo_date(path)
-        sort = int(date.timestamp() * 1000)
+        web_path = make_web_image(path, output_dir)
+        photo_data[path.name] = {
+            "web_name": web_path.name,
+            "date": date.isoformat(),
+            "sort": int(date.timestamp() * 1000),
+            "source": source,
+        }
+
+    photos = []
+    for original_name, entry in photo_data.items():
+        web_name = str(entry.get("web_name") or original_name)
+        web_path = output_dir / web_name
+        if not web_path.exists():
+            continue
+
+        try:
+            sort = int(entry["sort"])
+            date = str(entry["date"])
+            source = str(entry.get("source") or "metadata")
+        except (KeyError, TypeError, ValueError):
+            continue
+
         photos.append(
             {
-                "src": "./" + quote(path.name),
-                "date": date.isoformat(),
+                "src": "./" + quote(WEB_DIR) + "/" + quote(web_name),
+                "date": date,
                 "sort": sort,
                 "source": source,
-                "_name": path.name,
+                "_name": original_name,
+                "_web_name": web_name,
             }
         )
 
     photos.sort(key=lambda photo: (-int(photo["sort"]), str(photo["_name"]).lower()))
+    write_photo_data(
+        script_dir,
+        {
+            str(photo["_name"]): {
+                "web_name": photo["_web_name"],
+                "date": photo["date"],
+                "sort": photo["sort"],
+                "source": photo["source"],
+            }
+            for photo in photos
+        },
+    )
     return photos
 
 
