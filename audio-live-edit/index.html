@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Audio Mangler</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div>
+          <h1>Live Audio Mangler</h1>
+          <p id="status">Upload een MP3 of WAV om te beginnen.</p>
+        </div>
+        <label class="upload">
+          <input id="fileInput" type="file" accept="audio/mpeg,audio/mp3,audio/wav,audio/wave" />
+          <span>Upload Audio</span>
+        </label>
+      </header>
+
+      <section class="transport" aria-label="Live performance controls">
+        <button id="playPause" type="button">Play</button>
+        <button id="randomJump" type="button">Random Jump</button>
+        <button id="setSample" type="button">Set Sample From Current Position</button>
+        <button id="toggleLoop" type="button" aria-pressed="false">Toggle Loop</button>
+        <button id="stutter" type="button">Stutter</button>
+        <button id="reverseSample" type="button" aria-pressed="false">Reverse Sample</button>
+        <button id="glitchMode" type="button" aria-pressed="false">Random Glitch Mode</button>
+      </section>
+
+      <section class="readout" aria-label="Playback status">
+        <div>
+          <span>Position</span>
+          <strong id="positionReadout">0:00.000</strong>
+        </div>
+        <div>
+          <span>Sample Point</span>
+          <strong id="sampleReadout">0:00.000</strong>
+        </div>
+        <div>
+          <span>Mode</span>
+          <strong id="modeReadout">Idle</strong>
+        </div>
+      </section>
+
+      <div class="progress-shell" aria-label="Track progress">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+
+      <section class="sliders" aria-label="Audio controls">
+        <label>
+          <span>Playback Speed <strong id="speedValue">1.00x</strong></span>
+          <input id="speed" type="range" min="0.25" max="4" step="0.01" value="1" />
+        </label>
+
+        <label>
+          <span>Loop Length <strong id="loopLengthValue">250ms</strong></span>
+          <input id="loopLength" type="range" min="0.05" max="4" step="0.01" value="0.25" />
+        </label>
+
+        <label>
+          <span>Random Jump Intensity <strong id="jumpValue">50%</strong></span>
+          <input id="jumpIntensity" type="range" min="0" max="100" step="1" value="50" />
+        </label>
+
+        <label>
+          <span>Repeat Count <strong id="repeatValue">4</strong></span>
+          <input id="repeatCount" type="range" min="1" max="16" step="1" value="4" />
+        </label>
+
+        <label>
+          <span>Volume <strong id="volumeValue">85%</strong></span>
+          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.85" />
+        </label>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
