@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grieks oefenen :3</title>
+  <style>
+    :root {
+      --bg: #fff4f9;
+      --card: #ffffff;
+      --ink: #412034;
+      --muted: #7a5b70;
+      --pink: #d91d73;
+      --pink-dark: #b9145c;
+      --pink-soft: #ffe4f0;
+      --rose: #ff8fbd;
+      --green: #0f8b57;
+      --green-soft: #e9fff5;
+      --red: #bd2350;
+      --red-soft: #ffe8ee;
+      --gold: #ffbd42;
+      --shadow: 0 18px 45px rgba(217, 29, 115, 0.16);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Trebuchet MS", Verdana, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 16% 10%, rgba(255, 203, 226, 0.95), transparent 30%),
+        radial-gradient(circle at 88% 18%, rgba(255, 238, 248, 0.9), transparent 26%),
+        linear-gradient(135deg, #fff8fb 0%, #ffe0ee 48%, #fff2f7 100%);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 30px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--pink);
+      font-size: clamp(2.3rem, 7vw, 5.2rem);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+    }
+
+    .tabs,
+    .actions,
+    .learn-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tabs {
+      justify-content: flex-end;
+    }
+
+    .button {
+      min-height: 44px;
+      border: 0;
+      border-radius: var(--radius);
+      padding: 11px 16px;
+      color: #fff;
+      background: var(--pink);
+      box-shadow: 0 10px 22px rgba(217, 29, 115, 0.22);
+      cursor: pointer;
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+      white-space: nowrap;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(217, 29, 115, 0.28);
+      background: var(--pink-dark);
+    }
+
+    .button.secondary {
+      color: var(--pink);
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(217, 29, 115, 0.13);
+    }
+
+    .button.active {
+      color: #fff;
+      background: var(--pink-dark);
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .panel,
+    .stat,
+    .feedback,
+    .word-row {
+      border: 1px solid rgba(217, 29, 115, 0.14);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: 0 8px 24px rgba(217, 29, 115, 0.08);
+    }
+
+    .panel {
+      padding: clamp(16px, 3vw, 28px);
+      box-shadow: var(--shadow);
+    }
+
+    .learn-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(280px, 1.25fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .flashcard {
+      display: grid;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      justify-self: center;
+      min-height: 28px;
+      border-radius: 999px;
+      padding: 5px 12px;
+      color: var(--pink);
+      background: var(--pink-soft);
+      font-size: 0.82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .greek-big {
+      min-height: 140px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      padding: 18px;
+      color: var(--pink);
+      background: linear-gradient(180deg, #fff 0%, var(--pink-soft) 100%);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 9vw, 6.4rem);
+      font-weight: 900;
+      line-height: 1;
+      overflow-wrap: anywhere;
+    }
+
+    .answer-big {
+      min-height: 72px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      font-size: clamp(1.25rem, 3vw, 2rem);
+      font-weight: 900;
+    }
+
+    .learn-actions {
+      justify-content: center;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .search,
+    .select {
+      width: 100%;
+      min-height: 44px;
+      border: 2px solid rgba(217, 29, 115, 0.22);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      color: var(--ink);
+      background: #fff;
+      outline: none;
+    }
+
+    .word-list {
+      display: grid;
+      gap: 8px;
+      max-height: 560px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .word-row {
+      display: grid;
+      grid-template-columns: minmax(115px, 0.8fr) minmax(0, 1.2fr);
+      gap: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+
+    .word-row:hover {
+      border-color: rgba(217, 29, 115, 0.32);
+      background: #fff;
+    }
+
+    .row-greek {
+      color: var(--pink);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.35rem;
+      font-weight: 900;
+    }
+
+    .row-dutch {
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .row-cat {
+      grid-column: 1 / -1;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .stat {
+      min-height: 74px;
+      padding: 12px;
+    }
+
+    .stat-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .stat-value {
+      display: block;
+      margin-top: 6px;
+      color: var(--pink);
+      font-size: clamp(1.25rem, 3vw, 1.75rem);
+      font-weight: 900;
+    }
+
+    .quiz-card {
+      display: grid;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .prompt-label {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .answer-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .answer {
+      width: 100%;
+      min-height: 56px;
+      border: 2px solid rgba(217, 29, 115, 0.22);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      color: var(--ink);
+      background: #fff;
+      font-size: clamp(1.05rem, 2.8vw, 1.35rem);
+      outline: none;
+      transition: border 150ms ease, box-shadow 150ms ease;
+    }
+
+    .answer:focus,
+    .search:focus,
+    .select:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 4px rgba(217, 29, 115, 0.12);
+    }
+
+    .feedback {
+      min-height: 80px;
+      margin-top: 12px;
+      padding: 14px 16px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .feedback-title {
+      margin: 0;
+      color: var(--pink);
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .feedback-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .feedback.good {
+      background: var(--green-soft);
+      border-color: rgba(15, 139, 87, 0.28);
+    }
+
+    .feedback.good .feedback-title {
+      color: var(--green);
+    }
+
+    .feedback.try {
+      background: var(--red-soft);
+      border-color: rgba(189, 35, 80, 0.24);
+    }
+
+    .feedback.try .feedback-title {
+      color: var(--red);
+    }
+
+    .actions {
+      justify-content: center;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 850px) {
+      .topbar,
+      .learn-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .tabs,
+      .topbar .button,
+      .learn-actions .button,
+      .actions .button {
+        width: 100%;
+      }
+
+      .dashboard {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filters,
+      .answer-row,
+      .word-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="topbar" aria-label="Titel">
+      <div>
+        <h1>Grieks oefenen :3</h1>
+        <p class="subtitle">Eerst leren, daarna overhoren. Alle Griekse woorden uit de foto’s zitten erin.</p>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Spelstand">
+        <button class="button active" id="learnTab" type="button">1. Leren</button>
+        <button class="button secondary" id="quizTab" type="button">2. Overhoren</button>
+      </div>
+    </section>
+
+    <section class="screen active" id="learnScreen" aria-label="Leren">
+      <div class="learn-grid">
+        <section class="panel flashcard" aria-label="Leerkaart">
+          <span class="tag" id="learnCategory">woord</span>
+          <div class="greek-big" id="learnGreek">...</div>
+          <div class="answer-big" id="learnDutch">...</div>
+          <div class="learn-actions">
+            <button class="button secondary" id="prevCard" type="button">Vorige</button>
+            <button class="button" id="nextCard" type="button">Volgende</button>
+            <button class="button secondary" id="shuffleLearn" type="button">Hussel</button>
+          </div>
+        </section>
+
+        <section class="panel" aria-label="Woordenlijst">
+          <div class="filters">
+            <input class="search" id="search" type="search" placeholder="Zoek Grieks of Nederlands">
+            <select class="select" id="categoryFilter" aria-label="Categorie">
+              <option value="all">Alle woorden</option>
+            </select>
+          </div>
+          <div class="word-list" id="wordList"></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="screen" id="quizScreen" aria-label="Overhoren">
+      <section class="dashboard" aria-label="Score">
+        <div class="stat">
+          <span class="stat-label">Goed</span>
+          <span class="stat-value" id="correct">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Pogingen</span>
+          <span class="stat-value" id="tries">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Streak</span>
+          <span class="stat-value" id="streak">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Sterren</span>
+          <span class="stat-value" id="stars">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Woorden</span>
+          <span class="stat-value" id="totalWords">0</span>
+        </div>
+      </section>
+
+      <section class="panel quiz-card" aria-label="Oefenvraag">
+        <p class="prompt-label" id="quizCategory">Vertaal naar het Nederlands</p>
+        <div class="greek-big" id="quizGreek">...</div>
+        <form class="answer-row" id="answerForm">
+          <input class="answer" id="answer" type="text" autocomplete="off" spellcheck="false" placeholder="Typ hier de betekenis">
+          <button class="button" type="submit">Check</button>
+        </form>
+      </section>
+
+      <section class="feedback" id="feedback" aria-live="polite">
+        <p class="feedback-title" id="feedbackTitle">Klaar voor de overhoring?</p>
+        <p class="feedback-text" id="feedbackText">Typ je antwoord en druk op Enter.</p>
+      </section>
+
+      <div class="actions">
+        <button class="button secondary" id="showAnswer" type="button">Toon antwoord</button>
+        <button class="button" id="again" type="button">Volgende</button>
+        <button class="button secondary" id="resetQuiz" type="button">Reset score</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const words = [
+      { greek: "καθεύδω", dutch: ["ik slaap"], category: "1.A werkwoord" },
+      { greek: "φυλάττω", dutch: ["ik bescherm", "ik bewaak", "ik bescherm, ik bewaak"], category: "1.A werkwoord" },
+      { greek: "κρύπτω", dutch: ["ik verberg"], category: "1.A werkwoord" },
+      { greek: "ἡ οἰκία", dutch: ["het huis"], category: "1.A zelfstandig naamwoord" },
+      { greek: "ἡ ἀγορά", dutch: ["de markt"], category: "1.A zelfstandig naamwoord" },
+      { greek: "ἡ ἀδελφή", dutch: ["de zus"], category: "1.A zelfstandig naamwoord" },
+      { greek: "ἡ θύρα", dutch: ["de deur"], category: "1.A zelfstandig naamwoord" },
+      { greek: "ὁ ἀδελφός", dutch: ["de broer"], category: "1.A zelfstandig naamwoord" },
+      { greek: "ὁ δοῦλος", dutch: ["de slaaf"], category: "1.A zelfstandig naamwoord" },
+      { greek: "ὁ ἄνθρωπος", dutch: ["de mens", "de man", "de mens, de man"], category: "1.A zelfstandig naamwoord" },
+      { greek: "ὁ, ἡ, τό", dutch: ["de", "het", "de, het"], category: "1.A lidwoord" },
+      { greek: "ἐν + dat.", dutch: ["in", "op", "in, op"], category: "1.A voorzetsel" },
+      { greek: "πλησίον + gen.", dutch: ["dicht bij"], category: "1.A voorzetsel" },
+      { greek: "ἐκτός + gen.", dutch: ["buiten"], category: "1.A voorzetsel" },
+      { greek: "πρό + gen.", dutch: ["voor"], category: "1.A voorzetsel" },
+      { greek: "οὐ, οὐκ", dutch: ["niet"], category: "1.A bijwoord" },
+      { greek: "ἐξαίφνης", dutch: ["plotseling"], category: "1.A bijwoord" },
+      { greek: "δέ, δ᾽", dutch: ["leidt een nieuw stukje informatie in"], category: "1.A overig woord" },
+      { greek: "ἀλλά, ἀλλ᾽", dutch: ["maar", "integendeel", "maar, integendeel"], category: "1.A overig woord" },
+      { greek: "καί", dutch: ["en", "ook", "en, ook"], category: "1.A overig woord" },
+      { greek: "γάρ", dutch: ["want", "immers", "want, immers"], category: "1.A overig woord" },
+      { greek: "δύο", dutch: ["twee"], category: "1.A overig woord" },
+      { greek: "ἀκούω", dutch: ["ik hoor", "ik luister", "ik hoor, ik luister"], category: "1.B werkwoord" },
+      { greek: "λέγω", dutch: ["ik zeg", "ik spreek", "ik zeg, ik spreek"], category: "1.B werkwoord" },
+      { greek: "ἐστίν", dutch: ["hij/zij is", "hij is", "zij is"], category: "1.B werkwoord" },
+      { greek: "πράττω", dutch: ["ik doe"], category: "1.B werkwoord" },
+      { greek: "ἡ βία", dutch: ["het geweld"], category: "1.B zelfstandig naamwoord" },
+      { greek: "τὸ ἔργον", dutch: ["het werk"], category: "1.B zelfstandig naamwoord" },
+      { greek: "ἀγαθός", dutch: ["goed"], category: "1.B bijvoeglijk naamwoord" },
+      { greek: "ἐγώ", dutch: ["ik"], category: "1.B voornaamwoord" },
+      { greek: "ἡμᾶς", dutch: ["ons"], category: "1.B voornaamwoord" },
+      { greek: "ἡμεῖς", dutch: ["wij"], category: "1.B voornaamwoord" },
+      { greek: "αὖθις", dutch: ["weer", "opnieuw", "weer, opnieuw"], category: "1.B bijwoord" },
+      { greek: "ἔτι", dutch: ["nog"], category: "1.B bijwoord" },
+      { greek: "νῦν", dutch: ["nu", "op dit moment", "nu, op dit moment"], category: "1.B bijwoord" },
+      { greek: "ἔπειτα", dutch: ["daarna", "vervolgens", "daarna, vervolgens"], category: "1.B bijwoord" },
+      { greek: "εὖ", dutch: ["goed"], category: "1.B bijwoord" },
+      { greek: "πολλάκις", dutch: ["vaak"], category: "1.B bijwoord" },
+      { greek: "μέν", dutch: ["geeft aan dat de zin nog verder gaat"], category: "1.B overig woord" },
+      { greek: "A μέν ..., B δέ", dutch: ["A en B", "weliswaar A, maar B", "A en B; weliswaar A, maar B"], category: "1.B overig woord" },
+      { greek: "οὖν", dutch: ["dus", "dan", "nu", "dus, dan, nu"], category: "1.B overig woord" },
+      { greek: "ὦ", dutch: ["voor een aanspreekvorm, blijft onvertaald", "blijft onvertaald"], category: "1.B overig woord" },
+      { greek: "ὅτι", dutch: ["dat", "omdat", "dat, omdat"], category: "1.B overig woord" },
+      { greek: "ὥσπερ", dutch: ["zoals"], category: "1.B overig woord" },
+      { greek: "πρό", dutch: ["pro-loog"], category: "leenwoord uit het Grieks" },
+      { greek: "δύο", dutch: ["duo"], category: "leenwoord uit het Grieks" },
+      { greek: "κρύπτω", dutch: ["cryptogram", "cryptisch", "cryptogram, cryptisch"], category: "leenwoord uit het Grieks" },
+      { greek: "ἄνθρωπος", dutch: ["antropologie", "antropomorf", "antropologie, antropomorf"], category: "leenwoord uit het Grieks" },
+      { greek: "ἡ ἀγορά", dutch: ["agorafobie"], category: "leenwoord uit het Grieks" },
+      { greek: "ἀκούω", dutch: ["akoestiek", "akoestische gitaar", "akoestiek, akoestische gitaar"], category: "leenwoord uit het Grieks" },
+      { greek: "λέγω", dutch: ["mono-loog", "dia-loog", "mono-loog, dia-loog"], category: "leenwoord uit het Grieks" },
+      { greek: "ἐγώ", dutch: ["egoïstisch"], category: "leenwoord uit het Grieks" },
+      { greek: "εὖ", dutch: ["eu-thanasie", "eu-femisme", "eu-thanasie, eu-femisme"], category: "leenwoord uit het Grieks" },
+      { greek: "τὸ ἔργον", dutch: ["syn-ergie", "ergo-therapeut", "syn-ergie, ergo-therapeut"], category: "leenwoord uit het Grieks" },
+      { greek: "πράττω", dutch: ["praktijk", "praktisch", "Praxis", "praktijk, praktisch, Praxis"], category: "leenwoord uit het Grieks" }
+    ];
+
+    const learnTab = document.querySelector("#learnTab");
+    const quizTab = document.querySelector("#quizTab");
+    const learnScreen = document.querySelector("#learnScreen");
+    const quizScreen = document.querySelector("#quizScreen");
+    const learnCategoryEl = document.querySelector("#learnCategory");
+    const learnGreekEl = document.querySelector("#learnGreek");
+    const learnDutchEl = document.querySelector("#learnDutch");
+    const prevCardBtn = document.querySelector("#prevCard");
+    const nextCardBtn = document.querySelector("#nextCard");
+    const shuffleLearnBtn = document.querySelector("#shuffleLearn");
+    const searchEl = document.querySelector("#search");
+    const categoryFilterEl = document.querySelector("#categoryFilter");
+    const wordListEl = document.querySelector("#wordList");
+    const quizCategoryEl = document.querySelector("#quizCategory");
+    const quizGreekEl = document.querySelector("#quizGreek");
+    const answerForm = document.querySelector("#answerForm");
+    const answerEl = document.querySelector("#answer");
+    const feedbackEl = document.querySelector("#feedback");
+    const feedbackTitleEl = document.querySelector("#feedbackTitle");
+    const feedbackTextEl = document.querySelector("#feedbackText");
+    const correctEl = document.querySelector("#correct");
+    const triesEl = document.querySelector("#tries");
+    const streakEl = document.querySelector("#streak");
+    const starsEl = document.querySelector("#stars");
+    const totalWordsEl = document.querySelector("#totalWords");
+    const showAnswerBtn = document.querySelector("#showAnswer");
+    const againBtn = document.querySelector("#again");
+    const resetQuizBtn = document.querySelector("#resetQuiz");
+
+    let learnOrder = words.map((_, index) => index);
+    let learnIndex = 0;
+    let currentWord = null;
+    let correct = 0;
+    let tries = 0;
+    let streak = 0;
+    let stars = 0;
+    let answered = false;
+    const mistakes = new Map();
+
+    function normalize(value) {
+      return value
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[.,;:!?()]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function shuffle(items) {
+      const copy = [...items];
+      for (let index = copy.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+      }
+      return copy;
+    }
+
+    function displayAnswer(word) {
+      return word.dutch[word.dutch.length - 1];
+    }
+
+    function setMode(mode) {
+      const learning = mode === "learn";
+      learnScreen.classList.toggle("active", learning);
+      quizScreen.classList.toggle("active", !learning);
+      learnTab.classList.toggle("active", learning);
+      learnTab.classList.toggle("secondary", !learning);
+      quizTab.classList.toggle("active", !learning);
+      quizTab.classList.toggle("secondary", learning);
+      if (!learning) {
+        nextQuizWord();
+      }
+    }
+
+    function renderLearnCard() {
+      const word = words[learnOrder[learnIndex]];
+      learnCategoryEl.textContent = `${word.category} · ${learnIndex + 1}/${learnOrder.length}`;
+      learnGreekEl.textContent = word.greek;
+      learnDutchEl.textContent = displayAnswer(word);
+    }
+
+    function renderCategories() {
+      const categories = [...new Set(words.map((word) => word.category))];
+      categories.forEach((category) => {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+        categoryFilterEl.append(option);
+      });
+    }
+
+    function renderWordList() {
+      const query = normalize(searchEl.value);
+      const category = categoryFilterEl.value;
+      wordListEl.innerHTML = "";
+
+      words
+        .map((word, index) => ({ ...word, index }))
+        .filter((word) => category === "all" || word.category === category)
+        .filter((word) => {
+          const haystack = normalize(`${word.greek} ${word.dutch.join(" ")} ${word.category}`);
+          return !query || haystack.includes(query);
+        })
+        .forEach((word) => {
+          const row = document.createElement("button");
+          row.className = "word-row";
+          row.type = "button";
+          row.innerHTML = `
+            <span class="row-greek">${word.greek}</span>
+            <span class="row-dutch">${displayAnswer(word)}</span>
+            <span class="row-cat">${word.category}</span>
+          `;
+          row.addEventListener("click", () => {
+            const position = learnOrder.indexOf(word.index);
+            learnIndex = position >= 0 ? position : 0;
+            if (position < 0) learnOrder = words.map((_, index) => index);
+            renderLearnCard();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+          wordListEl.append(row);
+        });
+    }
+
+    function nextLearnCard(step) {
+      learnIndex = (learnIndex + step + learnOrder.length) % learnOrder.length;
+      renderLearnCard();
+    }
+
+    function shuffleLearn() {
+      learnOrder = shuffle(words.map((_, index) => index));
+      learnIndex = 0;
+      renderLearnCard();
+    }
+
+    function pickQuizWord() {
+      const weighted = words.flatMap((word, index) => {
+        const misses = mistakes.get(index) || 0;
+        return Array(Math.min(5, misses + 1)).fill({ ...word, id: index });
+      });
+      const options = shuffle(weighted);
+      return options.find((word) => !currentWord || word.id !== currentWord.id) || options[0];
+    }
+
+    function setFeedback(mode, title, text) {
+      feedbackEl.className = `feedback ${mode || ""}`.trim();
+      feedbackTitleEl.textContent = title;
+      feedbackTextEl.textContent = text;
+    }
+
+    function updateStats() {
+      correctEl.textContent = correct;
+      triesEl.textContent = tries;
+      streakEl.textContent = streak;
+      starsEl.textContent = stars;
+      totalWordsEl.textContent = words.length;
+    }
+
+    function nextQuizWord() {
+      currentWord = pickQuizWord();
+      answered = false;
+      quizGreekEl.textContent = currentWord.greek;
+      quizCategoryEl.textContent = currentWord.category === "leenwoord uit het Grieks"
+        ? "Typ het Nederlandse leenwoord"
+        : "Vertaal naar het Nederlands";
+      answerEl.value = "";
+      answerEl.disabled = false;
+      setFeedback("", "Nieuw woord", currentWord.category);
+      setTimeout(() => answerEl.focus(), 0);
+    }
+
+    function checkAnswer(event) {
+      event.preventDefault();
+      if (answered) {
+        nextQuizWord();
+        return;
+      }
+
+      const userAnswer = normalize(answerEl.value);
+      if (!userAnswer) {
+        setFeedback("try", "Nog niets ingevuld", "Typ eerst je antwoord.");
+        answerEl.focus();
+        return;
+      }
+
+      tries += 1;
+      const isCorrect = currentWord.dutch.some((answer) => normalize(answer) === userAnswer);
+
+      if (isCorrect) {
+        correct += 1;
+        streak += 1;
+        stars += streak >= 3 ? 2 : 1;
+        mistakes.set(currentWord.id, 0);
+        answered = true;
+        answerEl.disabled = true;
+        setFeedback("good", "Goed!", `Antwoord: ${displayAnswer(currentWord)}`);
+      } else {
+        streak = 0;
+        stars = Math.max(0, stars - 1);
+        mistakes.set(currentWord.id, (mistakes.get(currentWord.id) || 0) + 1);
+        setFeedback("try", "Bijna", "Probeer nog eens. Dit woord komt later vaker terug.");
+        answerEl.select();
+      }
+
+      updateStats();
+    }
+
+    function showAnswer() {
+      if (!currentWord) return;
+      answered = true;
+      streak = 0;
+      mistakes.set(currentWord.id, (mistakes.get(currentWord.id) || 0) + 1);
+      answerEl.value = displayAnswer(currentWord);
+      answerEl.disabled = true;
+      setFeedback("try", "Antwoord", displayAnswer(currentWord));
+      updateStats();
+    }
+
+    function resetQuiz() {
+      correct = 0;
+      tries = 0;
+      streak = 0;
+      stars = 0;
+      mistakes.clear();
+      updateStats();
+      nextQuizWord();
+    }
+
+    learnTab.addEventListener("click", () => setMode("learn"));
+    quizTab.addEventListener("click", () => setMode("quiz"));
+    prevCardBtn.addEventListener("click", () => nextLearnCard(-1));
+    nextCardBtn.addEventListener("click", () => nextLearnCard(1));
+    shuffleLearnBtn.addEventListener("click", shuffleLearn);
+    searchEl.addEventListener("input", renderWordList);
+    categoryFilterEl.addEventListener("change", renderWordList);
+    answerForm.addEventListener("submit", checkAnswer);
+    showAnswerBtn.addEventListener("click", showAnswer);
+    againBtn.addEventListener("click", nextQuizWord);
+    resetQuizBtn.addEventListener("click", resetQuiz);
+
+    renderCategories();
+    renderLearnCard();
+    renderWordList();
+    updateStats();
+  </script>
+</body>
+</html>
