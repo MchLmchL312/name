@@ -165,6 +165,11 @@ def photo_date(path: Path) -> tuple[datetime, str]:
     return datetime.fromtimestamp(timestamp).astimezone(), "file"
 
 
+def sort_from_date(value: str) -> int:
+    date = datetime.fromisoformat(value)
+    return int(date.timestamp() * 1000)
+
+
 def make_web_image(path: Path, output_dir: Path) -> Path:
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / path.name
@@ -247,8 +252,8 @@ def build_manifest(script_dir: Path) -> list[dict[str, object]]:
             continue
 
         try:
-            sort = int(entry["sort"])
             date = str(entry["date"])
+            sort = sort_from_date(date)
             source = str(entry.get("source") or "metadata")
         except (KeyError, TypeError, ValueError):
             continue
