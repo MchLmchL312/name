@@ -1,0 +1,1021 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Latijn Woordjes</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #fff4f8;
+      --paper: #fffafb;
+      --paper-strong: #ffffff;
+      --rose: #d84f8b;
+      --rose-dark: #8d2455;
+      --rose-soft: #f8c8dc;
+      --gold: #b8893d;
+      --ink: #321b29;
+      --muted: #7b6170;
+      --line: rgba(141, 36, 85, 0.18);
+      --good: #177245;
+      --bad: #b32c4b;
+      --shadow: 0 18px 45px rgba(141, 36, 85, 0.14);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(90deg, rgba(216, 79, 139, 0.08) 0 1px, transparent 1px 7.5rem),
+        radial-gradient(circle at 15% 10%, rgba(248, 200, 220, 0.7), transparent 22rem),
+        linear-gradient(135deg, #fff7fa, var(--bg));
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 26px 0 40px;
+    }
+
+    header {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: end;
+      padding: 20px 0 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    header::before,
+    header::after {
+      content: "";
+      position: absolute;
+      top: 18px;
+      width: 22px;
+      height: 72px;
+      border: 2px solid rgba(184, 137, 61, 0.45);
+      border-top-width: 8px;
+      border-bottom-width: 8px;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(184, 137, 61, 0.08),
+        rgba(184, 137, 61, 0.08) 3px,
+        transparent 3px,
+        transparent 7px
+      );
+      opacity: 0.75;
+      pointer-events: none;
+    }
+
+    header::before {
+      right: 110px;
+    }
+
+    header::after {
+      right: 72px;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 14ch;
+      color: var(--rose-dark);
+      font-size: clamp(2.2rem, 6vw, 5.6rem);
+      line-height: 0.9;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 12px 0 0;
+      max-width: 58ch;
+      color: var(--muted);
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1.55;
+    }
+
+    .wreath {
+      display: grid;
+      place-items: center;
+      width: 86px;
+      height: 86px;
+      border: 1px solid rgba(184, 137, 61, 0.35);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.64);
+      color: var(--gold);
+      font-size: 2.6rem;
+      box-shadow: var(--shadow);
+      z-index: 1;
+    }
+
+    .panel {
+      margin-top: 18px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 250, 251, 0.86);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field {
+      min-width: 0;
+    }
+
+    label {
+      display: block;
+      margin: 0 0 6px;
+      color: var(--rose-dark);
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    select,
+    input[type="text"] {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid rgba(141, 36, 85, 0.28);
+      border-radius: var(--radius);
+      background: var(--paper-strong);
+      color: var(--ink);
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    select:focus,
+    input[type="text"]:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 4px rgba(216, 79, 139, 0.16);
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      min-height: 44px;
+      padding: 4px;
+      border: 1px solid rgba(141, 36, 85, 0.18);
+      border-radius: var(--radius);
+      background: #fce7f0;
+    }
+
+    .segmented button,
+    .button {
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--rose-dark);
+      padding: 10px 12px;
+      cursor: pointer;
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-weight: 800;
+      transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+
+    .segmented button[aria-pressed="true"],
+    .button.primary {
+      background: var(--rose);
+      color: white;
+      box-shadow: 0 8px 18px rgba(216, 79, 139, 0.24);
+    }
+
+    .button {
+      min-height: 44px;
+      border: 1px solid rgba(141, 36, 85, 0.24);
+      background: var(--paper-strong);
+    }
+
+    .button:hover,
+    .segmented button:hover {
+      transform: translateY(-1px);
+    }
+
+    main {
+      margin-top: 18px;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      border: 1px solid rgba(184, 137, 61, 0.36);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 7px 10px;
+      color: var(--rose-dark);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .learn-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+    }
+
+    .word-card {
+      min-height: 126px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 244, 248, 0.86)),
+        var(--paper);
+      box-shadow: 0 10px 24px rgba(141, 36, 85, 0.08);
+    }
+
+    .word-card .lesson {
+      color: var(--gold);
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .latin {
+      margin-top: 9px;
+      color: var(--rose-dark);
+      font-size: 1.28rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .dutch {
+      margin-top: 8px;
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.4;
+    }
+
+    .hidden-answer .dutch {
+      filter: blur(7px);
+      user-select: none;
+    }
+
+    .quiz {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .quiz-card {
+      min-height: 300px;
+      padding: clamp(18px, 4vw, 34px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(90deg, rgba(184, 137, 61, 0.15) 0 8px, transparent 8px),
+        var(--paper-strong);
+      box-shadow: var(--shadow);
+    }
+
+    .question-label {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .question {
+      margin: 0 0 24px;
+      color: var(--rose-dark);
+      font-size: clamp(2rem, 6vw, 4rem);
+      line-height: 1;
+      overflow-wrap: anywhere;
+    }
+
+    .answer-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+
+    .feedback {
+      min-height: 68px;
+      margin-top: 18px;
+      padding: 13px 14px;
+      border-radius: var(--radius);
+      background: #fff4f8;
+      color: var(--muted);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    .feedback.good {
+      border: 1px solid rgba(23, 114, 69, 0.3);
+      background: rgba(23, 114, 69, 0.08);
+      color: var(--good);
+    }
+
+    .feedback.bad {
+      border: 1px solid rgba(179, 44, 75, 0.28);
+      background: rgba(179, 44, 75, 0.08);
+      color: var(--bad);
+    }
+
+    .side {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 250, 251, 0.9);
+      box-shadow: 0 10px 24px rgba(141, 36, 85, 0.08);
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    .score {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .score div {
+      padding: 12px;
+      border-radius: var(--radius);
+      background: white;
+      border: 1px solid var(--line);
+    }
+
+    .score strong {
+      display: block;
+      color: var(--rose-dark);
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+
+    .side .button {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .empty {
+      padding: 26px;
+      border: 1px dashed rgba(141, 36, 85, 0.35);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--muted);
+      font-family: "Segoe UI", Arial, sans-serif;
+      text-align: center;
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 850px) {
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      header::before,
+      header::after {
+        display: none;
+      }
+
+      .wreath {
+        width: 64px;
+        height: 64px;
+        font-size: 2rem;
+      }
+
+      .controls,
+      .quiz {
+        grid-template-columns: 1fr;
+      }
+
+      .answer-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .page {
+        width: min(100% - 18px, 1180px);
+        padding-top: 12px;
+      }
+
+      .panel {
+        padding: 10px;
+      }
+
+      .segmented {
+        grid-template-columns: 1fr;
+      }
+
+      .question {
+        font-size: 2.15rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <h1>Latijn Woordjes</h1>
+        <p class="subtitle">Leer en overhoor de basiswoorden van tekst 2 t/m 11. Kies je les, wissel van richting en oefen tot de vertalingen blijven hangen.</p>
+      </div>
+      <div class="wreath" aria-hidden="true">◖◗</div>
+    </header>
+
+    <section class="panel" aria-label="Instellingen">
+      <div class="controls">
+        <div class="field">
+          <label>Modus</label>
+          <div class="segmented" role="group" aria-label="Modus kiezen">
+            <button id="learnMode" type="button" aria-pressed="true">Leren</button>
+            <button id="quizMode" type="button" aria-pressed="false">Overhoren</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="direction">Richting</label>
+          <select id="direction">
+            <option value="la-nl">Latijn → Nederlands</option>
+            <option value="nl-la">Nederlands → Latijn</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="lesson">Les</label>
+          <select id="lesson">
+            <option value="all">Alles door elkaar</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Antwoorden</label>
+          <button id="toggleAnswers" class="button" type="button">Verberg antwoorden</button>
+        </div>
+      </div>
+    </section>
+
+    <main>
+      <section id="learnView">
+        <div class="stats">
+          <div class="pill-row">
+            <span id="wordCount" class="pill">0 woorden</span>
+            <span id="activeDirection" class="pill">Latijn → Nederlands</span>
+          </div>
+          <span id="learnHint">Klik op overhoren als je klaar bent om jezelf te testen.</span>
+        </div>
+        <div id="learnGrid" class="learn-grid"></div>
+      </section>
+
+      <section id="quizView" class="quiz is-hidden">
+        <div class="quiz-card">
+          <p class="question-label" id="questionLabel">Vertaal</p>
+          <h2 class="question" id="questionText">-</h2>
+          <form id="quizForm" class="answer-row">
+            <input id="answerInput" type="text" autocomplete="off" placeholder="Typ je antwoord">
+            <button class="button primary" type="submit">Controleer</button>
+          </form>
+          <div id="feedback" class="feedback">Vul je antwoord in en controleer jezelf.</div>
+        </div>
+
+        <aside class="side" aria-label="Score">
+          <div class="score">
+            <div>
+              <strong id="goodScore">0</strong>
+              goed
+            </div>
+            <div>
+              <strong id="badScore">0</strong>
+              fout
+            </div>
+          </div>
+          <div class="pill-row">
+            <span id="quizProgress" class="pill">Vraag 1 van 1</span>
+            <span id="quizLesson" class="pill">Alles</span>
+          </div>
+          <button id="nextQuestion" class="button primary" type="button">Volgende vraag</button>
+          <button id="resetQuiz" class="button" type="button">Opnieuw schudden</button>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const words = [
+      { lesson: 2, latin: "deus, mv dei", dutch: "god" },
+      { lesson: 2, latin: "est", dutch: "(hij/zij/het) is" },
+      { lesson: 2, latin: "esse", dutch: "zijn" },
+      { lesson: 2, latin: "in", dutch: "in, op" },
+      { lesson: 2, latin: "Olympus", dutch: "de Olympus" },
+      { lesson: 2, latin: "habitat", dutch: "(hij/zij) woont" },
+      { lesson: 2, latin: "habitare", dutch: "wonen" },
+      { lesson: 2, latin: "rex, mv reges", dutch: "koning" },
+      { lesson: 2, latin: "et", dutch: "en" },
+      { lesson: 2, latin: "sunt", dutch: "(zij) zijn" },
+      { lesson: 2, latin: "frater, mv fratres", dutch: "broer" },
+      { lesson: 2, latin: "non", dutch: "niet" },
+      { lesson: 2, latin: "semper", dutch: "altijd" },
+      { lesson: 2, latin: "saepe", dutch: "dikwijls" },
+      { lesson: 2, latin: "ibi", dutch: "daar" },
+      { lesson: 2, latin: "Tartarus", dutch: "de Tartarus (diepste plaats in de onderwereld)" },
+      { lesson: 2, latin: "vivit", dutch: "(hij/zij) leeft" },
+      { lesson: 2, latin: "vivere", dutch: "leven" },
+      { lesson: 2, latin: "terra", dutch: "aarde" },
+      { lesson: 2, latin: "locus", dutch: "plaats" },
+      { lesson: 2, latin: "obscurus", dutch: "donker" },
+      { lesson: 2, latin: "nox, mv noctes", dutch: "nacht" },
+      { lesson: 2, latin: "umbra, mv umbrae", dutch: "schim (van gestorven mensen); schaduw" },
+      { lesson: 2, latin: "huc", dutch: "hierheen" },
+      { lesson: 2, latin: "veniunt", dutch: "(zij) komen" },
+      { lesson: 2, latin: "venire", dutch: "komen" },
+      { lesson: 2, latin: "hic bijw.", dutch: "hier" },
+
+      { lesson: 3, latin: "dea", dutch: "godin" },
+      { lesson: 3, latin: "soror, sorores", dutch: "zuster" },
+      { lesson: 3, latin: "uxor, uxores", dutch: "vrouw, echtgenote" },
+      { lesson: 3, latin: "quoque", dutch: "ook" },
+      { lesson: 3, latin: "mater, matres", dutch: "moeder" },
+      { lesson: 3, latin: "pater, patres", dutch: "vader" },
+      { lesson: 3, latin: "filia", dutch: "dochter" },
+      { lesson: 3, latin: "insula", dutch: "eiland" },
+      { lesson: 3, latin: "ubi", dutch: "waar" },
+      { lesson: 3, latin: "silva", dutch: "bos" },
+      { lesson: 3, latin: "flos, flores m", dutch: "bloem" },
+      { lesson: 3, latin: "florere", dutch: "bloeien" },
+      { lesson: 3, latin: "puella", dutch: "meisje" },
+      { lesson: 3, latin: "ludere", dutch: "spelen" },
+
+      { lesson: 4, latin: "ager, agri mv", dutch: "akker" },
+      { lesson: 4, latin: "per + acc.", dutch: "over, door ... heen" },
+      { lesson: 4, latin: "errare", dutch: "(rond)zwerven, dwalen" },
+      { lesson: 4, latin: "explorare", dutch: "onderzoeken, inspecteren" },
+      { lesson: 4, latin: "quattuor", dutch: "vier" },
+      { lesson: 4, latin: "equus", dutch: "paard" },
+      { lesson: 4, latin: "trahere", dutch: "trekken" },
+      { lesson: 4, latin: "ecce", dutch: "kijk" },
+      { lesson: 4, latin: "amica", dutch: "vriendin" },
+      { lesson: 4, latin: "appropinquare", dutch: "naderen" },
+      { lesson: 4, latin: "intrare", dutch: "binnengaan, -komen" },
+      { lesson: 4, latin: "legere", dutch: "verzamelen" },
+      { lesson: 4, latin: "ridere", dutch: "lachen" },
+      { lesson: 4, latin: "audire", dutch: "horen" },
+      { lesson: 4, latin: "videre", dutch: "zien" },
+      { lesson: 4, latin: "statim", dutch: "meteen" },
+      { lesson: 4, latin: "amare", dutch: "beminnen, verliefd zijn op" },
+      { lesson: 4, latin: "temptare", dutch: "proberen" },
+      { lesson: 4, latin: "fugere/io", dutch: "vluchten" },
+      { lesson: 4, latin: "sed", dutch: "maar" },
+      { lesson: 4, latin: "in + acc.", dutch: "naar ... (binnen), in (richting)" },
+      { lesson: 4, latin: "exclamare", dutch: "uitroepen" },
+      { lesson: 4, latin: "servare", dutch: "redden" },
+      { lesson: 4, latin: "rapere/io", dutch: "roven, meesleuren" },
+      { lesson: 4, latin: "audere", dutch: "durven" },
+      { lesson: 4, latin: "enim", dutch: "want, immers" },
+      { lesson: 4, latin: "timere", dutch: "vrezen, bang zijn (voor + acc.)" },
+      { lesson: 4, latin: "deinde", dutch: "vervolgens" },
+      { lesson: 4, latin: "aperire", dutch: "openen" },
+      { lesson: 4, latin: "sub + acc.", dutch: "onder (richting)" },
+
+      { lesson: 5, latin: "Iuppiter, Iovem acc.", dutch: "Jupiter" },
+      { lesson: 5, latin: "Pluto, Plutonem acc.", dutch: "Pluto" },
+      { lesson: 5, latin: "regina", dutch: "koningin" },
+      { lesson: 5, latin: "nunc", dutch: "nu" },
+      { lesson: 5, latin: "sedere", dutch: "zitten" },
+      { lesson: 5, latin: "inter + acc.", dutch: "tussen, temidden van" },
+      { lesson: 5, latin: "gaudere", dutch: "blij zijn, zich verheugen" },
+      { lesson: 5, latin: "dolere", dutch: "verdrietig zijn" },
+      { lesson: 5, latin: "nam", dutch: "want" },
+      { lesson: 5, latin: "iuvare", dutch: "helpen" },
+      { lesson: 5, latin: "reddere", dutch: "teruggeven" },
+      { lesson: 5, latin: "cogitare", dutch: "(na)denken" },
+      { lesson: 5, latin: "nec ... nec", dutch: "noch ... noch, niet ... en ook niet" },
+      { lesson: 5, latin: "laedere", dutch: "kwetsen, beledigen" },
+      { lesson: 5, latin: "cupere/io", dutch: "willen, begeren, verlangen" },
+      { lesson: 5, latin: "consilium", dutch: "besluit, plan" },
+      { lesson: 5, latin: "capere/io", dutch: "nemen" },
+      { lesson: 5, latin: "annus", dutch: "jaar" },
+      { lesson: 5, latin: "dividere", dutch: "verdelen" },
+      { lesson: 5, latin: "sex", dutch: "zes" },
+      { lesson: 5, latin: "tum", dutch: "toen, dan" },
+      { lesson: 5, latin: "curare", dutch: "zorgen (voor + acc.)" },
+
+      { lesson: 6, latin: "mille", dutch: "duizend" },
+      { lesson: 6, latin: "petere", dutch: "zoeken, vragen" },
+      { lesson: 6, latin: "autem", dutch: "echter" },
+      { lesson: 6, latin: "claudere", dutch: "sluiten" },
+      { lesson: 6, latin: "recipere/io", dutch: "ontvangen, opnemen" },
+      { lesson: 6, latin: "tandem", dutch: "eindelijk" },
+      { lesson: 6, latin: "senex, senes", dutch: "oude man" },
+      { lesson: 6, latin: "dicere", dutch: "zeggen" },
+      { lesson: 6, latin: "nusquam", dutch: "nergens" },
+      { lesson: 6, latin: "dormire", dutch: "slapen" },
+      { lesson: 6, latin: "respondere", dutch: "antwoorden" },
+      { lesson: 6, latin: "quis", dutch: "wie?" },
+
+      { lesson: 7, latin: "praemium", dutch: "beloning" },
+      { lesson: 7, latin: "dare", dutch: "geven" },
+      { lesson: 7, latin: "quid", dutch: "wat?" },
+      { lesson: 7, latin: "optare", dutch: "wensen" },
+      { lesson: 7, latin: "diu", dutch: "lang, lange tijd" },
+      { lesson: 7, latin: "divitiae mv", dutch: "rijkdom, schatten" },
+      { lesson: 7, latin: "sacerdos, otes", dutch: "priester" },
+      { lesson: 7, latin: "simul", dutch: "tegelijk(ertijd)" },
+      { lesson: 7, latin: "vita", dutch: "(het) leven" },
+      { lesson: 7, latin: "finire", dutch: "beeindigen" },
+      { lesson: 7, latin: "evenire", dutch: "uitkomen" },
+      { lesson: 7, latin: "colere", dutch: "verzorgen; vereren" },
+      { lesson: 7, latin: "dum + praes.", dutch: "terwijl" },
+      { lesson: 7, latin: "ante + acc.", dutch: "voor" },
+      { lesson: 7, latin: "templum", dutch: "tempel" },
+      { lesson: 7, latin: "stare", dutch: "staan" },
+      { lesson: 7, latin: "corpus, ora", dutch: "lichaam" },
+      { lesson: 7, latin: "subito", dutch: "plotseling" },
+      { lesson: 7, latin: "arbor, ores", dutch: "boom" },
+      { lesson: 7, latin: "mutare", dutch: "veranderen (in + acc.)" },
+      { lesson: 7, latin: "tangere", dutch: "aanraken" },
+      { lesson: 7, latin: "cum voegw.", dutch: "wanneer, toen" },
+      { lesson: 7, latin: "ventus", dutch: "wind" },
+      { lesson: 7, latin: "movere", dutch: "bewegen" },
+      { lesson: 7, latin: "et", dutch: "en; ook" },
+      { lesson: 7, latin: "vale (-te)", dutch: "vaarwel" },
+
+      { lesson: 8, latin: "sacrum facere/io", dutch: "offeren" },
+      { lesson: 8, latin: "femina", dutch: "vrouw" },
+      { lesson: 8, latin: "cur", dutch: "waarom" },
+      { lesson: 8, latin: "sacrum", dutch: "offer" },
+      { lesson: 8, latin: "facere/io", dutch: "doen; maken" },
+      { lesson: 8, latin: "praefere", dutch: "verkiezen (boven + dat.)" },
+      { lesson: 8, latin: "genus, genera", dutch: "afkomst, geslacht" },
+      { lesson: 8, latin: "avus", dutch: "grootvader" },
+      { lesson: 8, latin: "gens, gentes", dutch: "volk" },
+      { lesson: 8, latin: "coniunx, iuges", dutch: "echtgenoot; echtgenote" },
+      { lesson: 8, latin: "septem", dutch: "zeven" },
+      { lesson: 8, latin: "filius", dutch: "zoon" },
+      { lesson: 8, latin: "fortuna", dutch: "(het) lot" },
+      { lesson: 8, latin: "numquam", dutch: "nooit" },
+      { lesson: 8, latin: "nocere + dat.", dutch: "schaden" },
+      { lesson: 8, latin: "tantum", dutch: "slechts" },
+      { lesson: 8, latin: "duo", dutch: "twee" },
+      { lesson: 8, latin: "liberi mv", dutch: "kinderen" },
+      { lesson: 8, latin: "tamquam", dutch: "als het ware" },
+      { lesson: 8, latin: "ideo", dutch: "daarom" },
+      { lesson: 8, latin: "suadere", dutch: "aanraden" },
+      { lesson: 8, latin: "parere + dat.", dutch: "gehoorzamen (aan)" },
+
+      { lesson: 9, latin: "lacrimare", dutch: "huilen" },
+      { lesson: 9, latin: "dubitare", dutch: "aarzelen" },
+      { lesson: 9, latin: "telum", dutch: "pijl, werpspies" },
+      { lesson: 9, latin: "mittere", dutch: "zenden" },
+      { lesson: 9, latin: "cadere", dutch: "vallen, dood neervallen" },
+      { lesson: 9, latin: "frustra", dutch: "tevergeefs" },
+      { lesson: 9, latin: "quinque", dutch: "vijf" },
+      { lesson: 9, latin: "necare", dutch: "doden" },
+      { lesson: 9, latin: "protegere", dutch: "beschermen" },
+      { lesson: 9, latin: "desinere", dutch: "ophouden" },
+      { lesson: 9, latin: "relinquere", dutch: "verlaten, achterlaten, overlaten" },
+      { lesson: 9, latin: "parcere + dat.", dutch: "sparen" },
+      { lesson: 9, latin: "rogare", dutch: "vragen" },
+      { lesson: 9, latin: "iam", dutch: "al, reeds" },
+      { lesson: 9, latin: "non iam", dutch: "niet meer" },
+      { lesson: 9, latin: "iam + ontkenning", dutch: "(niet) meer" },
+      { lesson: 9, latin: "paulatim", dutch: "geleidelijk, langzaamaan" },
+      { lesson: 9, latin: "saxum", dutch: "rots" },
+      { lesson: 9, latin: "patria", dutch: "vaderland" },
+      { lesson: 9, latin: "etiam", dutch: "zelfs, ook" },
+      { lesson: 9, latin: "lacrima", dutch: "traan" },
+
+      { lesson: 10, latin: "vestigium", dutch: "(voet)spoor" },
+      { lesson: 10, latin: "horrere", dutch: "huiveren" },
+      { lesson: 10, latin: "invenire", dutch: "vinden" },
+      { lesson: 10, latin: "oculus", dutch: "oog" },
+      { lesson: 10, latin: "complere", dutch: "vullen" },
+      { lesson: 10, latin: "accidi", dutch: "pf van accidere: gebeuren" },
+      { lesson: 10, latin: "accidere", dutch: "gebeuren" },
+      { lesson: 10, latin: "-ne", dutch: "achtervoegsel; sluit zich aan bij het eerste woord in de vraagzin; niet vertalen" },
+      { lesson: 10, latin: "exspectare", dutch: "afwachten, wachten op" },
+      { lesson: 10, latin: "parentes mv", dutch: "ouders" },
+      { lesson: 10, latin: "parui", dutch: "pf van parere: gehoorzamen" },
+      { lesson: 10, latin: "reliqui", dutch: "pf van relinquere: verlaten, achterlaten" },
+      { lesson: 10, latin: "veni", dutch: "pf van venire: komen" },
+      { lesson: 10, latin: "mors, mortem acc.", dutch: "(de) dood" },
+      { lesson: 10, latin: "culpa", dutch: "schuld" },
+      { lesson: 10, latin: "sustuli", dutch: "pf van tollere: optillen, opheffen" },
+      { lesson: 10, latin: "tollere", dutch: "optillen, opheffen" },
+      { lesson: 10, latin: "osculum", dutch: "kus" },
+      { lesson: 10, latin: "dedi", dutch: "pf van dare: geven" },
+      { lesson: 10, latin: "adii", dutch: "pf van adire: gaan naar" },
+      { lesson: 10, latin: "gladius", dutch: "zwaard" },
+
+      { lesson: 11, latin: "quaerere", dutch: "zoeken" },
+      { lesson: 11, latin: "iacere", dutch: "liggen" },
+      { lesson: 11, latin: "vidi", dutch: "pf van videre: zien" },
+      { lesson: 11, latin: "vocare", dutch: "roepen" },
+      { lesson: 11, latin: "causa", dutch: "oorzaak, reden" },
+      { lesson: 11, latin: "fui", dutch: "pf van esse: zijn" },
+      { lesson: 11, latin: "fugi", dutch: "pf van fugere/io: vluchten" },
+      { lesson: 11, latin: "aspicere/io", dutch: "aanschouwen, zien" },
+      { lesson: 11, latin: "nec", dutch: "en/ook niet" },
+      { lesson: 11, latin: "traxi", dutch: "pf van trahere: trekken" },
+      { lesson: 11, latin: "dixi", dutch: "pf van dicere: zeggen" },
+      { lesson: 11, latin: "amor, ores", dutch: "liefde" },
+      { lesson: 11, latin: "vetui", dutch: "pf van vetare: verbieden" },
+      { lesson: 11, latin: "vetare", dutch: "verbieden" },
+      { lesson: 11, latin: "sepulcrum", dutch: "graf" },
+      { lesson: 11, latin: "condere", dutch: "(op)bergen" }
+    ];
+
+    const state = {
+      mode: "learn",
+      direction: "la-nl",
+      lesson: "all",
+      answersHidden: false,
+      quizItems: [],
+      quizIndex: 0,
+      good: 0,
+      bad: 0,
+      checked: false
+    };
+
+    const els = {
+      learnMode: document.querySelector("#learnMode"),
+      quizMode: document.querySelector("#quizMode"),
+      direction: document.querySelector("#direction"),
+      lesson: document.querySelector("#lesson"),
+      toggleAnswers: document.querySelector("#toggleAnswers"),
+      learnView: document.querySelector("#learnView"),
+      quizView: document.querySelector("#quizView"),
+      learnGrid: document.querySelector("#learnGrid"),
+      wordCount: document.querySelector("#wordCount"),
+      activeDirection: document.querySelector("#activeDirection"),
+      questionLabel: document.querySelector("#questionLabel"),
+      questionText: document.querySelector("#questionText"),
+      quizForm: document.querySelector("#quizForm"),
+      answerInput: document.querySelector("#answerInput"),
+      feedback: document.querySelector("#feedback"),
+      goodScore: document.querySelector("#goodScore"),
+      badScore: document.querySelector("#badScore"),
+      quizProgress: document.querySelector("#quizProgress"),
+      quizLesson: document.querySelector("#quizLesson"),
+      nextQuestion: document.querySelector("#nextQuestion"),
+      resetQuiz: document.querySelector("#resetQuiz")
+    };
+
+    function initLessons() {
+      const lessons = [...new Set(words.map((word) => word.lesson))].sort((a, b) => a - b);
+      lessons.forEach((lesson) => {
+        const option = document.createElement("option");
+        option.value = String(lesson);
+        option.textContent = `Tekst ${lesson}`;
+        els.lesson.append(option);
+      });
+    }
+
+    function filteredWords() {
+      return state.lesson === "all"
+        ? words
+        : words.filter((word) => String(word.lesson) === state.lesson);
+    }
+
+    function promptFor(word) {
+      return state.direction === "la-nl" ? word.latin : word.dutch;
+    }
+
+    function answerFor(word) {
+      return state.direction === "la-nl" ? word.dutch : word.latin;
+    }
+
+    function directionText() {
+      return state.direction === "la-nl" ? "Latijn → Nederlands" : "Nederlands → Latijn";
+    }
+
+    function normalize(text) {
+      return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\([^)]*\)/g, " ")
+        .replace(/\b(mv|acc|bijw|voegw|praes|dat|pf|m)\b\.?/g, " ")
+        .replace(/[^a-z0-9?]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function answerParts(text) {
+      const stripped = text
+        .replace(/\([^)]*\)/g, " ")
+        .replace(/\b\d\b/g, " ")
+        .replace(/\bpf van\b/gi, " ");
+      return stripped
+        .split(/;|,|\/|\bof\b|\ben\b|\.\.\./i)
+        .map(normalize)
+        .filter(Boolean);
+    }
+
+    function isCorrect(input, expected) {
+      const typed = normalize(input);
+      if (!typed) return false;
+      const expectedNorm = normalize(expected);
+      const parts = answerParts(expected);
+      return typed === expectedNorm
+        || parts.includes(typed)
+        || parts.some((part) => typed.length >= 3 && (part.includes(typed) || typed.includes(part)));
+    }
+
+    function shuffle(items) {
+      const copy = [...items];
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function resetQuiz() {
+      state.quizItems = shuffle(filteredWords());
+      state.quizIndex = 0;
+      state.good = 0;
+      state.bad = 0;
+      state.checked = false;
+      renderQuiz();
+    }
+
+    function renderMode() {
+      els.learnMode.setAttribute("aria-pressed", String(state.mode === "learn"));
+      els.quizMode.setAttribute("aria-pressed", String(state.mode === "quiz"));
+      els.learnView.classList.toggle("is-hidden", state.mode !== "learn");
+      els.quizView.classList.toggle("is-hidden", state.mode !== "quiz");
+      els.toggleAnswers.disabled = state.mode !== "learn";
+      if (state.mode === "quiz") {
+        resetQuiz();
+        setTimeout(() => els.answerInput.focus(), 0);
+      }
+    }
+
+    function renderLearn() {
+      const items = filteredWords();
+      els.wordCount.textContent = `${items.length} woorden`;
+      els.activeDirection.textContent = directionText();
+      els.learnGrid.classList.toggle("hidden-answer", state.answersHidden);
+      els.learnGrid.innerHTML = "";
+
+      if (!items.length) {
+        els.learnGrid.innerHTML = `<div class="empty">Geen woorden gevonden voor deze keuze.</div>`;
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+      items.forEach((word) => {
+        const card = document.createElement("article");
+        card.className = "word-card";
+        card.innerHTML = `
+          <div class="lesson">Tekst ${word.lesson}</div>
+          <div class="latin">${escapeHtml(promptFor(word))}</div>
+          <div class="dutch">${escapeHtml(answerFor(word))}</div>
+        `;
+        fragment.append(card);
+      });
+      els.learnGrid.append(fragment);
+    }
+
+    function renderQuiz() {
+      const current = state.quizItems[state.quizIndex];
+      els.goodScore.textContent = state.good;
+      els.badScore.textContent = state.bad;
+      els.quizLesson.textContent = state.lesson === "all" ? "Alles" : `Tekst ${state.lesson}`;
+
+      if (!current) {
+        els.questionText.textContent = "-";
+        els.quizProgress.textContent = "Geen woorden";
+        els.feedback.className = "feedback";
+        els.feedback.textContent = "Kies een les met woorden om te starten.";
+        return;
+      }
+
+      els.questionLabel.textContent = `Vertaal naar ${state.direction === "la-nl" ? "Nederlands" : "Latijn"}`;
+      els.questionText.textContent = promptFor(current);
+      els.quizProgress.textContent = `Vraag ${state.quizIndex + 1} van ${state.quizItems.length}`;
+      els.answerInput.value = "";
+      els.feedback.className = "feedback";
+      els.feedback.textContent = "Vul je antwoord in en controleer jezelf.";
+      state.checked = false;
+    }
+
+    function nextQuestion() {
+      if (!state.quizItems.length) return;
+      state.quizIndex = (state.quizIndex + 1) % state.quizItems.length;
+      renderQuiz();
+      els.answerInput.focus();
+    }
+
+    function checkAnswer(event) {
+      event.preventDefault();
+      const current = state.quizItems[state.quizIndex];
+      if (!current || state.checked) return;
+
+      const expected = answerFor(current);
+      const typed = els.answerInput.value;
+      const correct = isCorrect(typed, expected);
+      state.checked = true;
+
+      if (correct) {
+        state.good += 1;
+        els.feedback.className = "feedback good";
+        els.feedback.textContent = `Goed. Antwoord: ${expected}`;
+      } else {
+        state.bad += 1;
+        els.feedback.className = "feedback bad";
+        els.feedback.textContent = `Bijna. Het antwoord is: ${expected}`;
+      }
+
+      els.goodScore.textContent = state.good;
+      els.badScore.textContent = state.bad;
+    }
+
+    function escapeHtml(value) {
+      return value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    els.learnMode.addEventListener("click", () => {
+      state.mode = "learn";
+      renderMode();
+      renderLearn();
+    });
+
+    els.quizMode.addEventListener("click", () => {
+      state.mode = "quiz";
+      renderMode();
+    });
+
+    els.direction.addEventListener("change", () => {
+      state.direction = els.direction.value;
+      renderLearn();
+      if (state.mode === "quiz") resetQuiz();
+    });
+
+    els.lesson.addEventListener("change", () => {
+      state.lesson = els.lesson.value;
+      renderLearn();
+      if (state.mode === "quiz") resetQuiz();
+    });
+
+    els.toggleAnswers.addEventListener("click", () => {
+      state.answersHidden = !state.answersHidden;
+      els.toggleAnswers.textContent = state.answersHidden ? "Toon antwoorden" : "Verberg antwoorden";
+      renderLearn();
+    });
+
+    els.quizForm.addEventListener("submit", checkAnswer);
+    els.nextQuestion.addEventListener("click", nextQuestion);
+    els.resetQuiz.addEventListener("click", resetQuiz);
+
+    els.answerInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && state.checked) {
+        event.preventDefault();
+        nextQuestion();
+      }
+    });
+
+    initLessons();
+    renderLearn();
+    renderMode();
+  </script>
+</body>
+</html>
