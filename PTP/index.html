@@ -1,4 +1,4 @@
-ï»¿<!doctype html> 
+<!doctype html> 
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
@@ -14,13 +14,13 @@
       --bg: #111;
       --card: rgba(255,255,255,.03);
 
-      /* PTP.jpg is 2011 Ã— 2048 */
+      /* PTP.jpg is 2011 × 2048 */
       --imgW: 2011;
       --imgH: 2048;
       --content-gap: clamp(16px, 3vw, 28px);
       --stage-fit-h: calc(100svh - 110px - (2 * var(--content-gap)));
 
-      /* dit bepaalt het totale 3Ã—3 blok */
+      /* dit bepaalt het totale 3×3 blok */
       --x1: 28%;
       --x2: 50%;
       --x3: 72%;
@@ -112,8 +112,10 @@
     }
 
     nav a.active{
-      border-color: rgba(255,255,255,.18);
-      background: rgba(255,255,255,.06);
+      color: #ffe45c;
+      border-color: rgba(255,228,92,.72);
+      background: rgba(255,228,92,.12);
+      font-weight: 650;
     }
 
     main.content{
@@ -530,7 +532,7 @@
 
         <nav aria-label="Navigatie">
           <a href="../boards/">Boards</a>
-          <a class="active" href="index.html">PTP</a>
+          <a class="active" href="index.html" aria-current="page">PTP</a>
           <a href="#installatie">Installatie</a>
           <a href="#about">About</a>
         </nav>
@@ -567,7 +569,7 @@
       <div class="about-body">
         <div class="about-copy">
           
-          <h2>PTP â€” Totaalproject</h2>
+          <h2>PTP — Totaalproject</h2>
 
           <p>PTP is een totaalproject waarin negen series schilderijen, objecten, teksten en fotografische registraties met elkaar in verband worden gebracht. De installatie werkt als een 3 x 3 grid: geen neutrale ordening, maar een denkruimte waarin ieder werk zijn positie krijgt door de relatie tot de andere werken. Het raster maakt zichtbaar hoe de afzonderlijke series elkaar aantrekken, tegenspreken en activeren.</p>
 
