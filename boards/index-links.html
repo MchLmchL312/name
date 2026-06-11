@@ -103,6 +103,15 @@
       line-height:1;
       padding:6px 12px 8px;
     }
+    nav a.icon-link{
+      padding:8px 10px;
+    }
+    nav a.icon-link svg{
+      width:20px;
+      height:20px;
+      flex-shrink:0;
+      stroke:currentColor;
+    }
     @media (max-width:720px){
       .topbar{align-items:flex-start; gap:10px;}
       nav{justify-content:flex-start;}
@@ -142,6 +151,16 @@
           <a href="index.html">Boards</a>
           <a href="../PTP/index.html">PTP</a>
           <a class="active plus-link" href="index-links.html" aria-label="Links" aria-current="page">+</a>
+          <a class="icon-link" href="mailto:machielvansoest@outlook.com" aria-label="E-mail">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 24 24" fill="none" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0
+              1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2
+              2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </a>
         </nav>
       </div>
     </div>
