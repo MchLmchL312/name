@@ -7,6 +7,7 @@
   <style>
     :root{
       --header-h: 52px;
+      --text: rgba(255,255,255,.92);
       /* PTP.jpg is 2011 × 2048 */
       --imgW: 2011;
       --imgH: 2048;
@@ -61,15 +62,41 @@
     .header-right{
       display:flex;
       align-items:center;
-      gap:20px;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
     }
     .header-right .map-link{
-      color:#fff;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:36px;
+      color:var(--text);
       text-decoration:none;
-      font-size:1rem;
-      transition: color .3s;
+      font-size:14px;
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid transparent;
+      white-space:nowrap;
+      transition: color .3s, background .3s, border-color .3s;
     }
-    .header-right .map-link:hover{ color: yellow; }
+    .header-right .map-link:hover,
+    .header-right .map-link:focus-visible{
+      border-color:rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);
+      outline:none;
+    }
+    .header-right .map-link.active{
+      color:#ffe45c;
+      border-color:rgba(255,228,92,.72);
+      background:rgba(255,228,92,.12);
+      font-weight:650;
+    }
+    .header-right .plus-link{
+      font-size:24px;
+      line-height:1;
+      padding:6px 12px 8px;
+    }
 
     .wrap{
       height: calc(100vh - var(--header-h));
@@ -116,6 +143,18 @@
     .s7{ left:var(--x1); top:var(--y3); }
     .s8{ left:var(--x2); top:var(--y3); }
     .s9{ left:var(--x3); top:var(--y3); }
+
+    @media (max-width: 520px){
+      :root{ --header-h: 108px; }
+      .header{
+        align-items:flex-start;
+        flex-direction:column;
+        gap:8px;
+      }
+      .header-right{
+        justify-content:flex-start;
+      }
+    }
   </style>
 </head>
 
@@ -123,7 +162,9 @@
   <div class="header">
     <div class="name">Machiel van Soest<span class="sub">PTP</span></div>
     <div class="header-right">
-      <a href="https://home.deds.nl/~unbrad/website/" class="map-link">boards</a>
+      <a href="https://home.deds.nl/~unbrad/website/" class="map-link">Boards</a>
+      <a href="index.html" class="map-link active" aria-current="page">PTP</a>
+      <a href="https://home.deds.nl/~unbrad/website/index-links.html" class="map-link plus-link" aria-label="Links">+</a>
     </div>
   </div>
 

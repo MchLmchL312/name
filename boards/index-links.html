@@ -92,6 +92,17 @@
       background:rgba(255,255,255,.04);
       outline:none;
     }
+    nav a.active{
+      color:#ffe45c;
+      border-color:rgba(255,228,92,.72);
+      background:rgba(255,228,92,.12);
+      font-weight:650;
+    }
+    nav a.plus-link{
+      font-size:24px;
+      line-height:1;
+      padding:6px 12px 8px;
+    }
     @media (max-width:720px){
       .topbar{align-items:flex-start; gap:10px;}
       nav{justify-content:flex-start;}
@@ -129,6 +140,8 @@
 
         <nav aria-label="Navigatie">
           <a href="index.html">Boards</a>
+          <a href="../PTP/index.html">PTP</a>
+          <a class="active plus-link" href="index-links.html" aria-label="Links" aria-current="page">+</a>
         </nav>
       </div>
     </div>
