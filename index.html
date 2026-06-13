@@ -1,130 +1,197 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="nl">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mapnavigatie</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Machiel van Soest</title>
+    <meta name="description" content="Kies tussen werk van Machiel van Soest en cursussen schilderen en tekenen.">
     <style>
       :root {
-        color-scheme: light dark;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color-scheme: light;
+        --ink: #171717;
+        --muted: #5f605c;
+        --paper: #f4f0e7;
+        --surface: rgba(255, 255, 255, 0.72);
+        --line: rgba(23, 23, 23, 0.16);
+        --accent: #b5292f;
+        --accent-dark: #7f1f26;
+        --green: #2f5f4f;
+        --green-dark: #183d32;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
       }
 
       body {
-        margin: 2rem;
-        line-height: 1.5;
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          linear-gradient(135deg, rgba(181, 41, 47, 0.12), transparent 34%),
+          linear-gradient(315deg, rgba(47, 95, 79, 0.13), transparent 40%),
+          var(--paper);
       }
 
-      h1 {
-        margin-bottom: 0.5rem;
+      main {
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+        padding: clamp(24px, 6vw, 72px);
       }
 
-      ul {
-        padding-left: 1.25rem;
+      .landing {
+        width: min(100%, 980px);
       }
 
-      .hidden {
-        display: none;
+      .intro {
+        max-width: 680px;
+        margin-bottom: clamp(28px, 5vw, 46px);
       }
 
-      .auth-box {
-        max-width: 420px;
-        padding: 1rem;
-        border: 1px solid #999;
-        border-radius: 8px;
+      .name {
+        margin: 0 0 10px;
+        font-size: clamp(2.3rem, 8vw, 5.8rem);
+        line-height: 0.95;
+        font-weight: 760;
+        letter-spacing: 0;
       }
 
-      .auth-row {
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        font-size: clamp(1rem, 2.2vw, 1.28rem);
+        max-width: 48rem;
+      }
+
+      .choices {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .choice {
+        min-height: 260px;
         display: flex;
-        gap: 0.5rem;
-        margin-top: 0.75rem;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 24px;
+        padding: clamp(22px, 4vw, 34px);
+        color: inherit;
+        text-decoration: none;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: 0 24px 80px rgba(23, 23, 23, 0.08);
+        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
       }
 
-      input[type="password"] {
-        flex: 1;
-        padding: 0.5rem;
+      .choice:hover,
+      .choice:focus-visible {
+        transform: translateY(-3px);
+        border-color: rgba(23, 23, 23, 0.32);
+        box-shadow: 0 30px 90px rgba(23, 23, 23, 0.13);
+        outline: none;
       }
 
-      button {
-        padding: 0.5rem 0.9rem;
-        cursor: pointer;
+      .label {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
       }
 
-      .error {
-        color: #b00020;
-        margin-top: 0.5rem;
+      h2 {
+        margin: 0;
+        font-size: clamp(1.85rem, 4vw, 3rem);
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .choice p:not(.label) {
+        margin: 16px 0 0;
+        max-width: 24rem;
+        color: var(--muted);
+        font-size: 1rem;
+      }
+
+      .arrow {
+        width: 46px;
+        height: 46px;
+        display: inline-grid;
+        place-items: center;
+        align-self: flex-start;
+        color: #fff;
+        background: var(--accent);
+        border-radius: 999px;
+        font-size: 1.6rem;
+        line-height: 1;
+      }
+
+      .choice.courses .arrow {
+        background: var(--green);
+      }
+
+      .choice.work:hover .arrow,
+      .choice.work:focus-visible .arrow {
+        background: var(--accent-dark);
+      }
+
+      .choice.courses:hover .arrow,
+      .choice.courses:focus-visible .arrow {
+        background: var(--green-dark);
+      }
+
+      @media (max-width: 720px) {
+        main {
+          align-items: start;
+        }
+
+        .choices {
+          grid-template-columns: 1fr;
+        }
+
+        .choice {
+          min-height: 210px;
+        }
       }
     </style>
   </head>
   <body>
-    <div id="auth" class="auth-box">
-      <h1>Beveiligde mapnavigatie</h1>
-      <p>Voer het wachtwoord in om de mappen te zien.</p>
-      <div class="auth-row">
-        <input id="password" type="password" placeholder="Wachtwoord" autocomplete="current-password" />
-        <button id="unlock" type="button">Ontgrendel</button>
-      </div>
-      <p id="error" class="error hidden">Onjuist wachtwoord.</p>
-    </div>
+    <main>
+      <section class="landing" aria-label="Kies een ingang">
+        <div class="intro">
+          <h1 class="name">Machiel van Soest</h1>
+          <p class="subtitle">Werk, projecten en cursussen schilderen en tekenen.</p>
+        </div>
 
-    <main id="content" class="hidden">
-      <h1>Mappen in deze map</h1>
-      <p>Klik op een map om ernaartoe te navigeren.</p>
+        <div class="choices">
+          <a class="choice work" href="boards/">
+            <span>
+              <p class="label">Werk</p>
+              <h2>Boards</h2>
+              <p>Bekijk beelden, projecten en visueel onderzoek.</p>
+            </span>
+            <span class="arrow" aria-hidden="true">&rarr;</span>
+          </a>
 
-      <ul>
-        <li><a href="keuzeboom/">keuzeboom</a></li>
-        <li><a href="kleur-impressie/">kleur-impressie</a></li>
-        <li><a href="kleurencirkel/">kleurencirkel</a></li>
-        <li><a href="kleurenmenger/">kleurenmenger</a></li>
-        <li><a href="licht-midden-schaduwvormen/">licht-midden-schaduwvormen</a></li>
-        <li><a href="toonversimpeler/">toonversimpeler</a></li>
-        <li><a href="toon-temperatuur/">toon-temperatuur</a></li>
-        <li><a href="audio-vertrager/">audio-vertrager</a></li>
-      </ul>
+          <a class="choice courses" href="kunstlessen/">
+            <span>
+              <p class="label">Cursussen</p>
+              <h2>Schilderlessen</h2>
+              <p>Ga naar de cursuspagina met lessen, workshops en online aanbod.</p>
+            </span>
+            <span class="arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </section>
     </main>
-
-    <script>
-      const PASSWORD = "kleur321"; // Pas dit aan naar je eigen wachtwoord.
-      const SESSION_KEY = "folder-index-unlocked";
-
-      const auth = document.getElementById("auth");
-      const content = document.getElementById("content");
-      const passwordInput = document.getElementById("password");
-      const unlockButton = document.getElementById("unlock");
-      const error = document.getElementById("error");
-
-      const unlock = () => {
-        auth.classList.add("hidden");
-        content.classList.remove("hidden");
-      };
-
-      const fail = () => {
-        error.classList.remove("hidden");
-        passwordInput.focus();
-      };
-
-      const checkPassword = () => {
-        if (passwordInput.value === PASSWORD) {
-          sessionStorage.setItem(SESSION_KEY, "true");
-          unlock();
-          return;
-        }
-        fail();
-      };
-
-      if (sessionStorage.getItem(SESSION_KEY) === "true") {
-        unlock();
-      }
-
-      unlockButton.addEventListener("click", checkPassword);
-      passwordInput.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-          checkPassword();
-        }
-      });
-      passwordInput.addEventListener("input", () => {
-        error.classList.add("hidden");
-      });
-    </script>
   </body>
 </html>
