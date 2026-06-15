@@ -39,10 +39,6 @@
       background-color: #000;
     }
 
-    body.intro-active {
-      overflow: hidden;
-    }
-
     :root{
       --maxw: 1200px;
       --pad: clamp(10px, 3vw, 18px);
@@ -292,45 +288,9 @@
       pointer-events: none;
     }
 
-    .intro-board {
-      position: fixed;
-      inset: 0;
-      z-index: 3000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #000;
-      cursor: pointer;
-      opacity: 1;
-      visibility: visible;
-      transition: opacity 0.35s ease, visibility 0.35s ease;
-    }
-
-    .intro-board.is-hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .intro-board img {
-      width: 100vw;
-      height: 100vh;
-      object-fit: contain;
-      display: block;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .intro-board img.is-loaded {
-      opacity: 1;
-    }
   </style>
 </head>
-<body class="intro-active">
-  <div class="intro-board" id="introBoard" aria-label="Open boards" role="button" tabindex="0">
-    <img src="" alt="Willekeurig board van Machiel van Soest" id="introImg">
-  </div>
-
+<body>
   <header class="header">
     <div class="wrap">
       <div class="topbar">
@@ -383,9 +343,6 @@
     // Hoeveel tegelijk laden (parallel) voor snelheid
     const BATCH_SIZE = 8;
 
-    // Huidige reeks in /boards loopt van board1.jpg t/m board45.jpg.
-    const INTRO_BOARD_COUNT = 45;
-
     // Optioneel: voeg ?nocache toe aan de URL als je bestaande bestanden hebt vervangen
     // (bijv. http://localhost/index.html?nocache)
     const NO_CACHE = new URLSearchParams(location.search).has('nocache');
@@ -410,14 +367,13 @@
       });
     }
 
-    function insertRandomAfterFirst(galleryEl, imgEl) {
-      // board1 blijft bovenaan; de rest krijgt een willekeurige plek eronder
+    function insertRandom(galleryEl, imgEl) {
       const count = galleryEl.children.length;
-      if (count <= 1) {
+      if (count === 0) {
         galleryEl.appendChild(imgEl);
         return;
       }
-      const pos = randInt(1, count); // 1..count
+      const pos = randInt(0, count);
       galleryEl.insertBefore(imgEl, galleryEl.children[pos] || null);
     }
 
@@ -425,39 +381,7 @@
       const gallery = document.getElementById('gallery');
       const overlay = document.getElementById('overlay');
       const fullscreenImg = document.getElementById('fullscreenImg');
-      const introBoard = document.getElementById('introBoard');
-      const introImg = document.getElementById('introImg');
-      let introClosed = false;
       let currentOverlayIndex = 0;
-
-      function closeIntro() {
-        if (introClosed) return;
-        introClosed = true;
-        introBoard.classList.add('is-hidden');
-        document.body.classList.remove('intro-active');
-      }
-
-      function showRandomIntroBoard() {
-        const randomUrl = boardUrl(randInt(1, INTRO_BOARD_COUNT));
-        introImg.classList.remove('is-loaded');
-        introImg.onload = () => introImg.classList.add('is-loaded');
-        introImg.onerror = closeIntro;
-        introImg.src = randomUrl;
-
-        if (introImg.complete) {
-          introImg.classList.add('is-loaded');
-        }
-      }
-
-      introBoard.addEventListener('click', closeIntro);
-      introBoard.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
-          e.preventDefault();
-          closeIntro();
-        }
-      });
-
-      showRandomIntroBoard();
 
       // klein laadbericht
       const loadingMsg = document.createElement('div');
@@ -482,15 +406,12 @@
             break;
           }
 
-          // eerste image (board1) bovenaan
           if (!foundAny) {
             // verwijder laadbericht zodra de eerste binnen is
             gallery.innerHTML = '';
-            gallery.appendChild(r.img);
             foundAny = true;
-          } else {
-            insertRandomAfterFirst(gallery, r.img);
           }
+          insertRandom(gallery, r.img);
         }
 
         n += BATCH_SIZE;
