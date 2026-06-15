@@ -1,59 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://machielvansoest.nl/</loc>
+    <loc>https://www.machielvansoest.nl/boards/</loc>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://machielvansoest.nl/index-links.html</loc>
+    <loc>https://www.machielvansoest.nl/boards/index-links.html</loc>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://machielvansoest.nl/index_PTP.html</loc>
+    <loc>https://www.machielvansoest.nl/PTP/</loc>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://machielvansoest.nl/Raam%20Laakkwartier/index.html</loc>
+    <loc>https://www.machielvansoest.nl/boards/Raam%20Laakkwartier/</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://machielvansoest.nl/LPSWWDmp3.html</loc>
+    <loc>https://www.machielvansoest.nl/boards/LPSWWDmp3.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://machielvansoest.nl/LPSWWD.html</loc>
+    <loc>https://www.machielvansoest.nl/boards/LPSWWD.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://machielvansoest.nl/noisekammer.html</loc>
+    <loc>https://www.machielvansoest.nl/boards/noisekammer.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://machielvansoest.nl/C_A.html</loc>
+    <loc>https://www.machielvansoest.nl/boards/C_A.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://machielvansoest.nl/wd4.html</loc>
+    <loc>https://www.machielvansoest.nl/boards/wd4.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://machielvansoest.nl/vid-X.html</loc>
+    <loc>https://www.machielvansoest.nl/boards/vid-X.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://machielvansoest.nl/animus-flash.html</loc>
+    <loc>https://www.machielvansoest.nl/boards/animus-flash.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://machielvansoest.nl/volk.html</loc>
+    <loc>https://www.machielvansoest.nl/boards/volk.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://machielvansoest.nl/Wilhelmus.html</loc>
+    <loc>https://www.machielvansoest.nl/boards/Wilhelmus.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://machielvansoest.nl/tekst1.html</loc>
+    <loc>https://www.machielvansoest.nl/boards/tekst1.html</loc>
     <priority>0.5</priority>
   </url>
 </urlset>

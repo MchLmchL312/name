@@ -3,8 +3,44 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Machiel van Soest</title>
-    <meta name="description" content="Kies tussen werk van Machiel van Soest en cursussen schilderen en tekenen.">
+    <title>Machiel van Soest | Beeldend kunstenaar en schilderdocent</title>
+    <meta name="description" content="Werk, projecten en schilderlessen van Machiel van Soest. Bekijk Boards, Pressure Temperature Pain en cursussen schilderen en tekenen in Delft en Den Haag.">
+    <meta name="author" content="Machiel van Soest">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.machielvansoest.nl/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="nl_NL">
+    <meta property="og:site_name" content="Machiel van Soest">
+    <meta property="og:title" content="Machiel van Soest | Beeldend kunstenaar en schilderdocent">
+    <meta property="og:description" content="Werk, projecten, Boards, Pressure Temperature Pain en schilderlessen van Machiel van Soest.">
+    <meta property="og:url" content="https://www.machielvansoest.nl/">
+    <meta property="og:image" content="https://www.machielvansoest.nl/boards/board1.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://www.machielvansoest.nl/#person",
+            "name": "Machiel van Soest",
+            "url": "https://www.machielvansoest.nl/",
+            "jobTitle": ["Beeldend kunstenaar", "Schilderdocent"],
+            "description": "Machiel van Soest is beeldend kunstenaar en docent schilderen en tekenen."
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://www.machielvansoest.nl/#website",
+            "url": "https://www.machielvansoest.nl/",
+            "name": "Machiel van Soest",
+            "inLanguage": "nl",
+            "publisher": {
+              "@id": "https://www.machielvansoest.nl/#person"
+            }
+          }
+        ]
+      }
+    </script>
     <style>
       :root {
         color-scheme: light;
@@ -17,6 +53,8 @@
         --accent-dark: #7f1f26;
         --green: #2f5f4f;
         --green-dark: #183d32;
+        --blue: #315978;
+        --blue-dark: #1f3f58;
       }
 
       * {
@@ -65,15 +103,23 @@
       }
 
       .subtitle {
-        margin: 0;
+        margin: 0 0 14px;
         color: var(--muted);
         font-size: clamp(1rem, 2.2vw, 1.28rem);
         max-width: 48rem;
       }
 
+      .context {
+        margin: 0;
+        max-width: 58rem;
+        color: var(--muted);
+        font-size: 1rem;
+        line-height: 1.65;
+      }
+
       .choices {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 14px;
       }
 
@@ -141,6 +187,10 @@
         background: var(--green);
       }
 
+      .choice.ptp .arrow {
+        background: var(--blue);
+      }
+
       .choice.work:hover .arrow,
       .choice.work:focus-visible .arrow {
         background: var(--accent-dark);
@@ -151,6 +201,17 @@
         background: var(--green-dark);
       }
 
+      .choice.ptp:hover .arrow,
+      .choice.ptp:focus-visible .arrow {
+        background: var(--blue-dark);
+      }
+
+      @media (max-width: 860px) {
+        .choices {
+          grid-template-columns: 1fr;
+        }
+      }
+
       @media (max-width: 720px) {
         main {
           align-items: start;
@@ -158,10 +219,6 @@
 
         .name {
           white-space: normal;
-        }
-
-        .choices {
-          grid-template-columns: 1fr;
         }
 
         .choice {
@@ -176,6 +233,7 @@
         <div class="intro">
           <h1 class="name">Machiel van Soest</h1>
           <p class="subtitle">Beeldend kunstenaar</p>
+          <p class="context">Werk, installaties, beeldend onderzoek en schilderlessen. Een ingang naar Boards, het project Pressure Temperature Pain en lessen schilderen en tekenen.</p>
         </div>
 
         <div class="choices">
@@ -184,6 +242,15 @@
               <p class="label">Werk</p>
               <h2>Boards</h2>
               <p>Bekijk werk, installaties, projecten en visueel onderzoek.</p>
+            </span>
+            <span class="arrow" aria-hidden="true">&rarr;</span>
+          </a>
+
+          <a class="choice ptp" href="PTP/">
+            <span>
+              <p class="label">Project</p>
+              <h2>PTP</h2>
+              <p>Open Pressure Temperature Pain: een totaalproject rond huid, druk, temperatuur, pijn en beeld.</p>
             </span>
             <span class="arrow" aria-hidden="true">&rarr;</span>
           </a>
