@@ -49,6 +49,14 @@
       font-weight: 650;
     }
 
+    .header .icon-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      text-decoration: none;
+    }
+
     .header .icon-link svg {
       width: 20px;
       height: 20px;
@@ -59,6 +67,52 @@
 
     .header .icon-link:hover svg {
       stroke: yellow;
+    }
+
+    .contact-popover {
+      position: relative;
+      display: inline-flex;
+    }
+
+    .contact-popover summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .contact-popover summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .contact-card {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      z-index: 1200;
+      width: min(380px, calc(100vw - 28px));
+      padding: 14px 16px;
+      color: #fff;
+      background: rgba(12,12,15,.96);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+      font-size: 14px;
+      line-height: 1.45;
+      text-align: left;
+    }
+
+    .contact-card p {
+      margin: 0 0 10px;
+    }
+
+    .contact-card a {
+      color: #fff;
+      text-underline-offset: 4px;
+    }
+
+    .contact-card a:hover,
+    .contact-card a:focus-visible {
+      color: yellow;
+      outline: none;
     }
 
     .gallery {
@@ -125,16 +179,22 @@
       </a>
 
       <!-- Email icoon -->
-      <a href="mailto:machielvansoest@outlook.com" class="icon-link">
-        <svg xmlns="http://www.w3.org/2000/svg"
-             viewBox="0 0 24 24" fill="none" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0
-          1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2
-          2-2z"></path>
-          <polyline points="22,6 12,13 2,6"></polyline>
-        </svg>
-      </a>
+      <details class="contact-popover">
+        <summary class="icon-link" aria-label="Contact">
+          <svg xmlns="http://www.w3.org/2000/svg"
+               viewBox="0 0 24 24" fill="none" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0
+            1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2
+            2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+        </summary>
+        <div class="contact-card">
+          <p>Machiel van Soest is beeldend kunstenaar. Deze website is een open archief van beelden, onderzoek en werk in ontwikkeling.</p>
+          <a href="mailto:machielvansoest@outlook.com">machielvansoest@outlook.com</a>
+        </div>
+      </details>
     </div>
   </div>
 
