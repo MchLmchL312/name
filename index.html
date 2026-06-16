@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Machiel van Soest | Beeldend kunstenaar en schilderdocent</title>
-    <meta name="description" content="Werk, projecten en schilderlessen van Machiel van Soest. Bekijk Boards, Pressure Temperature Pain en cursussen schilderen en tekenen in Delft en Den Haag.">
+    <meta name="description" content="Werk, projecten en schilderen van Machiel van Soest. Bekijk Boards, Pressure Temperature Pain en cursussen schilderen en tekenen in Delft en Den Haag.">
     <meta name="author" content="Machiel van Soest">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.machielvansoest.nl/">
@@ -12,7 +12,7 @@
     <meta property="og:locale" content="nl_NL">
     <meta property="og:site_name" content="Machiel van Soest">
     <meta property="og:title" content="Machiel van Soest | Beeldend kunstenaar en schilderdocent">
-    <meta property="og:description" content="Werk, projecten, Boards, Pressure Temperature Pain en schilderlessen van Machiel van Soest.">
+    <meta property="og:description" content="Werk, projecten, Boards, Pressure Temperature Pain en schilderen van Machiel van Soest.">
     <meta property="og:url" content="https://www.machielvansoest.nl/">
     <meta property="og:image" content="https://www.machielvansoest.nl/boards/board1.jpg">
     <meta name="twitter:card" content="summary_large_image">
@@ -170,6 +170,44 @@
         font-size: 1rem;
       }
 
+      .current {
+        margin-top: clamp(18px, 4vw, 30px);
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.98rem;
+        line-height: 1.6;
+      }
+
+      .current strong {
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      .current ul {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        margin: 0 0 0 8px;
+        padding: 0;
+        list-style: none;
+      }
+
+      .current li {
+        display: inline;
+      }
+
+      .current a {
+        color: inherit;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 4px;
+      }
+
+      .current a:hover,
+      .current a:focus-visible {
+        color: var(--ink);
+      }
+
       .arrow {
         width: 46px;
         height: 46px;
@@ -233,7 +271,7 @@
         <div class="intro">
           <h1 class="name">Machiel van Soest</h1>
           <p class="subtitle">Beeldend kunstenaar</p>
-          <p class="context">Werk, installaties, beeldend onderzoek en schilderlessen. Een ingang naar Boards, het project Pressure Temperature Pain en lessen schilderen en tekenen.</p>
+          <p class="context">Werk, installaties, beeldend onderzoek en schilderen. Een ingang naar Boards, het project Pressure Temperature Pain en lessen schilderen en tekenen.</p>
         </div>
 
         <div class="choices">
@@ -258,11 +296,18 @@
           <a class="choice courses" href="kunstlessen/">
             <span>
               <p class="label">Cursussen</p>
-              <h2>Schilderlessen</h2>
+              <h2>Schilderen</h2>
               <p>Ga naar de cursuspagina voor lessen, workshops en online aanbod in schilderen en tekenen.</p>
             </span>
             <span class="arrow" aria-hidden="true">&rarr;</span>
           </a>
+        </div>
+
+        <div class="current" aria-label="Actuele links">
+          <strong>Actueel:</strong>
+          <ul>
+            <li><a href="boards/Raam%20Laakkwartier/">Raamgalerie</a></li>
+          </ul>
         </div>
       </section>
     </main>
