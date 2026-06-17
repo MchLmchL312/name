@@ -220,8 +220,23 @@
         color: var(--ink);
       }
 
+      .current-group + .current-group {
+        margin-top: 22px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+      }
+
+      .current-label {
+        margin: 0 0 8px;
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-weight: 760;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
       .instagram-post {
-        margin-top: 18px;
+        margin-top: 12px;
         max-width: 540px;
       }
 
@@ -362,13 +377,19 @@
 
         <div class="current" aria-label="Actuele links">
           <strong>Actueel:</strong>
-          <ul>
-            <li><a href="boards/Raam%20Laakkwartier/">Raam Laakkwartier</a></li>
-          </ul>
-          <div class="instagram-post">
-            <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DZeelp8tYD6/" data-instgrm-version="14">
-              <a href="https://www.instagram.com/kunstlessen_machiel/p/DZeelp8tYD6/">Bekijk deze post op Instagram</a>
-            </blockquote>
+          <div class="current-group">
+            <p class="current-label">Updates</p>
+            <ul>
+              <li><a href="boards/Raam%20Laakkwartier/">Raam Laakkwartier</a></li>
+            </ul>
+          </div>
+          <div class="current-group">
+            <p class="current-label">Instagram</p>
+            <div class="instagram-post">
+              <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DZeelp8tYD6/" data-instgrm-version="14">
+                <a href="https://www.instagram.com/kunstlessen_machiel/p/DZeelp8tYD6/">Bekijk deze post op Instagram</a>
+              </blockquote>
+            </div>
           </div>
         </div>
 
