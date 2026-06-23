@@ -1,4 +1,8 @@
 window.RAAM_LAAKKWARTIER_PHOTOS = [
+  { src: "./web/IMG_1522.JPG", date: "2026-06-23T08:40:33+02:00", sort: 1782196833000, source: "metadata" },
+  { src: "./web/IMG_1521.JPG", date: "2026-06-23T07:40:15+02:00", sort: 1782193215000, source: "metadata" },
+  { src: "./web/IMG_1514.JPG", date: "2026-06-22T08:28:29+02:00", sort: 1782109709000, source: "metadata" },
+  { src: "./web/IMG_1513.JPG", date: "2026-06-22T08:28:09+02:00", sort: 1782109689000, source: "metadata" },
   { src: "./web/IMG_1441.JPG", date: "2026-06-15T12:42:22+02:00", sort: 1781520142000, source: "metadata" },
   { src: "./web/IMG_1459.JPG", date: "2026-06-15T07:39:08+02:00", sort: 1781501948000, source: "metadata" },
   { src: "./web/2026-06-14%2022.35.56.png", date: "2026-06-14T22:36:13+02:00", sort: 1781469373000, source: "file" },
