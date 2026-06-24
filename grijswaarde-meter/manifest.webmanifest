@@ -1,0 +1,19 @@
+{
+  "name": "Grijswaarde-meter",
+  "short_name": "Grijswaarde",
+  "description": "Meet de gemiddelde grijswaarde in een gekozen cirkel op een foto.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111418",
+  "theme_color": "#12161b",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
