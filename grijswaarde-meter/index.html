@@ -123,7 +123,7 @@
 
   .actions {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 8px;
   }
 
@@ -191,7 +191,7 @@
   .emptyState .emptyActions {
     width: min(360px, 100%);
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
   }
 
@@ -200,6 +200,14 @@
     display: none;
     max-width: 100%;
     max-height: 100%;
+  }
+
+  .cameraVideo {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
   }
 
   canvas {
@@ -367,7 +375,7 @@
     }
 
     .actions {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
     }
 
     main {
@@ -419,15 +427,15 @@
     h1 { font-size: 19px; }
 
     .actions {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 6px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 5px;
     }
 
     button,
     label.button {
       min-height: 38px;
-      padding: 0 6px;
-      font-size: 13px;
+      padding: 0 4px;
+      font-size: 12px;
     }
 
     .radiusControl {
@@ -490,6 +498,7 @@
       <div class="actions">
         <label class="button" for="photoInput">Foto</label>
         <label class="button" for="cameraInput">Camera</label>
+        <button class="secondary" type="button" id="liveButton" aria-pressed="false">Live</button>
         <button class="secondary" type="button" id="bwButton" aria-pressed="false" disabled>Zwart/wit</button>
         <button class="secondary" type="button" id="resetButton">Nieuw beeld</button>
         <input id="photoInput" type="file" accept="image/*" />
@@ -509,9 +518,11 @@
           <div class="emptyActions">
             <label class="button" for="photoInput">Foto</label>
             <label class="button secondary" for="cameraInput">Camera</label>
+            <button class="secondary" type="button" id="liveEmptyButton">Live</button>
           </div>
         </div>
         <div class="canvasWrap" id="canvasWrap">
+          <video class="cameraVideo" id="cameraVideo" playsinline muted></video>
           <canvas id="canvas"></canvas>
           <div class="probeStick" id="probeStick"></div>
           <div class="touchPoint" id="touchPoint"></div>
@@ -554,11 +565,14 @@
   const cameraInput = document.getElementById("cameraInput");
   const radiusInput = document.getElementById("radiusInput");
   const radiusLabel = document.getElementById("radiusLabel");
+  const liveButton = document.getElementById("liveButton");
+  const liveEmptyButton = document.getElementById("liveEmptyButton");
   const bwButton = document.getElementById("bwButton");
   const resetButton = document.getElementById("resetButton");
   const emptyState = document.getElementById("emptyState");
   const stage = document.getElementById("stage");
   const canvasWrap = document.getElementById("canvasWrap");
+  const cameraVideo = document.getElementById("cameraVideo");
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
   const originalCanvas = document.createElement("canvas");
@@ -575,9 +589,13 @@
   const error = document.getElementById("error");
   const compactControls = window.matchMedia("(max-width: 480px)");
   const TOUCH_SAMPLE_OFFSET = 76;
+  const LIVE_MAX_SIDE = 720;
 
   let hasImage = false;
   let isMonochrome = false;
+  let isLive = false;
+  let liveStream = null;
+  let liveFrameId = null;
   let lastPoint = null;
   let activePointerId = null;
 
@@ -597,7 +615,16 @@
   function updateRadius() {
     const radius = Number(radiusInput.value);
     radiusLabel.textContent = `${radius} px`;
+    if (isLive) {
+      sampleAtCenter();
+      return;
+    }
     if (lastPoint) sampleAt(lastPoint.clientX, lastPoint.clientY, lastPoint.guidePoint);
+  }
+
+  function updateLiveButton() {
+    liveButton.textContent = isLive ? (compactControls.matches ? "Stop" : "Stop live") : "Live";
+    liveButton.setAttribute("aria-pressed", String(isLive));
   }
 
   function updateBwButton() {
@@ -611,6 +638,7 @@
   }
 
   function updateControlLabels() {
+    updateLiveButton();
     updateBwButton();
     updateResetButton();
   }
@@ -637,7 +665,25 @@
     lastPoint = null;
   }
 
+  function stopLiveCamera() {
+    if (liveFrameId) {
+      cancelAnimationFrame(liveFrameId);
+      liveFrameId = null;
+    }
+
+    if (liveStream) {
+      liveStream.getTracks().forEach((track) => track.stop());
+      liveStream = null;
+    }
+
+    cameraVideo.pause();
+    cameraVideo.srcObject = null;
+    isLive = false;
+    updateControlLabels();
+  }
+
   function clearImage() {
+    stopLiveCamera();
     hasImage = false;
     isMonochrome = false;
     activePointerId = null;
@@ -652,6 +698,58 @@
     resetReadout();
     updateControlLabels();
     setError("");
+  }
+
+  function waitForVideoReady() {
+    if (cameraVideo.readyState >= 2 && cameraVideo.videoWidth > 0) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve, reject) => {
+      let timeoutId = 0;
+
+      const cleanup = () => {
+        clearTimeout(timeoutId);
+        cameraVideo.removeEventListener("loadedmetadata", handleReady);
+        cameraVideo.removeEventListener("canplay", handleReady);
+        cameraVideo.removeEventListener("error", handleError);
+      };
+
+      const handleReady = () => {
+        if (cameraVideo.videoWidth <= 0) return;
+        cleanup();
+        resolve();
+      };
+
+      const handleError = () => {
+        cleanup();
+        reject(new Error("camera video error"));
+      };
+
+      timeoutId = setTimeout(() => {
+        cleanup();
+        reject(new Error("camera video timeout"));
+      }, 5000);
+
+      cameraVideo.addEventListener("loadedmetadata", handleReady);
+      cameraVideo.addEventListener("canplay", handleReady);
+      cameraVideo.addEventListener("error", handleError);
+    });
+  }
+
+  function syncLiveCanvasSize() {
+    const sourceWidth = cameraVideo.videoWidth || 640;
+    const sourceHeight = cameraVideo.videoHeight || 480;
+    const scale = Math.min(1, LIVE_MAX_SIDE / Math.max(sourceWidth, sourceHeight));
+    const width = Math.max(1, Math.round(sourceWidth * scale));
+    const height = Math.max(1, Math.round(sourceHeight * scale));
+
+    if (canvas.width === width && canvas.height === height) return;
+
+    canvas.width = width;
+    canvas.height = height;
+    originalCanvas.width = width;
+    originalCanvas.height = height;
   }
 
   function applyMonochrome() {
@@ -678,6 +776,83 @@
     if (lastPoint) sampleAt(lastPoint.clientX, lastPoint.clientY, lastPoint.guidePoint);
   }
 
+  function drawLiveFrame() {
+    if (!isLive) return;
+
+    if (cameraVideo.readyState >= 2 && cameraVideo.videoWidth > 0) {
+      syncLiveCanvasSize();
+      originalCtx.drawImage(cameraVideo, 0, 0, originalCanvas.width, originalCanvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(originalCanvas, 0, 0);
+      if (isMonochrome) applyMonochrome();
+      sampleAtCenter();
+    }
+
+    liveFrameId = requestAnimationFrame(drawLiveFrame);
+  }
+
+  async function startLiveCamera() {
+    if (isLive) {
+      stopLiveCamera();
+      return;
+    }
+
+    if (!window.isSecureContext && location.protocol !== "https:") {
+      setError("Live camera werkt alleen via HTTPS. Open de GitHub Pages-link of de beginscherm-app.");
+      return;
+    }
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setError("Live camera wordt door deze browser niet ondersteund.");
+      return;
+    }
+
+    setError("");
+    let stream = null;
+
+    try {
+      const constraints = {
+        audio: false,
+        video: {
+          facingMode: { ideal: "environment" },
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      };
+
+      try {
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
+      }
+
+      liveStream = stream;
+      cameraVideo.srcObject = stream;
+      await cameraVideo.play();
+      await waitForVideoReady();
+
+      hasImage = true;
+      isLive = true;
+      isMonochrome = false;
+      activePointerId = null;
+      photoInput.value = "";
+      cameraInput.value = "";
+      emptyState.style.display = "none";
+      canvasWrap.style.display = "block";
+      resetReadout();
+      updateControlLabels();
+      drawLiveFrame();
+    } catch {
+      if (stream) stream.getTracks().forEach((track) => track.stop());
+      liveStream = null;
+      cameraVideo.pause();
+      cameraVideo.srcObject = null;
+      isLive = false;
+      setError("Live camera kon niet starten. Controleer cameratoegang in Safari.");
+      updateControlLabels();
+    }
+  }
+
   function drawImage(file) {
     if (!file) return;
     if (!file.type.startsWith("image/")) {
@@ -685,6 +860,7 @@
       return;
     }
 
+    stopLiveCamera();
     setError("");
     const img = new Image();
     const objectUrl = URL.createObjectURL(file);
@@ -830,6 +1006,15 @@
     lastPoint = { clientX, clientY, guidePoint };
   }
 
+  function sampleAtCenter() {
+    if (!hasImage) return;
+
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return;
+
+    sampleAt(rect.left + rect.width / 2, rect.top + rect.height / 2);
+  }
+
   function sampleFromPointer(event) {
     const isTouch = event.pointerType === "touch";
     const offset = isTouch ? Math.min(TOUCH_SAMPLE_OFFSET, canvas.getBoundingClientRect().height * 0.26) : 0;
@@ -844,11 +1029,13 @@
   photoInput.addEventListener("change", handleFileInput);
   cameraInput.addEventListener("change", handleFileInput);
   radiusInput.addEventListener("input", updateRadius);
+  liveButton.addEventListener("click", startLiveCamera);
+  liveEmptyButton.addEventListener("click", startLiveCamera);
   bwButton.addEventListener("click", () => {
     if (!hasImage) return;
     isMonochrome = !isMonochrome;
     updateControlLabels();
-    renderImage();
+    if (!isLive) renderImage();
   });
   resetButton.addEventListener("click", clearImage);
 
@@ -901,6 +1088,11 @@
   } else {
     compactControls.addListener(updateControlLabels);
   }
+
+  window.addEventListener("pagehide", stopLiveCamera);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && isLive) stopLiveCamera();
+  });
 
   if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
     window.addEventListener("load", () => {

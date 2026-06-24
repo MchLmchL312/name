@@ -1,4 +1,4 @@
-const CACHE_NAME = "grijswaarde-meter-v2";
+const CACHE_NAME = "grijswaarde-meter-v3";
 const CORE_ASSETS = [
   "./",
   "./index.html",

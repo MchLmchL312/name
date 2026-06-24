@@ -1,6 +1,6 @@
 # Grijswaarde-meter
 
-Mobielvriendelijke webpagina voor GitHub Pages. De pagina werkt als losse statische site: geen installatie, geen servercode en geen externe bibliotheken.
+Mobielvriendelijke webpagina voor GitHub Pages. De pagina werkt als losse statische site: geen installatie, geen servercode en geen externe bibliotheken. Je kunt een foto kiezen, een camerafoto maken of live met de camera richten terwijl de grijswaarde in het midden realtime wordt gemeten.
 
 ## Bestanden
 
@@ -18,4 +18,4 @@ Mobielvriendelijke webpagina voor GitHub Pages. De pagina werkt als losse statis
 
 ## Op iPhone gebruiken
 
-Open de GitHub Pages-link in Safari. Via de deelknop kun je `Zet op beginscherm` kiezen, zodat de meter als losse app opent.
+Open de GitHub Pages-link in Safari. Via de deelknop kun je `Zet op beginscherm` kiezen, zodat de meter als losse app opent. De live-camera werkt via HTTPS en vraagt eenmalig om cameratoegang.
