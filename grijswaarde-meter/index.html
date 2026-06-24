@@ -46,6 +46,7 @@
 
   button,
   label.button {
+    min-width: 0;
     min-height: 44px;
     display: inline-flex;
     align-items: center;
@@ -60,6 +61,7 @@
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
+    white-space: nowrap;
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -69,8 +71,15 @@
     color: var(--text);
   }
 
+  button:disabled {
+    opacity: 0.48;
+    cursor: not-allowed;
+  }
+
   button:active,
   label.button:active { transform: translateY(1px); }
+
+  button:disabled:active { transform: none; }
 
   input[type="file"] {
     position: absolute;
@@ -114,7 +123,7 @@
 
   .actions {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
   }
 
@@ -210,11 +219,37 @@
   .probe {
     position: absolute;
     display: none;
+    z-index: 3;
     border: 2px solid #ffffff;
     border-radius: 50%;
     box-shadow:
       0 0 0 1px rgba(0, 0, 0, 0.92),
       inset 0 0 0 1px rgba(0, 0, 0, 0.92);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+  }
+
+  .probeStick {
+    position: absolute;
+    z-index: 2;
+    display: none;
+    height: 2px;
+    background: #ffffff;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.82);
+    pointer-events: none;
+    transform-origin: 0 50%;
+  }
+
+  .touchPoint {
+    position: absolute;
+    z-index: 2;
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.42);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.82);
     pointer-events: none;
     transform: translate(-50%, -50%);
   }
@@ -335,10 +370,6 @@
       grid-template-columns: 1fr 1fr;
     }
 
-    .actions .secondary {
-      grid-column: 1 / -1;
-    }
-
     main {
       display: flex;
       min-height: auto;
@@ -375,18 +406,52 @@
     .percent { font-size: 48px; }
   }
 
-  @media (max-width: 430px) {
+  @media (max-width: 480px) {
+    header {
+      gap: 8px;
+      padding: 8px;
+    }
+
+    .titleRow {
+      min-height: 24px;
+    }
+
     h1 { font-size: 19px; }
+
+    .actions {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+    }
 
     button,
     label.button {
-      min-height: 46px;
-      padding: 0 10px;
-      font-size: 14px;
+      min-height: 38px;
+      padding: 0 6px;
+      font-size: 13px;
     }
 
     .radiusControl {
-      grid-template-columns: 54px minmax(0, 1fr) 50px;
+      grid-template-columns: 44px minmax(0, 1fr) 44px;
+      gap: 7px;
+      font-size: 13px;
+    }
+
+    .stage {
+      min-height: 50dvh;
+      padding: 6px;
+    }
+
+    canvas {
+      max-width: calc(100vw - 12px - env(safe-area-inset-left) - env(safe-area-inset-right));
+      max-height: 56dvh;
+    }
+
+    aside {
+      padding: 8px;
+    }
+
+    .readout {
+      gap: 8px;
     }
 
     .emptyState {
@@ -398,11 +463,20 @@
     }
 
     .panel {
-      padding: 12px;
+      padding: 9px;
     }
 
     .percent {
-      font-size: 44px;
+      font-size: 40px;
+    }
+
+    .swatch {
+      height: 48px;
+    }
+
+    .meta {
+      gap: 6px;
+      font-size: 13px;
     }
   }
 </style>
@@ -416,6 +490,7 @@
       <div class="actions">
         <label class="button" for="photoInput">Foto</label>
         <label class="button" for="cameraInput">Camera</label>
+        <button class="secondary" type="button" id="bwButton" aria-pressed="false" disabled>Zwart/wit</button>
         <button class="secondary" type="button" id="resetButton">Nieuw beeld</button>
         <input id="photoInput" type="file" accept="image/*" />
         <input id="cameraInput" type="file" accept="image/*" capture="environment" />
@@ -438,6 +513,8 @@
         </div>
         <div class="canvasWrap" id="canvasWrap">
           <canvas id="canvas"></canvas>
+          <div class="probeStick" id="probeStick"></div>
+          <div class="touchPoint" id="touchPoint"></div>
           <div class="probe" id="probe"></div>
         </div>
       </section>
@@ -477,12 +554,17 @@
   const cameraInput = document.getElementById("cameraInput");
   const radiusInput = document.getElementById("radiusInput");
   const radiusLabel = document.getElementById("radiusLabel");
+  const bwButton = document.getElementById("bwButton");
   const resetButton = document.getElementById("resetButton");
   const emptyState = document.getElementById("emptyState");
   const stage = document.getElementById("stage");
   const canvasWrap = document.getElementById("canvasWrap");
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  const originalCanvas = document.createElement("canvas");
+  const originalCtx = originalCanvas.getContext("2d", { willReadFrequently: true });
+  const probeStick = document.getElementById("probeStick");
+  const touchPoint = document.getElementById("touchPoint");
   const probe = document.getElementById("probe");
   const grayPercent = document.getElementById("grayPercent");
   const toneMarker = document.getElementById("toneMarker");
@@ -491,8 +573,11 @@
   const hexValue = document.getElementById("hexValue");
   const pixelCount = document.getElementById("pixelCount");
   const error = document.getElementById("error");
+  const compactControls = window.matchMedia("(max-width: 480px)");
+  const TOUCH_SAMPLE_OFFSET = 76;
 
   let hasImage = false;
+  let isMonochrome = false;
   let lastPoint = null;
   let activePointerId = null;
 
@@ -512,7 +597,32 @@
   function updateRadius() {
     const radius = Number(radiusInput.value);
     radiusLabel.textContent = `${radius} px`;
-    if (lastPoint) sampleAt(lastPoint.clientX, lastPoint.clientY);
+    if (lastPoint) sampleAt(lastPoint.clientX, lastPoint.clientY, lastPoint.guidePoint);
+  }
+
+  function updateBwButton() {
+    bwButton.disabled = !hasImage;
+    bwButton.textContent = isMonochrome ? "Kleur" : (compactControls.matches ? "Z/W" : "Zwart/wit");
+    bwButton.setAttribute("aria-pressed", String(isMonochrome));
+  }
+
+  function updateResetButton() {
+    resetButton.textContent = compactControls.matches ? "Nieuw" : "Nieuw beeld";
+  }
+
+  function updateControlLabels() {
+    updateBwButton();
+    updateResetButton();
+  }
+
+  function hideProbeGuide() {
+    probeStick.style.display = "none";
+    touchPoint.style.display = "none";
+  }
+
+  function setLastPointGuide(guidePoint) {
+    if (!lastPoint) return;
+    lastPoint.guidePoint = guidePoint;
   }
 
   function resetReadout() {
@@ -523,20 +633,49 @@
     swatch.style.background = "#808080";
     toneMarker.style.left = "50%";
     probe.style.display = "none";
+    hideProbeGuide();
     lastPoint = null;
   }
 
   function clearImage() {
     hasImage = false;
+    isMonochrome = false;
     activePointerId = null;
     photoInput.value = "";
     cameraInput.value = "";
     canvas.width = 1;
     canvas.height = 1;
+    originalCanvas.width = 1;
+    originalCanvas.height = 1;
     emptyState.style.display = "grid";
     canvasWrap.style.display = "none";
     resetReadout();
+    updateControlLabels();
     setError("");
+  }
+
+  function applyMonochrome() {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    for (let index = 0; index < data.length; index += 4) {
+      const gray = Math.round(0.2126 * data[index] + 0.7152 * data[index + 1] + 0.0722 * data[index + 2]);
+      data[index] = gray;
+      data[index + 1] = gray;
+      data[index + 2] = gray;
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+  }
+
+  function renderImage() {
+    if (!hasImage) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(originalCanvas, 0, 0);
+    if (isMonochrome) applyMonochrome();
+
+    if (lastPoint) sampleAt(lastPoint.clientX, lastPoint.clientY, lastPoint.guidePoint);
   }
 
   function drawImage(file) {
@@ -561,13 +700,18 @@
 
       canvas.width = width;
       canvas.height = height;
-      ctx.clearRect(0, 0, width, height);
-      ctx.drawImage(img, 0, 0, width, height);
+      originalCanvas.width = width;
+      originalCanvas.height = height;
+      originalCtx.clearRect(0, 0, width, height);
+      originalCtx.drawImage(img, 0, 0, width, height);
 
       hasImage = true;
+      isMonochrome = false;
       emptyState.style.display = "none";
       canvasWrap.style.display = "block";
       resetReadout();
+      updateControlLabels();
+      renderImage();
       URL.revokeObjectURL(objectUrl);
     };
 
@@ -586,7 +730,37 @@
     return { x, y, rect };
   }
 
-  function sampleAt(clientX, clientY) {
+  function updateProbeGuide(rect, displayX, displayY, guidePoint) {
+    if (!guidePoint) {
+      hideProbeGuide();
+      return;
+    }
+
+    const startX = clamp(guidePoint.clientX - rect.left, 0, rect.width);
+    const startY = clamp(guidePoint.clientY - rect.top, 0, rect.height);
+    const endX = displayX - rect.left;
+    const endY = displayY - rect.top;
+    const dx = endX - startX;
+    const dy = endY - startY;
+    const distance = Math.hypot(dx, dy);
+
+    touchPoint.style.left = `${startX}px`;
+    touchPoint.style.top = `${startY}px`;
+    touchPoint.style.display = "block";
+
+    if (distance < 10) {
+      probeStick.style.display = "none";
+      return;
+    }
+
+    probeStick.style.left = `${startX}px`;
+    probeStick.style.top = `${startY}px`;
+    probeStick.style.width = `${distance}px`;
+    probeStick.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+    probeStick.style.display = "block";
+  }
+
+  function sampleAt(clientX, clientY, guidePoint = null) {
     if (!hasImage) return;
 
     const radius = Number(radiusInput.value);
@@ -651,8 +825,16 @@
     probe.style.left = `${displayX - rect.left}px`;
     probe.style.top = `${displayY - rect.top}px`;
     probe.style.display = "block";
+    updateProbeGuide(rect, displayX, displayY, guidePoint);
 
-    lastPoint = { clientX, clientY };
+    lastPoint = { clientX, clientY, guidePoint };
+  }
+
+  function sampleFromPointer(event) {
+    const isTouch = event.pointerType === "touch";
+    const offset = isTouch ? Math.min(TOUCH_SAMPLE_OFFSET, canvas.getBoundingClientRect().height * 0.26) : 0;
+    const guidePoint = isTouch ? { clientX: event.clientX, clientY: event.clientY } : null;
+    sampleAt(event.clientX, event.clientY - offset, guidePoint);
   }
 
   function handleFileInput(event) {
@@ -662,26 +844,36 @@
   photoInput.addEventListener("change", handleFileInput);
   cameraInput.addEventListener("change", handleFileInput);
   radiusInput.addEventListener("input", updateRadius);
+  bwButton.addEventListener("click", () => {
+    if (!hasImage) return;
+    isMonochrome = !isMonochrome;
+    updateControlLabels();
+    renderImage();
+  });
   resetButton.addEventListener("click", clearImage);
 
   canvas.addEventListener("pointerdown", (event) => {
     activePointerId = event.pointerId;
     canvas.setPointerCapture(event.pointerId);
-    sampleAt(event.clientX, event.clientY);
+    sampleFromPointer(event);
   });
 
   canvas.addEventListener("pointermove", (event) => {
     if (event.pointerType === "mouse" || event.pointerId === activePointerId) {
-      sampleAt(event.clientX, event.clientY);
+      sampleFromPointer(event);
     }
   });
 
   canvas.addEventListener("pointerup", (event) => {
     if (event.pointerId === activePointerId) activePointerId = null;
+    setLastPointGuide(null);
+    hideProbeGuide();
   });
 
   canvas.addEventListener("pointercancel", () => {
     activePointerId = null;
+    setLastPointGuide(null);
+    hideProbeGuide();
   });
 
   canvas.addEventListener("pointerleave", (event) => {
@@ -702,6 +894,13 @@
   });
 
   updateRadius();
+  updateControlLabels();
+
+  if (compactControls.addEventListener) {
+    compactControls.addEventListener("change", updateControlLabels);
+  } else {
+    compactControls.addListener(updateControlLabels);
+  }
 
   if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
     window.addEventListener("load", () => {
