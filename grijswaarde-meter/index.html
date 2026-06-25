@@ -60,6 +60,7 @@
     font: inherit;
     font-size: 15px;
     font-weight: 700;
+    line-height: 1;
     cursor: pointer;
     white-space: nowrap;
     -webkit-tap-highlight-color: transparent;
@@ -74,6 +75,18 @@
   button:disabled {
     opacity: 0.48;
     cursor: not-allowed;
+  }
+
+  button[aria-pressed="true"] {
+    border-color: rgba(198, 227, 109, 0.45);
+    background: var(--accent-2);
+    color: #151a07;
+  }
+
+  #liveButton[aria-pressed="true"] {
+    border-color: rgba(255, 111, 97, 0.55);
+    background: var(--danger);
+    color: #250806;
   }
 
   button:active,
@@ -235,6 +248,23 @@
       inset 0 0 0 1px rgba(0, 0, 0, 0.92);
     pointer-events: none;
     transform: translate(-50%, -50%);
+  }
+
+  .probe::before,
+  .probe::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(18px, 58%);
+    height: 2px;
+    background: #ffffff;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.86);
+    transform: translate(-50%, -50%);
+  }
+
+  .probe::after {
+    transform: translate(-50%, -50%) rotate(90deg);
   }
 
   .probeStick {
@@ -416,75 +446,123 @@
 
   @media (max-width: 480px) {
     header {
-      gap: 8px;
-      padding: 8px;
+      gap: 7px;
+      padding: 7px;
     }
 
     .titleRow {
-      min-height: 24px;
+      min-height: 20px;
     }
 
-    h1 { font-size: 19px; }
+    h1 { font-size: 17px; }
 
     .actions {
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 5px;
+      gap: 4px;
     }
 
     button,
     label.button {
-      min-height: 38px;
+      min-height: 36px;
       padding: 0 4px;
       font-size: 12px;
+      border-radius: 7px;
     }
 
     .radiusControl {
       grid-template-columns: 44px minmax(0, 1fr) 44px;
-      gap: 7px;
-      font-size: 13px;
+      gap: 6px;
+      font-size: 12px;
     }
 
     .stage {
-      min-height: 50dvh;
-      padding: 6px;
+      min-height: 52dvh;
+      padding: 5px;
     }
 
     canvas {
-      max-width: calc(100vw - 12px - env(safe-area-inset-left) - env(safe-area-inset-right));
-      max-height: 56dvh;
+      max-width: calc(100vw - 10px - env(safe-area-inset-left) - env(safe-area-inset-right));
+      max-height: 58dvh;
     }
 
     aside {
-      padding: 8px;
+      padding: 7px;
     }
 
     .readout {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
       gap: 8px;
     }
 
+    .panel.primary,
+    .panel.full {
+      grid-column: auto;
+    }
+
+    .error.full {
+      grid-column: 1 / -1;
+    }
+
     .emptyState {
-      padding: 22px 12px;
+      gap: 12px;
+      padding: 18px 10px;
+      box-shadow: 0 10px 30px var(--shadow);
     }
 
     .emptyState strong {
-      font-size: 20px;
+      font-size: 18px;
     }
 
     .panel {
-      padding: 9px;
+      padding: 8px;
+    }
+
+    .label {
+      margin-bottom: 5px;
+      font-size: 12px;
     }
 
     .percent {
-      font-size: 40px;
+      font-size: 38px;
+    }
+
+    .percent small {
+      font-size: 18px;
+    }
+
+    .toneBar {
+      height: 18px;
     }
 
     .swatch {
-      height: 48px;
+      height: 44px;
     }
 
     .meta {
       gap: 6px;
       font-size: 13px;
+    }
+
+    .meta div {
+      gap: 8px;
+    }
+  }
+
+  @media (max-width: 360px) {
+    h1 { font-size: 16px; }
+
+    button,
+    label.button {
+      padding: 0 2px;
+      font-size: 11px;
+    }
+
+    .radiusControl {
+      grid-template-columns: 40px minmax(0, 1fr) 42px;
+    }
+
+    .percent {
+      font-size: 34px;
     }
   }
 </style>
