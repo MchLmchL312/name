@@ -419,6 +419,15 @@
       padding: 10px;
     }
 
+    .stage.hasImage {
+      min-height: 0;
+      place-items: start center;
+    }
+
+    .stage.hasImage .canvasWrap {
+      max-height: none;
+    }
+
     canvas {
       max-width: calc(100vw - 20px - env(safe-area-inset-left) - env(safe-area-inset-right));
       max-height: 54dvh;
@@ -478,6 +487,10 @@
     .stage {
       min-height: 52dvh;
       padding: 5px;
+    }
+
+    .stage.hasImage {
+      min-height: 0;
     }
 
     canvas {
@@ -773,6 +786,7 @@
     originalCanvas.height = 1;
     emptyState.style.display = "grid";
     canvasWrap.style.display = "none";
+    stage.classList.remove("hasImage");
     resetReadout();
     updateControlLabels();
     setError("");
@@ -917,6 +931,7 @@
       cameraInput.value = "";
       emptyState.style.display = "none";
       canvasWrap.style.display = "block";
+      stage.classList.add("hasImage");
       resetReadout();
       updateControlLabels();
       drawLiveFrame();
@@ -963,6 +978,7 @@
       isMonochrome = false;
       emptyState.style.display = "none";
       canvasWrap.style.display = "block";
+      stage.classList.add("hasImage");
       resetReadout();
       updateControlLabels();
       renderImage();
