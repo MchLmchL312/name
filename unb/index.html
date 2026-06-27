@@ -442,10 +442,10 @@
       const metaMovement = document.getElementById('metaMovement');
       const metaNote = document.getElementById('metaNote');
 
-      const files = Array.from({ length: 43 }, (_, index) => `P (${index + 1}).jpg`);
+      const files = Array.from({ length: 61 }, (_, index) => `P (${index + 1}).jpg`);
       // metadata bijgewerkt voor P (39), P (40) en P (41)
 
-      // Info per portret (1..35)
+      // Info per portret (1..61)
       const meta = [
         { name: 'Franklin D. Roosevelt', years: '1882–1945', movement: 'New Deal liberalisme / geallieerde oorlogspolitiek', note: '' },
         { name: 'Winston Churchill', years: '1874–1965', movement: 'Conservatisme / liberal-democratische oorlogspolitiek', note: '' },
@@ -494,7 +494,25 @@
         { name: 'Theo van Gogh', years: '1957–2004', movement: 'Film / polemiek / Nederlandse publieke cultuur', note: '' },
         { name: 'Mohammed Bouyeri', years: '1978–heden', movement: 'Jihadistisch extremisme / Hofstadnetwerk', note: '' },
         { name: 'Derrick Bell', years: '1930–2011', movement: 'Critical Race Theory / rechtskritiek', note: '' },
-        { name: 'Richard Delgado', years: '1939–heden', movement: 'Critical Race Theory / rechtskritiek', note: '' }
+        { name: 'Richard Delgado', years: '1939–heden', movement: 'Critical Race Theory / rechtskritiek', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' },
+        { name: 'unknown', years: 'unknown', movement: 'unknown', note: '' }
       ];
 
       const captions = meta.map(m => m.name);
@@ -562,8 +580,18 @@
       });
 
       document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && lightbox.classList.contains('open')) {
+        if (!lightbox.classList.contains('open')) return;
+
+        if (event.key === 'Escape') {
           closeLightbox();
+          return;
+        }
+
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+          event.preventDefault();
+          const direction = event.key === 'ArrowRight' ? 1 : -1;
+          const nextIndex = (currentIndex + direction + files.length) % files.length;
+          openModal(nextIndex);
         }
       });
     </script>
