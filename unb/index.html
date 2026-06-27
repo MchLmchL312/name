@@ -317,6 +317,21 @@
         color: #e0e0e0;
       }
 
+      .qr-code {
+        display: flex;
+        justify-content: center;
+        margin-top: 24px;
+        padding: 8px 0 18px;
+      }
+
+      .qr-code img {
+        width: min(190px, 46vw);
+        height: auto;
+        display: block;
+        border-radius: 8px;
+        background: #fff;
+      }
+
       @media (max-width: 860px) {
         .modal-inner {
           grid-template-columns: 1fr;
@@ -402,6 +417,10 @@
         </form>
 
         <div class="comment-list" id="commentList"></div>
+      </section>
+
+      <section class="qr-code" aria-label="QR-code">
+        <img src="qrcode_www.machielvansoest.nl.png" alt="QR-code www.machielvansoest.nl" loading="lazy" />
       </section>
 </main>
 
