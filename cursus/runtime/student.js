@@ -233,7 +233,10 @@ function renderIndex(entries) {
     list.append(empty);
     return;
   }
-  entries.sort((a, b) => (b.date || '').localeCompare(a.date || '')).forEach((entry) => {
+  const orderValue = (entry) => Number.isFinite(entry.sortOrder)
+    ? entry.sortOrder
+    : -(Date.parse(entry.updatedAt || entry.date || '') || 0);
+  entries.sort((a, b) => orderValue(a) - orderValue(b) || (b.date || '').localeCompare(a.date || '') || String(a.title || '').localeCompare(String(b.title || ''))).forEach((entry) => {
     const link = document.createElement('a');
     link.href = entry.href;
     const title = document.createElement('strong');
