@@ -433,7 +433,7 @@
 
       function updateItem(id, patch) {
         items = items.map((item) => item.id === id ? { ...item, ...patch } : item);
-        render();
+        renderPreview();
       }
 
       function moveItem(id, direction) {
