@@ -220,6 +220,18 @@
         line-height: 1.45;
       }
 
+      .instagram-post {
+        margin-top: 12px;
+        width: min(100%, 540px);
+      }
+
+      .instagram-post .instagram-media {
+        min-width: 0 !important;
+        width: 100% !important;
+        max-width: 540px !important;
+        margin: 0 !important;
+      }
+
       .current a {
         display: inline-flex;
         align-items: center;
@@ -446,6 +458,7 @@
           href: 'boards/Raam%20Laakkwartier/',
           text: '',
           visible: true,
+          embed: false,
           order: 1
         }
       ];
@@ -467,8 +480,34 @@
         }
       }
 
+      function instagramPostUrl(value) {
+        if (typeof value !== 'string') return '';
+        try {
+          const url = new URL(value.trim());
+          const host = url.hostname.replace(/^www\./, '');
+          const parts = url.pathname.split('/').filter(Boolean);
+          if (host !== 'instagram.com' || !['p', 'reel', 'tv'].includes(parts[0]) || !parts[1]) return '';
+          return `https://www.instagram.com/${parts[0]}/${parts[1]}/`;
+        } catch {
+          return '';
+        }
+      }
+
+      function loadInstagramEmbedScript() {
+        const existing = document.querySelector('script[src="https://www.instagram.com/embed.js"]');
+        if (existing) {
+          window.instgrm?.Embeds?.process?.();
+          return;
+        }
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.instagram.com/embed.js';
+        document.body.append(script);
+      }
+
       function renderCurrentItems(items) {
         const groups = new Map();
+        let hasInstagramEmbed = false;
         items
           .filter((item) => item && item.visible !== false && sanitizeText(item.title).trim())
           .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0))
@@ -505,12 +544,30 @@
               paragraph.textContent = text;
               entry.append(paragraph);
             }
+            const instagramUrl = item.embed === true ? instagramPostUrl(item.href) : '';
+            if (instagramUrl) {
+              const embedWrap = document.createElement('div');
+              embedWrap.className = 'instagram-post';
+              const blockquote = document.createElement('blockquote');
+              blockquote.className = 'instagram-media';
+              blockquote.dataset.instgrmPermalink = instagramUrl;
+              blockquote.dataset.instgrmVersion = '14';
+              const fallback = document.createElement('a');
+              fallback.href = instagramUrl;
+              fallback.textContent = 'Bekijk deze post op Instagram';
+              blockquote.append(fallback);
+              embedWrap.append(blockquote);
+              entry.append(embedWrap);
+              hasInstagramEmbed = true;
+            }
             list.append(entry);
           });
 
           group.append(heading, list);
           current.append(group);
         });
+
+        if (hasInstagramEmbed) loadInstagramEmbedScript();
       }
 
       fetch('content/actueel.json', { cache: 'no-store' })

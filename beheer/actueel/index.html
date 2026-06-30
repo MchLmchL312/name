@@ -394,6 +394,7 @@
           href: 'boards/Raam%20Laakkwartier/',
           text: '',
           visible: true,
+          embed: false,
           order: 1
         }
       ];
@@ -417,6 +418,7 @@
           href: typeof item.href === 'string' ? item.href : '',
           text: typeof item.text === 'string' ? item.text : '',
           visible: item.visible !== false,
+          embed: item.embed === true,
           order: Number.isFinite(Number(item.order)) ? Number(item.order) : index + 1
         };
       }
@@ -434,6 +436,19 @@
       function updateItem(id, patch) {
         items = items.map((item) => item.id === id ? { ...item, ...patch } : item);
         renderPreview();
+      }
+
+      function instagramPostUrl(value) {
+        if (typeof value !== 'string') return '';
+        try {
+          const url = new URL(value.trim());
+          const host = url.hostname.replace(/^www\./, '');
+          const parts = url.pathname.split('/').filter(Boolean);
+          if (host !== 'instagram.com' || !['p', 'reel', 'tv'].includes(parts[0]) || !parts[1]) return '';
+          return `https://www.instagram.com/${parts[0]}/${parts[1]}/`;
+        } catch {
+          return '';
+        }
       }
 
       function moveItem(id, direction) {
@@ -483,12 +498,16 @@
             <label class="checkbox-label">
               <input data-field="visible" type="checkbox"> Zichtbaar op homepage
             </label>
+            <label class="checkbox-label">
+              <input data-field="embed" type="checkbox"> Instagram post embedden
+            </label>
           `;
           article.querySelector('[data-field="label"]').value = item.label;
           article.querySelector('[data-field="title"]').value = item.title;
           article.querySelector('[data-field="href"]').value = item.href;
           article.querySelector('[data-field="text"]').value = item.text;
           article.querySelector('[data-field="visible"]').checked = item.visible;
+          article.querySelector('[data-field="embed"]').checked = item.embed;
 
           article.querySelectorAll('[data-field]').forEach((field) => {
             field.addEventListener('input', () => {
@@ -538,6 +557,14 @@
               const text = document.createElement('p');
               text.textContent = item.text;
               entry.append(text);
+            }
+            if (item.embed === true) {
+              const instagramUrl = instagramPostUrl(item.href);
+              const note = document.createElement('p');
+              note.textContent = instagramUrl
+                ? 'Instagram-post wordt als embed op de homepage getoond.'
+                : 'Embed staat aan, maar de link is geen Instagram post/reel/tv-link.';
+              entry.append(note);
             }
             list.append(entry);
           });
@@ -637,6 +664,7 @@
             href: '',
             text: '',
             visible: true,
+            embed: false,
             order: items.length + 1
           }, items.length)
         ];
