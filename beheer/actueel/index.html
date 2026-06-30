@@ -413,7 +413,7 @@
               <button id="save-github" type="button" class="secondary">Koppeling opslaan</button>
               <button type="button" data-publish>Publiceer actueel nu</button>
               <button id="clear-github" type="button" class="text">Koppeling verwijderen</button>
-              <p class="publish-note">Koppeling opslaan bewaart alleen je GitHub-sleutel. Klik daarna op Publiceren om je wijzigingen op de homepage te zetten.</p>
+              <p class="publish-note">De GitHub-koppeling wordt automatisch in deze browser bewaard zodra de velden compleet zijn. Klik op Koppeling verwijderen om de sleutel uit deze browser te wissen.</p>
             </div>
           </section>
         </aside>
@@ -649,6 +649,27 @@
         $('#token').value = settings?.token || '';
       }
 
+      function readGithubForm() {
+        return {
+          owner: $('#owner').value.trim(),
+          repo: $('#repo').value.trim(),
+          branch: $('#branch').value.trim() || 'main',
+          token: $('#token').value.trim()
+        };
+      }
+
+      function saveGithubSettings({ showStatus = false } = {}) {
+        const settings = readGithubForm();
+        if (!settings.owner || !settings.repo || !settings.branch || !settings.token) return null;
+        localStorage.setItem(STORAGE_GITHUB, JSON.stringify(settings));
+        if (showStatus) setStatus('GitHub-koppeling opgeslagen in deze browser.');
+        return settings;
+      }
+
+      function getGithubSettings() {
+        return saveGithubSettings() || readGithubSettings();
+      }
+
       async function githubRequest(settings, path, options = {}) {
         const method = options.method || 'GET';
         const ref = method === 'GET' ? `?ref=${encodeURIComponent(settings.branch)}` : '';
@@ -678,7 +699,7 @@
       }
 
       async function loadOnline() {
-        const settings = readGithubSettings();
+        const settings = getGithubSettings();
         if (!settings) throw new Error('Vul eerst de GitHub-koppeling in.');
         const file = await githubRequest(settings, CONTENT_PATH, { method: 'GET' });
         items = normalizeItems(JSON.parse(fromBase64Utf8(file.content)));
@@ -688,7 +709,7 @@
       }
 
       async function publish() {
-        const settings = readGithubSettings();
+        const settings = getGithubSettings();
         if (!settings) throw new Error('Vul eerst de GitHub-koppeling in.');
         const normalizedItems = items.map(normalizeItem);
         const content = `${JSON.stringify(normalizedItems, null, 2)}\n`;
@@ -760,14 +781,14 @@
       });
 
       $('#save-github').addEventListener('click', () => {
-        const settings = {
-          owner: $('#owner').value.trim(),
-          repo: $('#repo').value.trim(),
-          branch: $('#branch').value.trim() || 'main',
-          token: $('#token').value.trim()
-        };
-        localStorage.setItem(STORAGE_GITHUB, JSON.stringify(settings));
-        setStatus('GitHub-koppeling opgeslagen. Klik nu op Publiceren om Actueel online te zetten.');
+        const settings = saveGithubSettings({ showStatus: true });
+        if (!settings) setStatus('Vul account, repository, branch en toegangssleutel in.');
+      });
+
+      ['owner', 'repo', 'branch', 'token'].forEach((id) => {
+        $(`#${id}`).addEventListener('input', () => {
+          saveGithubSettings();
+        });
       });
 
       $('#clear-github').addEventListener('click', () => {
