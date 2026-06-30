@@ -8,5 +8,15 @@
     "visible": true,
     "embed": false,
     "order": 1
+  },
+  {
+    "id": "vrije-kunst",
+    "label": "Updates",
+    "title": "Vrije Kunst",
+    "href": "https://www.instagram.com/p/DaNBNYYtO-F/",
+    "text": "@ Weimarstraat 300 Den Haag",
+    "visible": true,
+    "embed": true,
+    "order": 2
   }
 ]
