@@ -396,10 +396,10 @@
               <p>Gebruik een fijnmazige GitHub-toegangssleutel met alleen <strong>Contents: read and write</strong> voor deze repository. De sleutel blijft alleen in deze browser.</p>
               <div class="row">
                 <label>Account
-                  <input id="owner" autocomplete="off" placeholder="mchlmchl312">
+                  <input id="owner" autocomplete="off" value="mchlmchl312">
                 </label>
                 <label>Repository
-                  <input id="repo" autocomplete="off" placeholder="name">
+                  <input id="repo" autocomplete="off" value="name">
                 </label>
               </div>
               <div class="row">
@@ -424,6 +424,11 @@
       const CONTENT_PATH = 'content/actueel.json';
       const STORAGE_ITEMS = 'machiel-actueel-concept';
       const STORAGE_GITHUB = 'machiel-actueel-github';
+      const DEFAULT_GITHUB = {
+        owner: 'mchlmchl312',
+        repo: 'name',
+        branch: 'main'
+      };
       const fallbackItems = [
         {
           id: 'raam-laakkwartier',
@@ -632,10 +637,21 @@
         renderPreview();
       }
 
+      function completeGithubSettings(settings = {}) {
+        return {
+          owner: (settings.owner || DEFAULT_GITHUB.owner).trim(),
+          repo: (settings.repo || DEFAULT_GITHUB.repo).trim(),
+          branch: (settings.branch || DEFAULT_GITHUB.branch).trim(),
+          token: typeof settings.token === 'string' ? settings.token.trim() : ''
+        };
+      }
+
       function readGithubSettings() {
         try {
-          const settings = JSON.parse(localStorage.getItem(STORAGE_GITHUB) || 'null');
-          if (!settings || !settings.owner || !settings.repo || !settings.branch || !settings.token) return null;
+          const stored = JSON.parse(localStorage.getItem(STORAGE_GITHUB) || 'null');
+          if (!stored) return null;
+          const settings = completeGithubSettings(stored);
+          if (!settings.token) return null;
           return settings;
         } catch {
           return null;
@@ -643,18 +659,20 @@
       }
 
       function writeGithubForm(settings) {
-        $('#owner').value = settings?.owner || '';
-        $('#repo').value = settings?.repo || '';
-        $('#branch').value = settings?.branch || 'main';
+        const completeSettings = completeGithubSettings(settings || {});
+        $('#owner').value = completeSettings.owner;
+        $('#repo').value = completeSettings.repo;
+        $('#branch').value = completeSettings.branch;
         $('#token').value = settings?.token || '';
       }
 
       function readGithubForm() {
+        const stored = readGithubSettings();
         return {
-          owner: $('#owner').value.trim(),
-          repo: $('#repo').value.trim(),
-          branch: $('#branch').value.trim() || 'main',
-          token: $('#token').value.trim()
+          owner: $('#owner').value.trim() || DEFAULT_GITHUB.owner,
+          repo: $('#repo').value.trim() || DEFAULT_GITHUB.repo,
+          branch: $('#branch').value.trim() || DEFAULT_GITHUB.branch,
+          token: $('#token').value.trim() || stored?.token || ''
         };
       }
 
