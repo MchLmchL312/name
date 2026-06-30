@@ -11,23 +11,23 @@
     "order": 1
   },
   {
-    "id": "raam-laakkwartier",
-    "label": "Updates",
-    "title": "Raam Laakkwartier",
-    "href": "boards/Raam%20Laakkwartier/",
-    "text": "",
-    "image": "uploads/actueel/raam-laakkwartier-1782818049779-img-1589.jpg",
-    "visible": true,
-    "embed": false,
-    "order": 2
-  },
-  {
     "id": "item-1782816063534",
     "label": "Updates",
     "title": "Boards",
     "href": "https://www.machielvansoest.nl/boards/",
     "text": "",
     "image": "https://www.machielvansoest.nl/boards/boards/board2.jpg",
+    "visible": true,
+    "embed": false,
+    "order": 2
+  },
+  {
+    "id": "raam-laakkwartier",
+    "label": "Updates",
+    "title": "Raam Laakkwartier",
+    "href": "boards/Raam%20Laakkwartier/",
+    "text": "",
+    "image": "uploads/actueel/raam-laakkwartier-1782818049779-img-1589.jpg",
     "visible": true,
     "embed": false,
     "order": 3
