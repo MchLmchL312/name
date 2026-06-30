@@ -1,15 +1,5 @@
 [
   {
-    "id": "raam-laakkwartier",
-    "label": "Updates",
-    "title": "Raam Laakkwartier",
-    "href": "boards/Raam%20Laakkwartier/",
-    "text": "",
-    "visible": true,
-    "embed": false,
-    "order": 1
-  },
-  {
     "id": "vrije-kunst",
     "label": "Updates",
     "title": "Vrije Kunst",
@@ -17,6 +7,16 @@
     "text": "@ Weimarstraat 300 Den Haag",
     "visible": true,
     "embed": true,
+    "order": 1
+  },
+  {
+    "id": "raam-laakkwartier",
+    "label": "Updates",
+    "title": "Raam Laakkwartier",
+    "href": "boards/Raam%20Laakkwartier/",
+    "text": "",
+    "visible": true,
+    "embed": false,
     "order": 2
   }
 ]
