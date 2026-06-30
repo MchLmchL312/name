@@ -310,6 +310,35 @@
         font-size: 0.92rem;
       }
 
+      .publish-result {
+        margin-top: 14px;
+        padding: 14px;
+        background: #f8f3eb;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      .publish-result[hidden] {
+        display: none;
+      }
+
+      .publish-result strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .publish-result pre {
+        max-height: 230px;
+        overflow: auto;
+        margin: 10px 0 0;
+        padding: 10px;
+        background: #24211d;
+        color: #fffaf2;
+        border-radius: 6px;
+        font-size: 0.78rem;
+        white-space: pre-wrap;
+      }
+
       @media (max-width: 900px) {
         .layout,
         .row {
@@ -349,6 +378,7 @@
           </div>
           <div class="panel-inner">
             <div id="items" class="items"></div>
+            <div id="publish-result" class="publish-result" hidden></div>
           </div>
         </section>
 
@@ -413,9 +443,25 @@
       const $ = (selector) => document.querySelector(selector);
       const itemsRoot = $('#items');
       const status = $('#status');
+      const publishResult = $('#publish-result');
 
       function setStatus(message) {
         status.textContent = message;
+      }
+
+      function setPublishResult(title, message, details = '') {
+        publishResult.hidden = false;
+        publishResult.replaceChildren();
+        const heading = document.createElement('strong');
+        heading.textContent = title;
+        const text = document.createElement('p');
+        text.textContent = message;
+        publishResult.append(heading, text);
+        if (details) {
+          const pre = document.createElement('pre');
+          pre.textContent = details;
+          publishResult.append(pre);
+        }
       }
 
       function normalizeItem(item, index) {
@@ -608,6 +654,7 @@
         const ref = method === 'GET' ? `?ref=${encodeURIComponent(settings.branch)}` : '';
         const response = await fetch(`https://api.github.com/repos/${encodeURIComponent(settings.owner)}/${encodeURIComponent(settings.repo)}/contents/${path}${ref}`, {
           ...options,
+          cache: 'no-store',
           headers: {
             Accept: 'application/vnd.github+json',
             Authorization: `Bearer ${settings.token}`,
@@ -643,11 +690,17 @@
       async function publish() {
         const settings = readGithubSettings();
         if (!settings) throw new Error('Vul eerst de GitHub-koppeling in.');
+        const normalizedItems = items.map(normalizeItem);
+        const content = `${JSON.stringify(normalizedItems, null, 2)}\n`;
+        setPublishResult(
+          'Publiceren gestart',
+          `Ik ga ${normalizedItems.length} item(s) naar GitHub schrijven.`,
+          content
+        );
         const file = await githubRequest(settings, CONTENT_PATH, { method: 'GET' }).catch((error) => {
           if (String(error.message).includes('Not Found')) return null;
           throw error;
         });
-        const content = `${JSON.stringify(items.map(normalizeItem), null, 2)}\n`;
         const body = {
           message: 'Update homepage actueel',
           content: toBase64Utf8(content),
@@ -658,8 +711,30 @@
           method: 'PUT',
           body: JSON.stringify(body)
         });
+        const check = await githubRequest(settings, CONTENT_PATH, { method: 'GET' });
+        const savedContent = fromBase64Utf8(check.content);
+        const savedItems = normalizeItems(JSON.parse(savedContent));
+        const visibleTitles = savedItems.filter((item) => item.visible).map((item) => item.title).join(', ') || 'geen zichtbare items';
+        let liveMessage = 'GitHub heeft de nieuwe JSON opgeslagen. GitHub Pages kan nog kort nodig hebben voordat de publieke URL is bijgewerkt.';
+        try {
+          const liveResponse = await fetch(`../../content/actueel.json?published=${Date.now()}`, { cache: 'no-store' });
+          if (liveResponse.ok) {
+            const liveItems = normalizeItems(await liveResponse.json());
+            const liveContent = `${JSON.stringify(liveItems, null, 2)}\n`;
+            liveMessage = liveContent === savedContent
+              ? 'De publieke actueel.json geeft dezelfde inhoud terug. De homepage kan nu worden ververst.'
+              : 'GitHub is bijgewerkt, maar de publieke actueel.json geeft nog oude inhoud terug. Wacht 30-60 seconden en ververs met Ctrl+F5.';
+          }
+        } catch {
+          liveMessage = 'GitHub is bijgewerkt. De publieke controle kon niet worden gelezen, maar de commit is geaccepteerd.';
+        }
         localStorage.setItem(STORAGE_ITEMS, JSON.stringify(items));
-        setStatus('Gepubliceerd naar GitHub.');
+        setStatus(`Gepubliceerd naar GitHub: ${visibleTitles}.`);
+        setPublishResult(
+          'Gepubliceerd naar GitHub',
+          liveMessage,
+          savedContent
+        );
       }
 
       $('#add-item').addEventListener('click', () => {
@@ -716,13 +791,18 @@
 
       async function handlePublishClick() {
         if (busy) return;
-        if (!confirm('Actueel nu publiceren naar de homepage?')) return;
         busy = true;
         setStatus('Publiceren...');
         try {
           await publish();
         } catch (error) {
-          setStatus(error instanceof Error ? error.message : 'Publiceren is niet gelukt.');
+          const message = error instanceof Error ? error.message : 'Publiceren is niet gelukt.';
+          setStatus(message);
+          setPublishResult(
+            'Publiceren niet gelukt',
+            message,
+            'Controleer of de GitHub-toegangssleutel nog geldig is en Contents: read and write heeft voor repository name.'
+          );
         } finally {
           busy = false;
         }
