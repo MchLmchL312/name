@@ -55,6 +55,8 @@
         --green-dark: #183d32;
         --blue: #315978;
         --blue-dark: #1f3f58;
+        --gold: #9f6b1f;
+        --gold-dark: #6e4713;
       }
 
       * {
@@ -84,7 +86,7 @@
       }
 
       .landing {
-        width: min(100%, 980px);
+        width: min(100%, 1180px);
       }
 
       .intro {
@@ -119,12 +121,12 @@
 
       .choices {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 14px;
       }
 
       .choice {
-        min-height: 260px;
+        min-height: 250px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -202,7 +204,20 @@
       }
 
       .current li {
-        display: inline;
+        display: block;
+      }
+
+      .current-item {
+        display: grid;
+        gap: 4px;
+      }
+
+      .current-item p {
+        margin: 0;
+        max-width: 44rem;
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.45;
       }
 
       .current a {
@@ -233,18 +248,6 @@
         font-weight: 760;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-      }
-
-      .instagram-post {
-        margin-top: 12px;
-        max-width: 540px;
-      }
-
-      .instagram-post .instagram-media {
-        min-width: 0 !important;
-        width: 100% !important;
-        max-width: 540px !important;
-        margin: 0 !important;
       }
 
       .social-links {
@@ -301,6 +304,10 @@
         background: var(--blue);
       }
 
+      .choice.login .arrow {
+        background: var(--gold);
+      }
+
       .choice.work:hover .arrow,
       .choice.work:focus-visible .arrow {
         background: var(--accent-dark);
@@ -316,7 +323,18 @@
         background: var(--blue-dark);
       }
 
-      @media (max-width: 860px) {
+      .choice.login:hover .arrow,
+      .choice.login:focus-visible .arrow {
+        background: var(--gold-dark);
+      }
+
+      @media (max-width: 1080px) {
+        .choices {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 720px) {
         .choices {
           grid-template-columns: 1fr;
         }
@@ -373,23 +391,24 @@
             </span>
             <span class="arrow" aria-hidden="true">&rarr;</span>
           </a>
+
+          <a class="choice login" href="cursus/">
+            <span>
+              <p class="label">Alleen cursisten</p>
+              <h2>Cursisten login</h2>
+              <p>Open de beveiligde cursusomgeving met het seizoenswachtwoord.</p>
+            </span>
+            <span class="arrow" aria-hidden="true">&rarr;</span>
+          </a>
         </div>
 
         <div class="current" aria-label="Actuele links">
           <strong>Actueel:</strong>
-          <div class="current-group">
+          <div class="current-group" id="current-updates">
             <p class="current-label">Updates</p>
             <ul>
-              <li><a href="boards/Raam%20Laakkwartier/">Raam Laakkwartier</a></li>
+              <li class="current-item"><a href="boards/Raam%20Laakkwartier/">Raam Laakkwartier</a></li>
             </ul>
-          </div>
-          <div class="current-group">
-            <p class="current-label">Instagram</p>
-            <div class="instagram-post">
-              <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DZeelp8tYD6/" data-instgrm-version="14">
-                <a href="https://www.instagram.com/kunstlessen_machiel/p/DZeelp8tYD6/">Bekijk deze post op Instagram</a>
-              </blockquote>
-            </div>
           </div>
         </div>
 
@@ -419,6 +438,85 @@
         </div>
       </section>
     </main>
-    <script async src="https://www.instagram.com/embed.js"></script>
+    <script>
+      const fallbackUpdates = [
+        {
+          label: 'Updates',
+          title: 'Raam Laakkwartier',
+          href: 'boards/Raam%20Laakkwartier/',
+          text: '',
+          visible: true,
+          order: 1
+        }
+      ];
+
+      function sanitizeText(value) {
+        return typeof value === 'string' ? value : '';
+      }
+
+      function safeHomepageHref(value) {
+        if (typeof value !== 'string') return '';
+        const trimmed = value.trim();
+        if (!trimmed) return '';
+        if (trimmed.startsWith('/') || trimmed.startsWith('./') || trimmed.startsWith('../') || trimmed.startsWith('#')) return trimmed;
+        try {
+          const url = new URL(trimmed);
+          return ['https:', 'mailto:'].includes(url.protocol) ? trimmed : '';
+        } catch {
+          return trimmed;
+        }
+      }
+
+      function renderCurrentItems(items) {
+        const groups = new Map();
+        items
+          .filter((item) => item && item.visible !== false && sanitizeText(item.title).trim())
+          .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0))
+          .forEach((item) => {
+            const label = sanitizeText(item.label).trim() || 'Updates';
+            if (!groups.has(label)) groups.set(label, []);
+            groups.get(label).push(item);
+          });
+
+        const current = document.querySelector('.current');
+        if (!current) return;
+        current.querySelectorAll('.current-group').forEach((group) => group.remove());
+        current.hidden = groups.size === 0;
+        if (groups.size === 0) return;
+
+        groups.forEach((groupItems, label) => {
+          const group = document.createElement('div');
+          group.className = 'current-group';
+          const heading = document.createElement('p');
+          heading.className = 'current-label';
+          heading.textContent = label;
+          const list = document.createElement('ul');
+
+          groupItems.forEach((item) => {
+            const entry = document.createElement('li');
+            entry.className = 'current-item';
+            const link = document.createElement('a');
+            link.href = safeHomepageHref(item.href) || '#';
+            link.textContent = sanitizeText(item.title);
+            entry.append(link);
+            const text = sanitizeText(item.text).trim();
+            if (text) {
+              const paragraph = document.createElement('p');
+              paragraph.textContent = text;
+              entry.append(paragraph);
+            }
+            list.append(entry);
+          });
+
+          group.append(heading, list);
+          current.append(group);
+        });
+      }
+
+      fetch('content/actueel.json', { cache: 'no-store' })
+        .then((response) => response.ok ? response.json() : fallbackUpdates)
+        .then((items) => renderCurrentItems(Array.isArray(items) ? items : fallbackUpdates))
+        .catch(() => renderCurrentItems(fallbackUpdates));
+    </script>
   </body>
 </html>
