@@ -18,5 +18,15 @@
     "visible": true,
     "embed": false,
     "order": 2
+  },
+  {
+    "id": "item-1782816063534",
+    "label": "Updates",
+    "title": "Boards",
+    "href": "https://www.machielvansoest.nl/boards/",
+    "text": "",
+    "visible": true,
+    "embed": false,
+    "order": 3
   }
 ]
