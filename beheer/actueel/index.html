@@ -294,6 +294,33 @@
         font-size: 0.95rem;
       }
 
+      .preview-image {
+        display: block;
+        width: min(100%, 420px);
+        margin-top: 10px;
+      }
+
+      .preview-image img {
+        display: block;
+        width: 100%;
+        max-height: 320px;
+        object-fit: cover;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      .upload-help {
+        display: block;
+        margin-top: -5px;
+        margin-bottom: 12px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      input[type="file"] {
+        padding: 8px;
+      }
+
       .settings {
         display: grid;
         gap: 12px;
@@ -422,6 +449,7 @@
 
     <script>
       const CONTENT_PATH = 'content/actueel.json';
+      const UPLOAD_PATH = 'uploads/actueel';
       const STORAGE_ITEMS = 'machiel-actueel-concept';
       const STORAGE_GITHUB = 'machiel-actueel-github';
       const DEFAULT_GITHUB = {
@@ -436,6 +464,7 @@
           title: 'Raam Laakkwartier',
           href: 'boards/Raam%20Laakkwartier/',
           text: '',
+          image: '',
           visible: true,
           embed: false,
           order: 1
@@ -444,6 +473,7 @@
 
       let items = [];
       let busy = false;
+      const pendingImageUploads = new Map();
 
       const $ = (selector) => document.querySelector(selector);
       const itemsRoot = $('#items');
@@ -476,6 +506,7 @@
           title: typeof item.title === 'string' ? item.title : '',
           href: typeof item.href === 'string' ? item.href : '',
           text: typeof item.text === 'string' ? item.text : '',
+          image: typeof item.image === 'string' ? item.image : (typeof item.imageUrl === 'string' ? item.imageUrl : ''),
           visible: item.visible !== false,
           embed: item.embed === true,
           order: Number.isFinite(Number(item.order)) ? Number(item.order) : index + 1
@@ -510,6 +541,23 @@
         }
       }
 
+      function safeImageSrc(value) {
+        if (typeof value !== 'string') return '';
+        const trimmed = value.trim();
+        if (!trimmed) return '';
+        if (trimmed.startsWith('blob:') || trimmed.startsWith('/') || trimmed.startsWith('./') || trimmed.startsWith('../')) return trimmed;
+        try {
+          const url = new URL(trimmed);
+          return ['https:', 'http:'].includes(url.protocol) ? trimmed : '';
+        } catch {
+          return trimmed;
+        }
+      }
+
+      function itemImageSrc(item) {
+        return pendingImageUploads.get(item.id)?.previewUrl || safeImageSrc(item.image);
+      }
+
       function moveItem(id, direction) {
         const ordered = [...items].sort((a, b) => Number(a.order) - Number(b.order));
         const index = ordered.findIndex((item) => item.id === id);
@@ -522,6 +570,9 @@
 
       function removeItem(id) {
         if (!confirm('Dit actuele item verwijderen uit je concept?')) return;
+        const pending = pendingImageUploads.get(id);
+        if (pending?.previewUrl) URL.revokeObjectURL(pending.previewUrl);
+        pendingImageUploads.delete(id);
         items = items.filter((item) => item.id !== id).map((item, index) => ({ ...item, order: index + 1 }));
         render();
       }
@@ -551,6 +602,13 @@
             <label>Link
               <input data-field="href" value="">
             </label>
+            <label>Afbeelding of afbeeldingslink
+              <input data-field="image" value="" placeholder="uploads/actueel/foto.jpg of https://...">
+            </label>
+            <label>Afbeelding uploaden
+              <input data-upload-image type="file" accept="image/*">
+            </label>
+            <span class="upload-help" data-upload-name></span>
             <label>Korte tekst
               <textarea data-field="text" rows="3"></textarea>
             </label>
@@ -564,6 +622,7 @@
           article.querySelector('[data-field="label"]').value = item.label;
           article.querySelector('[data-field="title"]').value = item.title;
           article.querySelector('[data-field="href"]').value = item.href;
+          article.querySelector('[data-field="image"]').value = item.image;
           article.querySelector('[data-field="text"]').value = item.text;
           article.querySelector('[data-field="visible"]').checked = item.visible;
           article.querySelector('[data-field="embed"]').checked = item.embed;
@@ -573,6 +632,28 @@
               const key = field.dataset.field;
               updateItem(item.id, { [key]: field.type === 'checkbox' ? field.checked : field.value });
             });
+          });
+          const uploadInput = article.querySelector('[data-upload-image]');
+          const uploadName = article.querySelector('[data-upload-name]');
+          const pending = pendingImageUploads.get(item.id);
+          uploadName.textContent = pending ? `Geselecteerd: ${pending.file.name}` : '';
+          uploadInput.addEventListener('change', () => {
+            const [file] = uploadInput.files || [];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+              uploadInput.value = '';
+              setStatus('Kies een afbeeldingsbestand.');
+              return;
+            }
+            const previous = pendingImageUploads.get(item.id);
+            if (previous?.previewUrl) URL.revokeObjectURL(previous.previewUrl);
+            pendingImageUploads.set(item.id, {
+              file,
+              previewUrl: URL.createObjectURL(file)
+            });
+            uploadName.textContent = `Geselecteerd: ${file.name}`;
+            setStatus('Afbeelding klaar om mee te publiceren.');
+            renderPreview();
           });
           article.querySelector('[data-action="up"]').addEventListener('click', () => moveItem(item.id, -1));
           article.querySelector('[data-action="down"]').addEventListener('click', () => moveItem(item.id, 1));
@@ -616,6 +697,17 @@
               const text = document.createElement('p');
               text.textContent = item.text;
               entry.append(text);
+            }
+            const image = itemImageSrc(item);
+            if (image) {
+              const imageLink = document.createElement('a');
+              imageLink.className = 'preview-image';
+              imageLink.href = item.href || image;
+              const imageElement = document.createElement('img');
+              imageElement.src = image;
+              imageElement.alt = item.title;
+              imageLink.append(imageElement);
+              entry.append(imageLink);
             }
             if (item.embed === true) {
               const instagramUrl = instagramPostUrl(item.href);
@@ -716,6 +808,86 @@
         return decodeURIComponent(escape(atob(value.replace(/\n/g, ''))));
       }
 
+      function slugify(value) {
+        return String(value || 'actueel')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '') || 'actueel';
+      }
+
+      function uploadFileName(file) {
+        const rawName = file.name.split(/[/\\]/).pop() || 'afbeelding';
+        const extensionFromType = {
+          'image/jpeg': 'jpg',
+          'image/png': 'png',
+          'image/webp': 'webp',
+          'image/gif': 'gif'
+        }[file.type] || 'jpg';
+        const extension = (rawName.match(/\.([a-z0-9]{2,5})$/i)?.[1] || extensionFromType).toLowerCase();
+        const stem = rawName.replace(/\.[^.]+$/, '');
+        return `${slugify(stem)}.${extension}`;
+      }
+
+      function imageUploadPath(item, file) {
+        const itemPart = slugify(item.title || item.id);
+        return `${UPLOAD_PATH}/${itemPart}-${Date.now()}-${uploadFileName(file)}`;
+      }
+
+      function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = String(reader.result || '');
+            resolve(result.includes(',') ? result.split(',')[1] : result);
+          };
+          reader.onerror = () => reject(new Error('Afbeelding lezen is niet gelukt.'));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function uploadImageFile(settings, item, pending) {
+        const path = imageUploadPath(item, pending.file);
+        const content = await fileToBase64(pending.file);
+        const existing = await githubRequest(settings, path, { method: 'GET' }).catch((error) => {
+          if (String(error.message).includes('Not Found')) return null;
+          throw error;
+        });
+        const body = {
+          message: `Upload actueel afbeelding ${pending.file.name}`,
+          content,
+          branch: settings.branch
+        };
+        if (existing?.sha) body.sha = existing.sha;
+        await githubRequest(settings, path, {
+          method: 'PUT',
+          body: JSON.stringify(body)
+        });
+        return path;
+      }
+
+      async function uploadPendingImages(settings) {
+        if (!pendingImageUploads.size) return items;
+        const nextItems = [];
+        for (const item of items) {
+          const pending = pendingImageUploads.get(item.id);
+          if (!pending) {
+            nextItems.push(item);
+            continue;
+          }
+          setPublishResult('Afbeelding uploaden', `Ik upload ${pending.file.name} naar GitHub.`);
+          const image = await uploadImageFile(settings, item, pending);
+          if (pending.previewUrl) URL.revokeObjectURL(pending.previewUrl);
+          pendingImageUploads.delete(item.id);
+          nextItems.push({ ...item, image });
+        }
+        items = nextItems;
+        localStorage.setItem(STORAGE_ITEMS, JSON.stringify(items));
+        render();
+        return items;
+      }
+
       async function loadOnline() {
         const settings = getGithubSettings();
         if (!settings) throw new Error('Vul eerst de GitHub-koppeling in.');
@@ -729,7 +901,9 @@
       async function publish() {
         const settings = getGithubSettings();
         if (!settings) throw new Error('Vul eerst de GitHub-koppeling in.');
-        const normalizedItems = items.map(normalizeItem);
+        setPublishResult('Publiceren gestart', 'Ik bereid de update en eventuele afbeeldingen voor.');
+        const itemsForPublish = await uploadPendingImages(settings);
+        const normalizedItems = itemsForPublish.map(normalizeItem);
         const content = `${JSON.stringify(normalizedItems, null, 2)}\n`;
         setPublishResult(
           'Publiceren gestart',
@@ -785,6 +959,7 @@
             title: 'Nieuwe update',
             href: '',
             text: '',
+            image: '',
             visible: true,
             embed: false,
             order: items.length + 1

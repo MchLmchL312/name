@@ -220,6 +220,21 @@
         line-height: 1.45;
       }
 
+      .current-image {
+        display: block;
+        width: min(100%, 460px);
+        margin-top: 10px;
+      }
+
+      .current-image img {
+        display: block;
+        width: 100%;
+        max-height: 360px;
+        object-fit: cover;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
       .instagram-post {
         margin-top: 12px;
         width: min(100%, 540px);
@@ -457,6 +472,7 @@
           title: 'Raam Laakkwartier',
           href: 'boards/Raam%20Laakkwartier/',
           text: '',
+          image: '',
           visible: true,
           embed: false,
           order: 1
@@ -475,6 +491,19 @@
         try {
           const url = new URL(trimmed);
           return ['https:', 'mailto:'].includes(url.protocol) ? trimmed : '';
+        } catch {
+          return trimmed;
+        }
+      }
+
+      function safeImageSrc(value) {
+        if (typeof value !== 'string') return '';
+        const trimmed = value.trim();
+        if (!trimmed) return '';
+        if (trimmed.startsWith('/') || trimmed.startsWith('./') || trimmed.startsWith('../')) return trimmed;
+        try {
+          const url = new URL(trimmed);
+          return ['https:', 'http:'].includes(url.protocol) ? trimmed : '';
         } catch {
           return trimmed;
         }
@@ -543,6 +572,18 @@
               const paragraph = document.createElement('p');
               paragraph.textContent = text;
               entry.append(paragraph);
+            }
+            const image = safeImageSrc(item.image || item.imageUrl);
+            if (image) {
+              const imageLink = document.createElement('a');
+              imageLink.className = 'current-image';
+              imageLink.href = safeHomepageHref(item.href) || image;
+              const imageElement = document.createElement('img');
+              imageElement.src = image;
+              imageElement.alt = sanitizeText(item.title);
+              imageElement.loading = 'lazy';
+              imageLink.append(imageElement);
+              entry.append(imageLink);
             }
             const instagramUrl = item.embed === true ? instagramPostUrl(item.href) : '';
             if (instagramUrl) {
