@@ -304,6 +304,12 @@
         overflow-wrap: anywhere;
       }
 
+      .publish-note {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
       @media (max-width: 900px) {
         .layout,
         .row {
@@ -337,7 +343,7 @@
         <section class="panel">
           <div class="toolbar">
             <button id="save-local" type="button" class="secondary">Concept opslaan</button>
-            <button id="publish" type="button">Publiceren</button>
+            <button id="publish" type="button" data-publish>Publiceren</button>
             <button id="load-online" type="button" class="secondary">Online versie laden</button>
             <span id="status" class="status" role="status"></span>
           </div>
@@ -375,7 +381,9 @@
                 </label>
               </div>
               <button id="save-github" type="button" class="secondary">Koppeling opslaan</button>
+              <button type="button" data-publish>Publiceer actueel nu</button>
               <button id="clear-github" type="button" class="text">Koppeling verwijderen</button>
+              <p class="publish-note">Koppeling opslaan bewaart alleen je GitHub-sleutel. Klik daarna op Publiceren om je wijzigingen op de homepage te zetten.</p>
             </div>
           </section>
         </aside>
@@ -684,7 +692,7 @@
           token: $('#token').value.trim()
         };
         localStorage.setItem(STORAGE_GITHUB, JSON.stringify(settings));
-        setStatus('GitHub-koppeling opgeslagen.');
+        setStatus('GitHub-koppeling opgeslagen. Klik nu op Publiceren om Actueel online te zetten.');
       });
 
       $('#clear-github').addEventListener('click', () => {
@@ -706,7 +714,7 @@
         }
       });
 
-      $('#publish').addEventListener('click', async () => {
+      async function handlePublishClick() {
         if (busy) return;
         if (!confirm('Actueel nu publiceren naar de homepage?')) return;
         busy = true;
@@ -718,6 +726,10 @@
         } finally {
           busy = false;
         }
+      }
+
+      document.querySelectorAll('[data-publish]').forEach((button) => {
+        button.addEventListener('click', handlePublishClick);
       });
 
       async function init() {
