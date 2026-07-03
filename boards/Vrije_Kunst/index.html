@@ -61,10 +61,9 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        gap: 6px;
+        gap: 4px;
         margin-bottom: clamp(28px, 5vw, 48px);
         color: var(--muted);
-        font-size: 0.95rem;
       }
 
       .topnav a {
@@ -72,12 +71,20 @@
         display: inline-flex;
         align-items: center;
         line-height: 1.2;
-        text-decoration-thickness: 1.3px;
-        text-underline-offset: 5px;
+        text-decoration: none;
+      }
+
+      .topnav .brand-link {
+        color: var(--ink);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(1.45rem, 3vw, 1.8rem);
+        font-weight: 700;
+        letter-spacing: 0;
       }
 
       .topnav .subtitle-link {
-        font-size: 0.92rem;
+        color: var(--muted);
+        font-size: 1rem;
       }
 
       .hero {
@@ -291,7 +298,7 @@
   <body>
     <main class="page">
       <nav class="topnav" aria-label="Navigatie">
-        <a href="https://www.machielvansoest.nl/">Machiel van Soest</a>
+        <a class="brand-link" href="https://www.machielvansoest.nl/">Machiel van Soest</a>
         <a class="subtitle-link" href="https://www.machielvansoest.nl/">Schilderlessen &amp; beeldende kunst</a>
       </nav>
 
