@@ -532,6 +532,12 @@ dd {
   object-position: top center;
 }
 
+.exhibition-card.poster-card img {
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  background: #120f0d;
+}
+
 .exhibition-card span {
   display: block;
   min-height: 68px;
