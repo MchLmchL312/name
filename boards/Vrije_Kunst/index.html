@@ -90,14 +90,11 @@
       }
 
       .hero {
-        display: grid;
-        grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.72fr);
-        gap: clamp(28px, 6vw, 72px);
-        align-items: center;
+        display: block;
       }
 
       .hero-copy {
-        max-width: 620px;
+        max-width: 880px;
       }
 
       .project-logo {
@@ -238,7 +235,6 @@
         border-color: transparent;
       }
 
-      .poster,
       figure {
         display: block;
         margin: 0;
@@ -249,12 +245,6 @@
         box-shadow: 0 24px 80px rgba(23, 23, 23, 0.1);
       }
 
-      .poster {
-        width: min(100%, 410px);
-        justify-self: end;
-      }
-
-      .poster img,
       figure img {
         display: block;
         width: 100%;
@@ -292,14 +282,8 @@
       }
 
       @media (max-width: 820px) {
-        .hero,
         .image-grid {
           grid-template-columns: 1fr;
-        }
-
-        .poster {
-          width: min(100%, 380px);
-          justify-self: start;
         }
 
         h1 {
@@ -362,10 +346,6 @@
             </ul>
           </div>
         </div>
-
-        <a class="poster" href="vrije_kunst_poster.jpg" aria-label="Open poster">
-          <img src="vrije_kunst_poster.jpg" alt="Poster van Vrije Kunst" fetchpriority="high">
-        </a>
       </section>
 
       <section class="gallery" aria-label="Documentatie">
@@ -378,6 +358,10 @@
           <figure>
             <img src="Vrije_Kunst_2.jpg" alt="Documentatie Vrije Kunst 2" loading="lazy">
             <figcaption>Documentatie 2</figcaption>
+          </figure>
+          <figure>
+            <img src="vrije_kunst_poster.jpg" alt="Documentatie Vrije Kunst 3" loading="lazy">
+            <figcaption>Documentatie 3</figcaption>
           </figure>
         </div>
       </section>
