@@ -100,6 +100,14 @@
         max-width: 620px;
       }
 
+      .project-logo {
+        display: block;
+        width: clamp(86px, 13vw, 132px);
+        height: auto;
+        margin: 0 0 18px;
+        mix-blend-mode: multiply;
+      }
+
       .eyebrow {
         margin: 0 0 14px;
         color: var(--muted);
@@ -310,6 +318,7 @@
 
       <section class="hero" aria-label="Vrije Kunst">
         <div class="hero-copy">
+          <img class="project-logo" src="logo/Vrije_Kunst_logo.png" alt="Vrije Kunst logo">
           <p class="eyebrow">Documentatie</p>
           <h1>Vrije Kunst</h1>
           <p class="lead">Statement, documentatie en poster rond Vrije Kunst als overkoepelend concept.</p>
