@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Board Creator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="toolbar">
+      <div class="brand">
+        <strong>Board Creator</strong>
+        <span id="nextName">board...</span>
+      </div>
+
+      <div class="tool-group" aria-label="Achtergrondkleur">
+        <button class="swatch is-active" type="button" data-bg="#808080" title="Grijs" aria-label="Grijs"></button>
+        <button class="swatch" type="button" data-bg="#3f3f3f" title="Donkergrijs" aria-label="Donkergrijs"></button>
+        <button class="swatch" type="button" data-bg="#000000" title="Zwart" aria-label="Zwart"></button>
+        <button class="swatch swatch-white" type="button" data-bg="#ffffff" title="Wit" aria-label="Wit"></button>
+      </div>
+
+      <div class="tool-group">
+        <input id="fileInput" type="file" accept="image/*" multiple>
+        <button id="addButton" class="button" type="button" title="Afbeeldingen toevoegen">
+          <span class="icon">+</span>
+          <span>Afbeeldingen</span>
+        </button>
+        <button id="saveButton" class="button button-primary" type="button" title="Opslaan in de boards-map">
+          <span class="icon">↓</span>
+          <span>Opslaan</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="board-area" id="dropZone" aria-label="Board editor">
+        <canvas id="boardCanvas" width="1200" height="900"></canvas>
+      </section>
+
+      <aside class="side-panel">
+        <section class="panel-section">
+          <h2>Selectie</h2>
+          <div class="selection-actions">
+            <button id="forwardButton" class="icon-button" type="button" title="Naar voren" aria-label="Naar voren">↑</button>
+            <button id="backwardButton" class="icon-button" type="button" title="Naar achteren" aria-label="Naar achteren">↓</button>
+            <button id="deleteButton" class="icon-button danger" type="button" title="Verwijderen" aria-label="Verwijderen">×</button>
+          </div>
+          <label class="range-row">
+            <span>Grootte</span>
+            <input id="scaleSlider" type="range" min="8" max="220" value="100">
+          </label>
+          <output id="selectionName">Geen selectie</output>
+        </section>
+
+        <section class="panel-section">
+          <h2>Lagen</h2>
+          <div id="layers" class="layers"></div>
+        </section>
+
+        <section class="panel-section status-section">
+          <h2>Status</h2>
+          <p id="statusText">Server controleren...</p>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
