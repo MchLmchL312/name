@@ -1,5 +1,16 @@
 [
   {
+    "id": "item-1783147706692",
+    "label": "Updates",
+    "title": "Nieuwe update",
+    "href": "",
+    "text": "Vrije Kunst Logo",
+    "image": "uploads/actueel/nieuwe-update-1783147789791-vrije-kunst-logo.png",
+    "visible": true,
+    "embed": false,
+    "order": 1
+  },
+  {
     "id": "vrije-kunst",
     "label": "Updates",
     "title": "Vrije Kunst",
@@ -8,7 +19,7 @@
     "image": "",
     "visible": true,
     "embed": true,
-    "order": 1
+    "order": 2
   },
   {
     "id": "raam-laakkwartier",
@@ -19,6 +30,6 @@
     "image": "uploads/actueel/raam-laakkwartier-1782818049779-img-1589.jpg",
     "visible": true,
     "embed": false,
-    "order": 2
+    "order": 3
   }
 ]
