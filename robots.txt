@@ -1,4 +1,6 @@
 User-agent: *
+Disallow: /cursus/beheer/
+Disallow: /cursus/content/
 Allow: /
 
 Sitemap: https://www.machielvansoest.nl/sitemap.xml
