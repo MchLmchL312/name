@@ -1,5 +1,4 @@
 User-agent: *
-Disallow: /cursus/beheer/
 Disallow: /cursus/content/
 Allow: /
 

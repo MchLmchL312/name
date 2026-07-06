@@ -1,17 +1,24 @@
 <!doctype html>
 <html lang="nl">
   <head>
+    <link rel="icon" href="../../favicon.ico?v=3" sizes="any">
+    <link rel="icon" href="../../favicon_MchL.png?v=3" type="image/png">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Schilderlessen en beeldende kunst van Machiel van Soest.">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
-    <meta http-equiv="refresh" content="0; url=/cursus/">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'">
-    <title>Afgesloten | Machiel van Soest</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://github.com">
+    <title>Lesbeheer | Machiel van Soest</title>
+    <link rel="stylesheet" href="/cursus/assets/BaseLayout.h51rZr0m.css">
+    <link rel="stylesheet" href="/cursus/assets/index.HQVK_hTe.css">
   </head>
-  <body>
-    <main>
-      <p>Deze pagina is afgesloten.</p>
-      <p><a href="/cursus/">Terug naar de cursuslogin</a></p>
-    </main>
+  <body class="admin-body">
+    <div id="admin-gate" ssr></div>
+    <script type="module">
+      import AdminGate from "/cursus/assets/AdminGate.j8ckIzFX.js";
+      import mountReact from "/cursus/assets/client.BtDnPCOE.js";
+
+      mountReact(document.getElementById("admin-gate"))(AdminGate, {}, {}, { client: "only" });
+    </script>
   </body>
 </html>
