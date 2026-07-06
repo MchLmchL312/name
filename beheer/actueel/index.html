@@ -552,7 +552,20 @@
           const url = new URL(trimmed);
           return ['https:', 'http:'].includes(url.protocol) ? trimmed : '';
         } catch {
-          return trimmed;
+          return `../../${trimmed.replace(/^\/+/, '')}`;
+        }
+      }
+
+      function safePreviewHref(value) {
+        if (typeof value !== 'string') return '';
+        const trimmed = value.trim();
+        if (!trimmed) return '';
+        if (trimmed.startsWith('#') || trimmed.startsWith('/') || trimmed.startsWith('./') || trimmed.startsWith('../')) return trimmed;
+        try {
+          const url = new URL(trimmed);
+          return ['https:', 'http:', 'mailto:'].includes(url.protocol) ? trimmed : '';
+        } catch {
+          return `../../${trimmed.replace(/^\/+/, '')}`;
         }
       }
 
@@ -692,7 +705,7 @@
           groupItems.forEach((item) => {
             const entry = document.createElement('li');
             const link = document.createElement('a');
-            link.href = item.href || '#';
+            link.href = safePreviewHref(item.href) || '#';
             link.textContent = item.title;
             entry.append(link);
             if (item.text.trim()) {
@@ -704,7 +717,7 @@
             if (image) {
               const imageLink = document.createElement('a');
               imageLink.className = 'preview-image';
-              imageLink.href = item.href || image;
+              imageLink.href = safePreviewHref(item.href) || image;
               const imageElement = document.createElement('img');
               imageElement.src = image;
               imageElement.alt = item.title;
