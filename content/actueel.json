@@ -31,5 +31,16 @@
     "visible": true,
     "embed": false,
     "order": 3
+  },
+  {
+    "id": "item-1783353662780",
+    "label": "Updates",
+    "title": "Nieuwe update",
+    "href": "",
+    "text": "",
+    "image": "uploads/actueel/nieuwe-update-1783353759990-board46.jpg",
+    "visible": true,
+    "embed": false,
+    "order": 4
   }
 ]
