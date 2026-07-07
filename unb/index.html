@@ -194,6 +194,7 @@
       }
 
       .info h2,
+      .installatie h2,
       .comments h2 {
         margin: 0 0 10px;
         font-size: 1.05rem;
@@ -206,20 +207,42 @@
         color: #d8d8d8;
       }
 
-      
+      .installation-views {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
 
-      .installatie img {
-        width: 100%;
-        height: auto;
-        display: block;
-        margin-top: 12px;
-        border-radius: 12px;
+      .installation-view {
+        background: #101010;
         border: 1px solid #2e2e2e;
+        border-radius: 10px;
+        overflow: hidden;
+        padding: 0;
+        color: inherit;
+        cursor: pointer;
+        text-align: left;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .installation-view:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.55);
+      }
+
+      .installation-view img {
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+        display: block;
         background: #0b0b0b;
       }
 
-      .installatie img:first-of-type {
-        margin-top: 0;
+      .installation-view span {
+        display: block;
+        padding: 8px 10px;
+        font-size: 0.9rem;
+        color: #e8e8e8;
       }
 .comment-form {
         display: grid;
@@ -347,6 +370,10 @@
       }
 
       @media (max-width: 760px) {
+        .installation-views {
+          grid-template-columns: 1fr;
+        }
+
         .comment-row {
           grid-template-columns: 1fr;
         }
@@ -399,8 +426,27 @@
 
       <section class="installatie" id="installatie" aria-label="Installatie">
         <h2>Installatie</h2>
-        <img src="installatie.JPG" alt="Installatie" loading="lazy" />
-        <img src="installatie2.jpg" alt="Installatie 2" loading="lazy" />
+        <div class="installation-views" id="installationViews">
+          <button class="installation-view" type="button" data-installation-index="0">
+            <img src="installatie.JPG" alt="Installatie view 1" loading="lazy" />
+            <span>Installatie view 1</span>
+          </button>
+
+          <button class="installation-view" type="button" data-installation-index="1">
+            <img src="installatie2.jpg" alt="Installatie view 2" loading="lazy" />
+            <span>Installatie view 2</span>
+          </button>
+
+          <button class="installation-view" type="button" data-installation-index="2">
+            <img src="installatie3.JPG" alt="Installatie view 3" loading="lazy" />
+            <span>Installatie view 3</span>
+          </button>
+
+          <button class="installation-view" type="button" data-installation-index="3">
+            <img src="installatie4.JPG" alt="Installatie view 4" loading="lazy" />
+            <span>Installatie view 4</span>
+          </button>
+        </div>
       </section>
 
 <section class="comments" id="reacties" aria-label="Reacties">
@@ -426,7 +472,7 @@
       </section>
 </main>
 
-    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Portret informatie">
+    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Afbeelding informatie">
       <button class="close" id="closeBtn" type="button" aria-label="Sluiten">×</button>
 
       <div class="modal" role="document">
@@ -464,6 +510,13 @@
       const metaNote = document.getElementById('metaNote');
 
       const files = Array.from({ length: 61 }, (_, index) => `P (${index + 1}).jpg`);
+      const installationFiles = ['installatie.JPG', 'installatie2.jpg', 'installatie3.JPG', 'installatie4.JPG'];
+      const installationMeta = [
+        { name: 'Installatie view 1', years: '', movement: '', note: '' },
+        { name: 'Installatie view 2', years: '', movement: '', note: '' },
+        { name: 'Installatie view 3', years: '', movement: '', note: '' },
+        { name: 'Installatie view 4', years: '', movement: '', note: '' }
+      ];
       // metadata bijgewerkt voor P (39), P (40) en P (41)
 
       // Info per portret (1..61)
@@ -539,18 +592,28 @@
       const captions = meta.map(m => m.name);
 
       let currentIndex = null;
+      let currentFiles = files;
+      let currentMeta = meta;
+      let currentShowRows = true;
 
-      const openModal = (index) => {
+      const openModal = (index, options = {}) => {
+        const nextFiles = options.files || files;
+        const nextMeta = options.meta || meta;
+        const showRows = options.showRows !== false;
+
         // toggle sluiten als je opnieuw op hetzelfde klikt
-        if (lightbox.classList.contains('open') && currentIndex === index) {
+        if (lightbox.classList.contains('open') && currentIndex === index && currentFiles === nextFiles) {
           closeLightbox();
           return;
         }
 
         currentIndex = index;
+        currentFiles = nextFiles;
+        currentMeta = nextMeta;
+        currentShowRows = showRows;
 
-        const file = files[index];
-        const m = meta[index] || { name: file, years: '', movement: '', note: '' };
+        const file = currentFiles[index];
+        const m = currentMeta[index] || { name: file, years: '', movement: '', note: '' };
 
         lightboxImage.src = encodeURI(file);
         lightboxImage.alt = m.name || file;
@@ -560,6 +623,9 @@
         metaMovement.textContent = m.movement || '';
         metaNote.textContent = m.note || '';
 
+        metaYears.closest('.row').hidden = !showRows || !m.years;
+        metaMovement.closest('.row').hidden = !showRows || !m.movement;
+        lightbox.setAttribute('aria-label', `${m.name || 'Afbeelding'} informatie`);
         lightbox.classList.add('open');
         lightbox.setAttribute('aria-hidden', 'false');
       };
@@ -568,6 +634,9 @@
         lightbox.classList.remove('open');
         lightbox.setAttribute('aria-hidden', 'true');
         currentIndex = null;
+        currentFiles = files;
+        currentMeta = meta;
+        currentShowRows = true;
       };
 
       files.forEach((file, index) => {
@@ -591,6 +660,17 @@
         gallery.appendChild(button);
       });
 
+      document.querySelectorAll('[data-installation-index]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const index = Number(button.dataset.installationIndex);
+          openModal(index, {
+            files: installationFiles,
+            meta: installationMeta,
+            showRows: false
+          });
+        });
+      });
+
       closeBtn.addEventListener('click', closeLightbox);
 
       // Sluiten door opnieuw te klikken (op beeld of donkere overlay)
@@ -611,8 +691,12 @@
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
           event.preventDefault();
           const direction = event.key === 'ArrowRight' ? 1 : -1;
-          const nextIndex = (currentIndex + direction + files.length) % files.length;
-          openModal(nextIndex);
+          const nextIndex = (currentIndex + direction + currentFiles.length) % currentFiles.length;
+          openModal(nextIndex, {
+            files: currentFiles,
+            meta: currentMeta,
+            showRows: currentShowRows
+          });
         }
       });
     </script>
