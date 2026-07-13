@@ -52,6 +52,16 @@
       line-height:1.1;
       flex:1 1 180px;
       min-width:0;
+      color:inherit;
+      text-decoration:none;
+    }
+    .brand:hover .name,
+    .brand:focus-visible .name{
+      color:#ffe45c;
+    }
+    .brand:focus-visible{
+      outline:2px solid rgba(255,228,92,.72);
+      outline-offset:4px;
     }
     .brand .name{
       font-weight:650;
@@ -195,10 +205,10 @@
   <header class="header">
     <div class="wrap">
       <div class="topbar">
-        <div class="brand">
+        <a class="brand" href="https://www.machielvansoest.nl/" aria-label="Terug naar homepage Machiel van Soest">
           <div class="name">Machiel van Soest</div>
           <div class="sub">Links</div>
-        </div>
+        </a>
 
         <nav aria-label="Navigatie">
           <a href="index.html">Boards</a>

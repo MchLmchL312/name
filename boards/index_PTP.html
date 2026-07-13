@@ -27,6 +27,15 @@
     .header .name {
       font-size: 1.2rem;
       font-weight: bold;
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .header .name:hover,
+    .header .name:focus-visible {
+      color: yellow;
+      outline: none;
     }
 
     .header-right {
@@ -167,7 +176,7 @@
 </head>
 <body>
   <div class="header">
-    <div class="name">Machiel van Soest</div>
+    <a class="name" href="https://www.machielvansoest.nl/" aria-label="Terug naar homepage Machiel van Soest">Machiel van Soest</a>
     <div class="header-right">
 <a href="https://home.deds.nl/~mcs/" class="map-link active" aria-current="page">PTP</a>
       <!-- Plus icoon -->
