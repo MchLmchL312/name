@@ -354,7 +354,7 @@
       display:grid;
       gap:12px;
       align-content:start;
-      grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr);
+      grid-template-columns: minmax(0, 1.12fr) minmax(340px, .88fr);
       order:-1;
     }
 
@@ -369,10 +369,14 @@
       background: rgba(0,0,0,.24);
     }
 
-    .axis-grid{
+    .matrix-panel{
       display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap:12px;
+      grid-template-columns:76px minmax(0, 1fr);
+      grid-template-rows:auto minmax(0, 1fr);
+      gap:8px;
+      grid-column:1;
+      grid-row:2;
+      align-content:start;
     }
 
     .axis-card{
@@ -392,10 +396,74 @@
       font-size:13px;
     }
 
+    .axis-horizontal,
+    .axis-vertical{
+      color:var(--muted);
+      font-size:11px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    .axis-horizontal{
+      grid-column:2;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:2px;
+      padding:0 10px 2px;
+    }
+
+    .axis-label{
+      color:var(--text);
+      font-weight:700;
+      white-space:nowrap;
+    }
+
+    .axis-label span{
+      color:var(--muted);
+      font-weight:500;
+    }
+
+    .axis-values{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:8px;
+    }
+
+    .axis-values span{
+      min-width:0;
+    }
+
+    .axis-vertical{
+      grid-column:1;
+      grid-row:2;
+      display:grid;
+      grid-template-rows:auto repeat(3, minmax(0, 1fr));
+      align-items:center;
+      gap:0;
+      padding:8px 0;
+    }
+
+    .axis-vertical .axis-label{
+      padding-bottom:8px;
+    }
+
+    .axis-vertical .axis-values{
+      grid-column:1;
+      display:contents;
+    }
+
+    .axis-vertical .axis-values span{
+      align-self:center;
+      padding-right:8px;
+      text-align:right;
+    }
+
     .matrix{
       display:grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       overflow:hidden;
+      grid-column:2;
+      grid-row:2;
     }
 
     .cell{
@@ -405,8 +473,8 @@
       font:inherit;
       text-align:left;
       cursor:pointer;
-      min-height:96px;
-      padding:12px;
+      min-height:88px;
+      padding:10px;
       border-right:1px solid rgba(255,255,255,.08);
       border-bottom:1px solid rgba(255,255,255,.08);
       background: transparent;
@@ -463,14 +531,14 @@
       background: rgba(0,0,0,.24);
       overflow:hidden;
       grid-column: 2;
-      grid-row: 2 / 4;
-      align-self:stretch;
+      grid-row:2;
+      align-self:start;
       display:grid;
       grid-template-rows: minmax(0, 1fr) auto;
     }
 
     .preview-image-wrap{
-      min-height: clamp(360px, 42vw, 620px);
+      min-height: clamp(320px, 34vw, 480px);
       background:#000;
       display:grid;
       place-items:center;
@@ -617,10 +685,6 @@
         grid-template-columns: 1fr;
       }
 
-      .axis-grid{
-        grid-template-columns: 1fr;
-      }
-
       .cell,
       .cell:nth-child(3n),
       .cell:nth-last-child(-n+3){
@@ -630,6 +694,19 @@
 
       .cell:last-child{
         border-bottom:0;
+      }
+
+      .matrix-panel{
+        grid-template-columns:58px minmax(0, 1fr);
+      }
+
+      .axis-horizontal{
+        grid-template-columns:1fr;
+        gap:2px;
+      }
+
+      .axis-vertical{
+        font-size:10px;
       }
     }
     @media (max-width: 360px){
@@ -834,49 +911,57 @@
         <aside class="grid-note" aria-label="PTP grid uitleg">
           <div class="axis-card">
             <h2>PTP / UNE diagram</h2>
-            <p>Klik op een positie om rechts een willekeurig beeld uit de betreffende serie te tonen. De cijfers geven de plaats in het grid aan.</p>
+            <p>UNE loopt horizontaal van links naar rechts; PTP loopt verticaal van boven naar beneden. Klik op een positie voor een beeld uit de betreffende serie.</p>
           </div>
 
-          <div class="axis-grid">
-            <div class="axis-card">
-              <h2>UNE</h2>
-              <p>Unborn, Now, Entropy: het leven als beweging van potentie naar verschijnen en van verschijnen naar ontbinding.</p>
+          <div class="matrix-panel">
+            <div class="axis-horizontal" aria-label="UNE horizontale as: Unborn, Now, Entropy">
+              <div class="axis-label">UNE <span>&rarr; horizontaal</span></div>
+              <div class="axis-values" aria-hidden="true">
+                <span>Unborn</span>
+                <span>Now</span>
+                <span>Entropy</span>
+              </div>
             </div>
 
-            <div class="axis-card">
-              <h2>PTP</h2>
-              <p>Pressure, Temperature, Pain: huidzintuigen die tegelijk lichamelijk, psychologisch en politiek gelezen worden.</p>
+            <div class="axis-vertical" aria-label="PTP verticale as: Pressure, Temperature, Pain">
+              <div class="axis-label">PTP <span>&darr; verticaal</span></div>
+              <div class="axis-values" aria-hidden="true">
+                <span>Pressure</span>
+                <span>Temperature</span>
+                <span>Pain</span>
+              </div>
             </div>
-          </div>
 
-          <div class="matrix" aria-label="Negen series in het PTP raster">
-            <button class="cell" type="button" data-series="Emblem" data-number="1" data-axis="Pressure / Unborn" data-folder="1" data-pattern="image ({n}).jpg" data-max="31">
-              <span>1 / Pressure / Unborn</span><strong>Emblem</strong><em>teken, skelet, oorsprong</em>
-            </button>
-            <button class="cell" type="button" data-series="Flag" data-number="2" data-axis="Pressure / Now" data-folder="2" data-pattern="image ({n}).jpg" data-max="20">
-              <span>2 / Pressure / Now</span><strong>Flag</strong><em>landlichaam, identiteit</em>
-            </button>
-            <button class="cell" type="button" data-series="Text" data-number="3" data-axis="Pressure / Entropy" data-folder="3" data-pattern="image ({n}).jpg" data-max="8">
-              <span>3 / Pressure / Entropy</span><strong>Text</strong><em>taal, wet, ruis</em>
-            </button>
-            <button class="cell" type="button" data-series="Visceral" data-number="4" data-axis="Temperature / Unborn" data-folder="4" data-pattern="image ({n}).jpg" data-max="33">
-              <span>4 / Temperature / Unborn</span><strong>Visceral</strong><em>vliezen, binnenlichaam</em>
-            </button>
-            <button class="cell center-cell is-active" type="button" data-series="Skin" data-number="5" data-axis="Temperature / Now" data-folder="5" data-pattern="image_{n}.jpg" data-max="55">
-              <span>5 / Temperature / Now</span><strong>Skin</strong><em>huid, centrum, mens</em>
-            </button>
-            <button class="cell" type="button" data-series="Noise" data-number="6" data-axis="Temperature / Entropy" data-folder="6" data-pattern="image ({n}).jpg" data-max="6">
-              <span>6 / Temperature / Entropy</span><strong>Noise</strong><em>energie, massa, ontbinding</em>
-            </button>
-            <button class="cell" type="button" data-series="PTP" data-number="7" data-axis="Pain / Unborn" data-folder="7" data-pattern="image ({n}).jpg" data-max="11">
-              <span>7 / Pain / Unborn</span><strong>PTP</strong><em>samenstelling, concept</em>
-            </button>
-            <button class="cell" type="button" data-series="Actual" data-number="8" data-axis="Pain / Now" data-folder="8" data-pattern="image ({n}).jpg" data-max="4">
-              <span>8 / Pain / Now</span><strong>Actual</strong><em>object, werkelijkheid</em>
-            </button>
-            <button class="cell" type="button" data-series="Outside" data-number="9" data-axis="Pain / Entropy" data-folder="9" data-pattern="image ({n}).jpg" data-max="12">
-              <span>9 / Pain / Entropy</span><strong>Outside</strong><em>straat, afval, toeval</em>
-            </button>
+            <div class="matrix" aria-label="Negen series in het PTP raster">
+              <button class="cell" type="button" data-series="Emblem" data-number="1" data-axis="Pressure / Unborn" data-folder="1" data-pattern="image ({n}).jpg" data-max="31">
+                <span>1 / Pressure / Unborn</span><strong>Emblem</strong><em>teken, skelet, oorsprong</em>
+              </button>
+              <button class="cell" type="button" data-series="Flag" data-number="2" data-axis="Pressure / Now" data-folder="2" data-pattern="image ({n}).jpg" data-max="20">
+                <span>2 / Pressure / Now</span><strong>Flag</strong><em>landlichaam, identiteit</em>
+              </button>
+              <button class="cell" type="button" data-series="Text" data-number="3" data-axis="Pressure / Entropy" data-folder="3" data-pattern="image ({n}).jpg" data-max="8">
+                <span>3 / Pressure / Entropy</span><strong>Text</strong><em>taal, wet, ruis</em>
+              </button>
+              <button class="cell" type="button" data-series="Visceral" data-number="4" data-axis="Temperature / Unborn" data-folder="4" data-pattern="image ({n}).jpg" data-max="33">
+                <span>4 / Temperature / Unborn</span><strong>Visceral</strong><em>vliezen, binnenlichaam</em>
+              </button>
+              <button class="cell center-cell is-active" type="button" data-series="Skin" data-number="5" data-axis="Temperature / Now" data-folder="5" data-pattern="image_{n}.jpg" data-max="55">
+                <span>5 / Temperature / Now</span><strong>Skin</strong><em>huid, centrum, mens</em>
+              </button>
+              <button class="cell" type="button" data-series="Noise" data-number="6" data-axis="Temperature / Entropy" data-folder="6" data-pattern="image ({n}).jpg" data-max="6">
+                <span>6 / Temperature / Entropy</span><strong>Noise</strong><em>energie, massa, ontbinding</em>
+              </button>
+              <button class="cell" type="button" data-series="PTP" data-number="7" data-axis="Pain / Unborn" data-folder="7" data-pattern="image ({n}).jpg" data-max="11">
+                <span>7 / Pain / Unborn</span><strong>PTP</strong><em>samenstelling, concept</em>
+              </button>
+              <button class="cell" type="button" data-series="Actual" data-number="8" data-axis="Pain / Now" data-folder="8" data-pattern="image ({n}).jpg" data-max="4">
+                <span>8 / Pain / Now</span><strong>Actual</strong><em>object, werkelijkheid</em>
+              </button>
+              <button class="cell" type="button" data-series="Outside" data-number="9" data-axis="Pain / Entropy" data-folder="9" data-pattern="image ({n}).jpg" data-max="12">
+                <span>9 / Pain / Entropy</span><strong>Outside</strong><em>straat, afval, toeval</em>
+              </button>
+            </div>
           </div>
 
           <div class="preview-card" aria-live="polite">
