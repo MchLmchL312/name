@@ -396,6 +396,24 @@
       font-size:13px;
     }
 
+    .axis-summaries{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:12px 20px;
+      margin-top:10px;
+      padding-top:10px;
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+
+    .axis-summaries p{
+      font-size:12px;
+    }
+
+    .axis-summaries strong{
+      color:var(--text);
+      font-weight:650;
+    }
+
     .axis-horizontal,
     .axis-vertical{
       color:var(--muted);
@@ -708,6 +726,11 @@
       .axis-vertical{
         font-size:10px;
       }
+
+      .axis-summaries{
+        grid-template-columns:1fr;
+        gap:8px;
+      }
     }
     @media (max-width: 360px){
       .brand,
@@ -912,6 +935,10 @@
           <div class="axis-card">
             <h2>PTP / UNE diagram</h2>
             <p>UNE loopt horizontaal van links naar rechts; PTP loopt verticaal van boven naar beneden. Klik op een positie voor een beeld uit de betreffende serie.</p>
+            <div class="axis-summaries">
+              <p><strong>UNE</strong> — Unborn, Now, Entropy: het leven als beweging van potentie naar verschijnen en van verschijnen naar ontbinding.</p>
+              <p><strong>PTP</strong> — Pressure, Temperature, Pain: huidzintuigen die tegelijk lichamelijk, psychologisch en politiek gelezen worden.</p>
+            </div>
           </div>
 
           <div class="matrix-panel">
