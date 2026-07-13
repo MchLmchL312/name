@@ -369,14 +369,12 @@
       });
     }
 
-    function insertRandom(galleryEl, imgEl) {
-      const count = galleryEl.children.length;
-      if (count === 0) {
-        galleryEl.appendChild(imgEl);
-        return;
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = randInt(0, i);
+        [array[i], array[j]] = [array[j], array[i]];
       }
-      const pos = randInt(0, count);
-      galleryEl.insertBefore(imgEl, galleryEl.children[pos] || null);
+      return array;
     }
 
     (async function initGallery() {
@@ -396,6 +394,7 @@
       let foundAny = false;
       let n = 1;
       let stop = false;
+      const images = [];
 
       while (n <= MAX_SCAN && !stop) {
         const batchNums = Array.from({ length: BATCH_SIZE }, (_, i) => n + i);
@@ -413,7 +412,7 @@
             gallery.innerHTML = '';
             foundAny = true;
           }
-          insertRandom(gallery, r.img);
+          images.push(r.img);
         }
 
         n += BATCH_SIZE;
@@ -429,6 +428,8 @@
         gallery.appendChild(msg);
         return;
       }
+
+      shuffle(images).forEach(img => gallery.appendChild(img));
 
       // Overlay functionaliteit
       function galleryImages() {
