@@ -311,7 +311,6 @@
 
     .about-body{
       display:grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr);
       gap: clamp(22px, 4vw, 48px);
       padding: clamp(22px, 4vw, 44px);
       align-items:start;
@@ -320,6 +319,7 @@
     .about-copy{
       display:grid;
       gap: 18px;
+      max-width: 900px;
       color: rgba(255,255,255,.82);
       font-size: clamp(16px, 1.8vw, 19px);
       line-height: 1.72;
@@ -354,30 +354,12 @@
       display:grid;
       gap:12px;
       align-content:start;
-      position:sticky;
-      top:84px;
-      max-height: calc(100svh - 104px);
-      overflow:auto;
-      scrollbar-width: thin;
-      scrollbar-color: #333 rgba(0,0,0,.18);
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr);
+      order:-1;
     }
 
-    .grid-note::-webkit-scrollbar{
-      width:8px;
-    }
-
-    .grid-note::-webkit-scrollbar-track{
-      background: rgba(0,0,0,.18);
-      border-radius:999px;
-    }
-
-    .grid-note::-webkit-scrollbar-thumb{
-      background:#333;
-      border-radius:999px;
-    }
-
-    .grid-note::-webkit-scrollbar-thumb:hover{
-      background:#444;
+    .grid-note > .axis-card:first-child{
+      grid-column: 1 / -1;
     }
 
     .axis-card,
@@ -423,8 +405,8 @@
       font:inherit;
       text-align:left;
       cursor:pointer;
-      min-height:72px;
-      padding:9px;
+      min-height:96px;
+      padding:12px;
       border-right:1px solid rgba(255,255,255,.08);
       border-bottom:1px solid rgba(255,255,255,.08);
       background: transparent;
@@ -453,21 +435,21 @@
 
     .cell span{
       color: var(--muted);
-      font-size:10px;
+      font-size:11px;
       letter-spacing:.06em;
       text-transform:uppercase;
     }
 
     .cell strong{
       color: var(--text);
-      font-size:13px;
+      font-size:16px;
       font-weight:650;
     }
 
     .cell em{
       color: rgba(255,255,255,.42);
       font-style:normal;
-      font-size:11px;
+      font-size:12px;
     }
 
     .cell.center-cell{
@@ -480,11 +462,15 @@
       border-radius:14px;
       background: rgba(0,0,0,.24);
       overflow:hidden;
+      grid-column: 2;
+      grid-row: 2 / 4;
+      align-self:stretch;
+      display:grid;
+      grid-template-rows: minmax(0, 1fr) auto;
     }
 
     .preview-image-wrap{
-      aspect-ratio: 16 / 10;
-      max-height: 210px;
+      min-height: clamp(360px, 42vw, 620px);
       background:#000;
       display:grid;
       place-items:center;
@@ -498,7 +484,7 @@
     }
 
     .preview-meta{
-      padding:10px 12px 12px;
+      padding:14px 16px 16px;
       display:grid;
       gap:4px;
     }
@@ -590,9 +576,16 @@
       }
 
       .grid-note{
-        position:static;
-        max-height:none;
-        overflow:visible;
+        grid-template-columns: 1fr;
+      }
+
+      .preview-card{
+        grid-column:auto;
+        grid-row:auto;
+      }
+
+      .preview-image-wrap{
+        min-height: clamp(260px, 62vw, 520px);
       }
     }
 
