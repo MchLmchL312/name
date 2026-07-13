@@ -22,17 +22,6 @@
     "order": 2
   },
   {
-    "id": "raam-laakkwartier",
-    "label": "Updates",
-    "title": "Raam Laakkwartier",
-    "href": "boards/Raam%20Laakkwartier/",
-    "text": "",
-    "image": "uploads/actueel/raam-laakkwartier-1782818049779-img-1589.jpg",
-    "visible": true,
-    "embed": false,
-    "order": 3
-  },
-  {
     "id": "item-1783353662780",
     "label": "Updates",
     "title": "Rijswijk",
@@ -41,6 +30,6 @@
     "image": "uploads/actueel/nieuwe-update-1783353759990-board46.jpg",
     "visible": true,
     "embed": false,
-    "order": 4
+    "order": 3
   }
 ]
