@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fbf6f8" />
+    <title>Pink Fluffy Stories</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&family=Libre+Baskerville:ital@0;1&family=Lora:ital,wght@0,400;0,600;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <section class="auth-screen" id="authScreen" aria-label="Inloggen">
+      <div class="auth-decoration auth-decoration-one"></div>
+      <div class="auth-decoration auth-decoration-two"></div>
+      <div class="auth-card">
+        <header class="auth-brand">
+          <div class="brand-mark" aria-hidden="true">✿</div>
+          <div>
+            <p class="eyebrow" data-i18n="writingSpace">Mijn schrijfruimte</p>
+            <h1>Pink Fluffy Stories</h1>
+          </div>
+          <select class="language-select auth-language" id="authLanguageSwitch" aria-label="Taal">
+            <option value="nl">NL</option>
+            <option value="en">EN</option>
+          </select>
+        </header>
+
+        <div class="auth-copy">
+          <p class="eyebrow" data-i18n="welcomeEyebrow">Welkom terug</p>
+          <h2 id="authHeading" data-i18n="loginHeading">Schrijf verder aan jouw verhaal</h2>
+          <p id="authIntro" data-i18n="loginIntro">Log in om je eigen boeken en hoofdstukken te openen.</p>
+        </div>
+
+        <div class="auth-tabs" role="tablist">
+          <button type="button" class="active" id="loginTab" role="tab" aria-selected="true" data-i18n="login">Inloggen</button>
+          <button type="button" id="registerTab" role="tab" aria-selected="false" data-i18n="register">Account maken</button>
+        </div>
+
+        <form class="auth-form" id="authForm">
+          <label for="usernameInput" data-i18n="username">Gebruikersnaam</label>
+          <input id="usernameInput" autocomplete="username" minlength="3" maxlength="30" required />
+
+          <label for="passwordInput" data-i18n="password">Wachtwoord</label>
+          <div class="password-field">
+            <input id="passwordInput" type="password" autocomplete="current-password" minlength="6" required />
+            <button type="button" id="togglePassword" aria-label="Wachtwoord tonen">◉</button>
+          </div>
+
+          <div class="confirm-password" id="confirmPasswordGroup">
+            <label for="confirmPasswordInput" data-i18n="confirmPassword">Herhaal wachtwoord</label>
+            <input id="confirmPasswordInput" type="password" autocomplete="new-password" minlength="6" />
+          </div>
+
+          <p class="auth-error" id="authError" role="alert"></p>
+          <button type="submit" class="primary-button auth-submit" id="authSubmit" data-i18n="login">Inloggen</button>
+        </form>
+
+        <p class="privacy-note"><span aria-hidden="true">♡</span> <span data-i18n="localAccountNote">Je account en verhalen worden alleen in deze browser opgeslagen.</span></p>
+      </div>
+    </section>
+
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar" aria-label="Boeken en hoofdstukken">
+        <header class="brand">
+          <div class="brand-mark" aria-hidden="true">✿</div>
+          <div>
+            <p class="eyebrow" data-i18n="writingSpace">Mijn schrijfruimte</p>
+            <h1 id="appTitle">Pink Fluffy Stories</h1>
+          </div>
+          <button class="icon-button mobile-close" id="closeSidebar" aria-label="Menu sluiten">×</button>
+        </header>
+
+        <div class="library-heading">
+          <span data-i18n="myLibrary">Mijn bibliotheek</span>
+          <button class="icon-button add-button" id="addBookButton" aria-label="Nieuw boek" title="Nieuw boek">+</button>
+        </div>
+
+        <nav class="book-tree" id="bookTree"></nav>
+
+        <button class="new-book-button" id="newBookButton">
+          <span class="button-icon">＋</span>
+          <span data-i18n="newBook">Nieuw boek</span>
+        </button>
+
+        <footer class="sidebar-footer">
+          <span class="tiny-flower" aria-hidden="true">✿</span>
+          <span data-i18n="storiesSaved">Jouw verhalen, veilig bewaard</span>
+        </footer>
+      </aside>
+
+      <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div class="document-identity">
+            <button class="icon-button menu-button" id="openSidebar" aria-label="Menu openen">☰</button>
+            <div class="book-symbol" aria-hidden="true">♡</div>
+            <div class="title-stack">
+              <input id="chapterTitle" class="chapter-title-input" value="" aria-label="Titel van hoofdstuk" />
+              <div class="breadcrumb" id="breadcrumb">Boek / Hoofdstuk</div>
+            </div>
+          </div>
+          <div class="document-actions">
+            <select class="language-select" id="languageSwitch" aria-label="Taal">
+              <option value="nl">NL</option>
+              <option value="en">EN</option>
+            </select>
+            <div class="save-state" id="saveState">
+              <span class="save-dot"></span>
+              <span data-i18n="saved">Opgeslagen</span>
+            </div>
+            <button class="soft-button" id="focusButton" title="Rustige schrijfmodus">
+              <span aria-hidden="true">☾</span>
+              <span class="button-label" data-i18n="focus">Focus</span>
+            </button>
+            <button class="account-button" id="accountButton" title="Account">
+              <span class="account-avatar" id="accountAvatar">A</span>
+              <span id="accountName">Account</span>
+            </button>
+            <button class="icon-button more-button" id="moreButton" aria-label="Meer opties">•••</button>
+            <div class="more-menu" id="moreMenu" role="menu">
+              <button id="duplicateChapter" role="menuitem" data-i18n="duplicateChapter">Hoofdstuk dupliceren</button>
+              <button id="clearFormatting" role="menuitem" data-i18n="clearFormatting">Alle opmaak wissen</button>
+              <button id="deleteChapter" class="danger" role="menuitem" data-i18n="deleteChapter">Hoofdstuk verwijderen</button>
+              <span class="menu-separator"></span>
+              <button id="renameWorkspace" role="menuitem" data-i18n="renameWorkspace">Titel schrijfruimte aanpassen</button>
+              <button id="logoutButton" role="menuitem" data-i18n="logout">Uitloggen</button>
+            </div>
+          </div>
+        </header>
+
+        <section class="toolbar-wrap" aria-label="Tekstopmaak">
+          <div class="toolbar" id="toolbar">
+            <select id="fontName" aria-label="Lettertype" title="Lettertype">
+              <option value="DM Sans">DM Sans</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Playfair Display">Playfair Display</option>
+              <option value="Libre Baskerville">Libre Baskerville</option>
+              <option value="Lora">Lora</option>
+              <option value="Merriweather">Merriweather</option>
+              <option value="Crimson Text">Crimson Text</option>
+              <option value="Nunito">Nunito</option>
+              <option value="Caveat">Caveat</option>
+              <option value="Courier New">Courier New</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Verdana">Verdana</option>
+              <option value="Arial">Arial</option>
+            </select>
+            <select id="blockFormat" aria-label="Tekststijl" title="Tekststijl">
+              <option value="p" data-i18n="paragraph">Alinea</option>
+              <option value="h2" data-i18n="heading1">Kop 1</option>
+              <option value="h3" data-i18n="heading2">Kop 2</option>
+              <option value="blockquote" data-i18n="quote">Citaat</option>
+            </select>
+
+            <span class="divider"></span>
+
+            <button data-command="bold" aria-label="Vet" title="Vet (Ctrl+B)"><strong>B</strong></button>
+            <button data-command="italic" aria-label="Cursief" title="Cursief (Ctrl+I)"><em>I</em></button>
+            <button data-command="underline" aria-label="Onderstrepen" title="Onderstrepen (Ctrl+U)"><u>U</u></button>
+            <button data-command="strikeThrough" aria-label="Doorhalen" title="Doorhalen"><s>S</s></button>
+
+            <span class="divider"></span>
+
+            <label class="color-control" title="Tekstkleur">
+              <span class="color-letter">A</span>
+              <input type="color" id="textColor" value="#3d3337" aria-label="Tekstkleur" />
+            </label>
+            <label class="color-control highlight-control" title="Markeerkleur">
+              <span aria-hidden="true">✎</span>
+              <input type="color" id="highlightColor" value="#f7dce7" aria-label="Markeerkleur" />
+            </label>
+
+            <span class="divider"></span>
+
+            <button data-command="justifyLeft" aria-label="Links uitlijnen" title="Links uitlijnen">☷</button>
+            <button data-command="justifyCenter" aria-label="Centreren" title="Centreren">≡</button>
+            <button data-command="insertUnorderedList" aria-label="Opsomming" title="Opsomming">•≡</button>
+            <button data-command="insertOrderedList" aria-label="Genummerde lijst" title="Genummerde lijst">1.</button>
+
+            <span class="divider"></span>
+
+            <button data-command="undo" aria-label="Ongedaan maken" title="Ongedaan maken">↶</button>
+            <button data-command="redo" aria-label="Opnieuw" title="Opnieuw">↷</button>
+          </div>
+        </section>
+
+        <section class="writing-area">
+          <article
+            id="editor"
+            class="editor"
+            contenteditable="true"
+            spellcheck="true"
+            aria-label="Tekst van het hoofdstuk"
+            data-placeholder="Begin hier met schrijven..."
+          ></article>
+        </section>
+
+        <footer class="statusbar">
+          <div class="writing-progress">
+            <span class="progress-flower" aria-hidden="true">✿</span>
+            <div class="progress-line"><span id="progressFill"></span></div>
+            <span id="progressText">0 woorden vandaag</span>
+          </div>
+          <div class="document-stats">
+            <span id="wordCount">0 woorden</span>
+            <span>•</span>
+            <span id="characterCount">0 tekens</span>
+            <span>•</span>
+            <span id="readingTime">0 min leestijd</span>
+          </div>
+        </footer>
+      </main>
+    </div>
+
+    <div class="dialog-backdrop" id="dialogBackdrop">
+      <form class="dialog" id="nameDialog">
+        <div class="dialog-icon">✿</div>
+        <p class="eyebrow" id="dialogEyebrow">Nieuw verhaal</p>
+        <h2 id="dialogTitle">Geef je boek een naam</h2>
+        <label for="nameInput" id="dialogLabel">Boektitel</label>
+        <input id="nameInput" autocomplete="off" maxlength="80" required />
+        <div class="dialog-actions">
+          <button type="button" class="ghost-button" id="cancelDialog">Annuleren</button>
+          <button type="submit" class="primary-button" id="confirmDialog">Maken</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="toast" id="toast" role="status"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
