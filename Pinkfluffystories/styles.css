@@ -896,6 +896,7 @@ select:focus-visible,
 }
 
 #fontName { width: 126px; }
+#fontSize { width: 72px; }
 #blockFormat { width: 85px; }
 
 .divider {

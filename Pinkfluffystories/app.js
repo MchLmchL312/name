@@ -212,6 +212,7 @@ const els = {
   saveState: document.querySelector("#saveState"),
   toolbar: document.querySelector("#toolbar"),
   fontName: document.querySelector("#fontName"),
+  fontSize: document.querySelector("#fontSize"),
   blockFormat: document.querySelector("#blockFormat"),
   textColor: document.querySelector("#textColor"),
   highlightColor: document.querySelector("#highlightColor"),
@@ -363,15 +364,28 @@ function saveState(showIndicator = true) {
   if (!currentUser) return;
   clearTimeout(saveTimer);
   const userAtSave = currentUser;
+  writeState(userAtSave);
   if (showIndicator) {
     els.saveState.classList.add("saving");
     els.saveState.lastElementChild.textContent = t("saving");
   }
   saveTimer = setTimeout(() => {
-    writeState(userAtSave);
     els.saveState.classList.remove("saving");
     els.saveState.lastElementChild.textContent = t("saved");
   }, showIndicator ? 350 : 0);
+}
+
+function flushState() {
+  if (!currentUser) return;
+  clearTimeout(saveTimer);
+  const chapter = getActiveChapter();
+  if (chapter) {
+    chapter.content = els.editor.innerHTML;
+    chapter.title = els.chapterTitle.value.trim() || t("unnamedChapter");
+  }
+  writeState();
+  els.saveState.classList.remove("saving");
+  els.saveState.lastElementChild.textContent = t("saved");
 }
 
 function getActiveBook() {
@@ -795,12 +809,28 @@ function moveBook(sourceBookId, targetBookId) {
 
 function runCommand(command, value = null) {
   els.editor.focus();
-  if (savedEditorRange) {
-    const selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(savedEditorRange);
-  }
+  restoreEditorSelection();
   document.execCommand(command, false, value);
+  persistEditor();
+  updateToolbarState();
+}
+
+function restoreEditorSelection() {
+  if (!savedEditorRange) return;
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(savedEditorRange);
+}
+
+function runFontSize(value) {
+  const size = Math.min(48, Math.max(12, Number(value) || 16));
+  els.editor.focus();
+  restoreEditorSelection();
+  document.execCommand("fontSize", false, "7");
+  els.editor.querySelectorAll('font[size="7"]').forEach((fontElement) => {
+    fontElement.removeAttribute("size");
+    fontElement.style.fontSize = `${size}px`;
+  });
   persistEditor();
   updateToolbarState();
 }
@@ -967,6 +997,7 @@ els.toolbar.addEventListener("click", (event) => {
   if (button) runCommand(button.dataset.command);
 });
 els.fontName.addEventListener("change", () => runCommand("fontName", els.fontName.value));
+els.fontSize.addEventListener("change", () => runFontSize(els.fontSize.value));
 els.blockFormat.addEventListener("change", () => runCommand("formatBlock", `<${els.blockFormat.value}>`));
 els.textColor.addEventListener("input", () => runCommand("foreColor", els.textColor.value));
 els.highlightColor.addEventListener("input", () => runCommand("hiliteColor", els.highlightColor.value));
@@ -1039,13 +1070,12 @@ document.addEventListener("keydown", (event) => {
 });
 
 window.addEventListener("beforeunload", () => {
-  if (!currentUser) return;
-  const chapter = getActiveChapter();
-  if (chapter) {
-    chapter.content = els.editor.innerHTML;
-    chapter.title = els.chapterTitle.value.trim() || t("unnamedChapter");
-  }
-  writeState();
+  flushState();
+});
+
+window.addEventListener("pagehide", flushState);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") flushState();
 });
 
 applyTranslations();

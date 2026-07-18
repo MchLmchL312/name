@@ -14,10 +14,11 @@ Open `index.html` in een moderne browser. Er is geen installatie of buildstap no
 - Boeken en hoofdstukken verslepen om hun volgorde te wijzigen
 - Boeken en hoofdstukken maken, hernoemen, dupliceren en verwijderen
 - Hoofdstukken ook tussen verschillende boeken verplaatsen
-- Tekst opmaken met een ruime lettertypekeuze, koppen, vet, cursief, onderstrepen, lijsten, kleuren en markeringen
+- Tekst opmaken met een ruime lettertype- en lettergroottekeuze, koppen, vet, cursief, onderstrepen, lijsten, kleuren en markeringen
 - Schakelen tussen een Nederlandse en Engelse interface
 - Lokale accounts met een gebruikersnaam en wachtwoord, ieder met een eigen bibliotheek
 - Automatisch opslaan in de lokale browseropslag
+- Direct opslaan bij iedere tekstwijziging en extra opslaan bij uitloggen, tabwissel en afsluiten
 - Woorden, tekens en geschatte leestijd bijhouden
 - Focusmodus en een responsive mobiele layout
 
