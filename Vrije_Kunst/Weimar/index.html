@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Online catalogus van Vrije Kunst bij Galerie de Kleedkamer in Weimar's Wijkpaleis, Den Haag.">
+    <meta name="theme-color" content="#79006f">
+    <title>Vrije Kunst — Weimar</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body id="top">
+    <a class="skip-link" href="#inhoud">Ga naar de inhoud</a>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Vrije Kunst — terug naar boven">
+        <img src="assets/vrije-kunst-logo.png" alt="" width="398" height="378">
+        <span>
+          <strong>Vrije Kunst</strong>
+          <small>Galerie de Kleedkamer × Weimar’s Wijkpaleis</small>
+        </span>
+      </a>
+      <nav aria-label="Hoofdnavigatie">
+        <a href="#deelnemers">Deelnemers</a>
+        <a href="#statement">Statement</a>
+        <a class="nav-contact" href="mailto:machielvsoest@gmail.com">Contact</a>
+      </nav>
+    </header>
+
+    <main id="inhoud">
+      <section class="catalogue-intro" id="deelnemers" aria-labelledby="deelnemers-titel">
+        <div>
+          <p class="section-number" aria-hidden="true">01</p>
+          <h1 id="deelnemers-titel">Deelnemers</h1>
+        </div>
+        <p>Klik op een naam om het werk, de beschrijving en de bijbehorende tekst te bekijken. Niet-ingeleverde onderdelen blijven bewust leeg en kunnen later worden aangevuld.</p>
+      </section>
+
+      <section class="artist-grid" aria-label="Deelnemers aan Vrije Kunst">
+        <button class="artist-card" data-artist="wendeline-jansen" type="button"><span>Wendeline Jansen</span><span aria-hidden="true">↗</span></button>
+        <button class="artist-card" data-artist="petra-zwarts" type="button"><span>Petra Zwarts</span><span aria-hidden="true">↗</span></button>
+        <button class="artist-card" data-artist="jos-van-niekerk" type="button"><span>Jos van Niekerk</span><span aria-hidden="true">↗</span></button>
+        <button class="artist-card" data-artist="ank-de-boer" type="button"><span>Ank de Boer</span><span aria-hidden="true">↗</span></button>
+        <button class="artist-card" data-artist="annemieke-jansen" type="button"><span>Annemieke Jansen</span><span aria-hidden="true">↗</span></button>
+        <button class="artist-card" data-artist="joanne-de-mooij" type="button"><span>Joanne de Mooij</span><span aria-hidden="true">↗</span></button>
+        <button class="artist-card" data-artist="thea-van-der-heijden" type="button"><span>Thea van der Heijden</span><span aria-hidden="true">↗</span></button>
+        <button class="artist-card" data-artist="marleen-elders" type="button"><span>Marleen Elders</span><span aria-hidden="true">↗</span></button>
+        <button class="artist-card" data-artist="machiel-van-soest" type="button"><span>Machiel van Soest</span><span aria-hidden="true">↗</span></button>
+      </section>
+
+      <section class="submitted-work" aria-labelledby="werk-titel">
+        <div class="submitted-visual">
+          <img src="assets/artists/machiel-van-soest/Machiel.jpg" alt="Schilderij van Machiel van Soest met twee figuren en een centraal abstract lichaam" width="2840" height="2840" loading="lazy">
+        </div>
+        <div class="submitted-copy">
+          <p class="section-number" aria-hidden="true">02</p>
+          <h2 id="werk-titel">Uitgelicht werk</h2>
+          <p class="work-status">Machiel van Soest</p>
+        </div>
+      </section>
+
+      <section class="statement-section" id="statement" aria-labelledby="statement-titel">
+        <div class="statement-heading">
+          <p class="section-number" aria-hidden="true">03</p>
+          <h2 id="statement-titel">Kijk zonder labels.<br>Kijk vrij.</h2>
+        </div>
+        <div class="statement-copy">
+          <p>Vrije Kunst vertrekt vanuit een fundamentele vraag: hoe vrij is kunst in een tijd waarin overheidsbeleid, economie, technologie en markt steeds sterker bepalen wat zichtbaar wordt, wat waarde krijgt en wat belangrijk wordt gevonden?</p>
+          <p>De tentoonstelling brengt professionele kunstenaars en amateurs naast elkaar in beeld, zonder dat naam, status of achtergrond vooraf bepalen hoe het werk wordt bekeken.</p>
+          <a class="text-link" href="https://www.machielvansoest.nl/Vrije_Kunst/" target="_blank" rel="noopener noreferrer">Lees het volledige statement <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+
+      <section class="information" id="informatie" aria-labelledby="informatie-titel">
+        <div>
+          <p class="section-number" aria-hidden="true">04</p>
+          <h2 id="informatie-titel">Bezoek</h2>
+        </div>
+        <div class="information-grid">
+          <div>
+            <h3>Vrije Kunst</h3>
+            <p>Galerie de Kleedkamer<br>Weimar’s Wijkpaleis<br>Weimarstraat 300<br>Den Haag</p>
+          </div>
+          <div>
+            <h3>Opening</h3>
+            <p>Vrijdag 24 juli<br>17.00 uur</p>
+          </div>
+          <div>
+            <h3>Contact</h3>
+            <p><a href="mailto:machielvsoest@gmail.com">machielvsoest@gmail.com</a></p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <a class="footer-brand" href="#top">
+        <img src="assets/vrije-kunst-logo.png" alt="Vrije Kunst" width="398" height="378">
+      </a>
+      <p>Vrije Kunst · online catalogus</p>
+      <a href="mailto:machielvsoest@gmail.com">Contact</a>
+    </footer>
+
+    <dialog class="artist-dialog" id="artist-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-bar">
+        <p>Vrije Kunst · catalogus</p>
+        <button class="dialog-close" type="button" aria-label="Sluit kunstenaarsprofiel">Sluiten <span aria-hidden="true">×</span></button>
+      </div>
+      <div class="dialog-content">
+        <header class="dialog-heading">
+          <p class="dialog-index" id="dialog-index"></p>
+          <h2 id="dialog-title"></h2>
+        </header>
+        <div class="dialog-layout">
+          <section class="dialog-work" aria-labelledby="werk-label">
+            <h3 id="werk-label">Werk</h3>
+            <div class="works-gallery" id="dialog-work"></div>
+          </section>
+          <div class="dialog-texts">
+            <section aria-labelledby="beschrijving-label">
+              <h3 id="beschrijving-label">Beschrijving van het werk</h3>
+              <div id="dialog-description" class="empty-copy" aria-label="Nog niet aangeleverd"></div>
+            </section>
+            <section aria-labelledby="tekst-label">
+              <h3 id="tekst-label">Tekst van de maker</h3>
+              <div id="dialog-text" class="empty-copy" aria-label="Nog niet aangeleverd"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  </body>
+</html>
