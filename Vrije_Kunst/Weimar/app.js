@@ -12,22 +12,73 @@ const artists = [
       "Vigevano ligt ongeveer 35 km ten zuidwesten van Milaan."
     ]
   },
-  { id: "petra-zwarts", name: "Petra Zwarts", works: [], description: "", text: [] },
+  {
+    id: "petra-zwarts",
+    name: "Petra Zwarts",
+    works: [
+      {
+        src: "Petra Zwarts/De menigte Petra Zwarts.jpeg",
+        alt: "Schilderij van een grote menigte rond twee centraal afgebeelde vrouwen",
+        title: "De menigte"
+      }
+    ],
+    description: "",
+    text: [
+      "Een tijdje geleden zag ik een documentaire over het schilderij ‘De blijde intocht van Christus in Brussel’ van de Belgische schilder James Ensor (1889).",
+      "Hierdoor geïnspireerd zocht ik naar een beeld van een menigte om een olieverfschilderij van te maken.",
+      "Ik kwam uit bij een indringende zwart-witfoto van een historische gebeurtenis van vlak na de bevrijding van Nederland in mei 1945.",
+      "De enorme menigte is hier niet samengekomen om feest te vieren, maar om getuige te zijn van een volksgericht: het kaalknippen en vernederen van ‘moffenmeiden’. Dit was de (veelal denigrerende) term voor Nederlandse vrouwen die tijdens de bezetting een relatie of intiem contact hadden gehad met Duitse soldaten. In het midden zijn twee jonge vrouwen te zien die zojuist publiekelijk zijn kaalgeschoren.",
+      "Kenmerken van dit schilderij:",
+      "• Compositie: het toont een overweldigende menigte vol hoeden en figuren die hun armen in de lucht steken en naar voren bewegen.",
+      "• Kleurgebruik: het werk is uitgevoerd in een monochroom palet van sepia- en aardetinten (hoofdzakelijk bruinen: Stil de Grainbrun, gebrande omber en sienna, Gris chaud).",
+      "• Focus: centraal in de menigte zijn de twee vrouwen te zien tussen verschillende andere personages, geschilderd in donkerrood en warm grijs.",
+      "De zwart-witfoto is genomen op 8 mei 1945 in de Van der Helsstraat in Utrecht door fotograaf Hogeweg.",
+      "De ‘Intocht van Christus in Brussel’ (2,58 meter hoog en 4,31 meter breed) is te bewonderen in het J. Paul Getty Museum in Los Angeles."
+    ]
+  },
   { id: "jos-van-niekerk", name: "Jos van Niekerk", works: [], description: "", text: [] },
   {
     id: "ank-de-boer",
     name: "Ank de Boer",
     works: [
-      { src: "assets/artists/ank-de-boer/ank1r.jpg", alt: "Schilderij van een wandelpad onder grillige boomtakken" },
-      { src: "assets/artists/ank-de-boer/ank2r.jpg", alt: "Schilderij van een boslandschap met een figuur op een rots" },
-      { src: "assets/artists/ank-de-boer/ank3r.jpg", alt: "Schilderij van een kust met strand en grijze zee" },
-      { src: "assets/artists/ank-de-boer/ank4r.jpg", alt: "Schilderij van een waterrijk landschap onder een lichte lucht" },
-      { src: "assets/artists/ank-de-boer/ank5r.jpg", alt: "Stilleven met planten in een donkere pot tegen een roze achtergrond" },
-      { src: "assets/artists/ank-de-boer/ank6r.jpg", alt: "Schilderij van een beschutte tuin met stoelen" },
-      { src: "assets/artists/ank-de-boer/ank7r.jpg", alt: "Schilderij van water dat tussen zandbanken stroomt" }
+      {
+        src: "assets/artists/ank-de-boer/ank1r.jpg",
+        alt: "Schilderij van een wandelpad onder grillige boomtakken",
+        description: "Dit doek ademt de herinnering aan talloze wandelingen door het vertrouwde duinlandschap."
+      },
+      {
+        src: "assets/artists/ank-de-boer/ank2r.jpg",
+        alt: "Schilderij van een herder met een kudde in een boslandschap",
+        description: "Dit doek brengt een ode aan de herder die zijn kudde door de Hollandsche duinen gidst."
+      },
+      {
+        src: "assets/artists/ank-de-boer/ank3r.jpg",
+        alt: "Schilderij van een kust met strand en grijze zee",
+        description: "Een schilderij dat geen uitleg behoeft, maar puur draait om het gevoel van ruimte aan de Algarvekust."
+      },
+      {
+        src: "assets/artists/ank-de-boer/ank4r.jpg",
+        alt: "Schilderij van een waterrijk landschap onder een lichte lucht",
+        description: "Een doek dat de kijker uitnodigt om simpelweg adem te halen en uit te kijken over het Friese land."
+      },
+      {
+        src: "assets/artists/ank-de-boer/ank5r.jpg",
+        alt: "Stilleven met planten in een donkere pot tegen een roze achtergrond",
+        description: "Stilleven"
+      },
+      {
+        src: "assets/artists/ank-de-boer/ank6r.jpg",
+        alt: "Schilderij van een beschutte tuin met stoelen",
+        description: "Retraitehoekje"
+      },
+      {
+        src: "assets/artists/ank-de-boer/ank7r.jpg",
+        alt: "Schilderij van een dynamische zee rond zandbanken en rotsen",
+        description: "De zee in al haar ongetemde dynamiek."
+      }
     ],
     description: "",
-    text: ["Dit doek ademt de herinnering aan talloze wandelingen door het vertrouwde duinlandschap."]
+    text: []
   },
   { id: "annemieke-jansen", name: "Annemieke Jansen", works: [], description: "", text: [] },
   { id: "joanne-de-mooij", name: "Joanne de Mooij", works: [], description: "", text: [] },
