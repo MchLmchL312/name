@@ -773,6 +773,15 @@ select:focus-visible,
   animation: pulse 900ms infinite alternate;
 }
 
+.save-state.save-error {
+  color: #a65365;
+}
+
+.save-state.save-error .save-dot {
+  background: #a65365;
+  box-shadow: 0 0 0 3px rgba(166, 83, 101, 0.14);
+}
+
 @keyframes pulse {
   to { opacity: 0.35; }
 }

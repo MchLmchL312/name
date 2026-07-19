@@ -41,6 +41,7 @@ const translations = {
     storiesSaved: "Jouw verhalen, veilig bewaard",
     saved: "Opgeslagen",
     saving: "Opslaan…",
+    saveFailed: "Opslaan mislukt — download een back-up",
     focus: "Focus",
     duplicateChapter: "Hoofdstuk dupliceren",
     clearFormatting: "Alle opmaak wissen",
@@ -131,6 +132,7 @@ const translations = {
     storiesSaved: "Your stories, safely kept",
     saved: "Saved",
     saving: "Saving…",
+    saveFailed: "Saving failed — download a backup",
     focus: "Focus",
     duplicateChapter: "Duplicate chapter",
     clearFormatting: "Clear all formatting",
@@ -306,6 +308,152 @@ function userStorageKey(userKey) {
   return `pink-fluffy-stories-user-${encodeURIComponent(userKey)}`;
 }
 
+function backupStorageKey(userKey) {
+  return `${BACKUP_KEY_PREFIX}${encodeURIComponent(userKey)}`;
+}
+
+function getAutomaticBackups(userKey = currentUser) {
+  if (!userKey) return [];
+  try {
+    const backups = JSON.parse(localStorage.getItem(backupStorageKey(userKey)) || "[]");
+    return Array.isArray(backups) ? backups.filter((backup) => backup?.state?.books?.length) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveAutomaticBackups(userKey, backups) {
+  const trimmed = backups.slice(0, MAX_AUTOMATIC_BACKUPS);
+  while (trimmed.length > 1 && JSON.stringify(trimmed).length > MAX_BACKUP_STORAGE_SIZE) trimmed.pop();
+
+  while (trimmed.length) {
+    try {
+      localStorage.setItem(backupStorageKey(userKey), JSON.stringify(trimmed));
+      return true;
+    } catch {
+      if (trimmed.length === 1) return false;
+      trimmed.pop();
+    }
+  }
+  return false;
+}
+
+function createAutomaticBackup(reason = "automatic", force = false) {
+  if (!currentUser || !state?.books?.length) return false;
+  const backups = getAutomaticBackups();
+  const serializedState = JSON.stringify(state);
+  if (!force && backups[0] && JSON.stringify(backups[0].state) === serializedState) return true;
+
+  backups.unshift({
+    version: 1,
+    createdAt: new Date().toISOString(),
+    reason,
+    state: JSON.parse(serializedState),
+  });
+  return saveAutomaticBackups(currentUser, backups);
+}
+
+function scheduleAutomaticBackup() {
+  if (!currentUser) return;
+  clearTimeout(backupTimer);
+  backupTimer = setTimeout(() => createAutomaticBackup(), BACKUP_DELAY);
+}
+
+function isValidBackupState(candidate) {
+  return (
+    candidate &&
+    Array.isArray(candidate.books) &&
+    candidate.books.length > 0 &&
+    candidate.books.every(
+      (book) =>
+        typeof book?.id === "string" &&
+        typeof book.title === "string" &&
+        Array.isArray(book.chapters) &&
+        book.chapters.length > 0 &&
+        book.chapters.every(
+          (chapter) => typeof chapter?.id === "string" && typeof chapter.title === "string" && typeof chapter.content === "string",
+        ),
+    )
+  );
+}
+
+function formatBackupDate(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString(language === "en" ? "en-GB" : "nl-NL", { dateStyle: "medium", timeStyle: "short" });
+}
+
+function applyBackupState(backupState, createdAt) {
+  if (!window.confirm(t("restoreBackupConfirm", { date: formatBackupDate(createdAt) }))) return;
+  flushState();
+  createAutomaticBackup("before-restore", true);
+  state = clone(backupState);
+  writeState();
+  renderActiveChapter();
+  createAutomaticBackup("restored", true);
+  els.moreMenu.classList.remove("open");
+  showToast(t("backupRestored"));
+}
+
+function downloadBackup() {
+  flushState();
+  createAutomaticBackup("download", true);
+  const account = getCurrentAccount();
+  const exportedAt = new Date().toISOString();
+  const backup = {
+    format: BACKUP_FORMAT,
+    version: 1,
+    exportedAt,
+    account: { key: currentUser, username: account?.username || currentUser },
+    state: clone(state),
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const safeUsername = (account?.username || currentUser).replace(/[^a-z0-9_-]+/gi, "-");
+  link.href = url;
+  link.download = `${safeUsername}-pink-fluffy-stories-${exportedAt.slice(0, 10)}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+  els.moreMenu.classList.remove("open");
+  showToast(t("backupDownloaded"));
+}
+
+function restorePreviousBackup() {
+  flushState();
+  const currentState = JSON.stringify(state);
+  const backup = getAutomaticBackups().find((entry) => JSON.stringify(entry.state) !== currentState);
+  if (!backup) {
+    els.moreMenu.classList.remove("open");
+    showToast(t("backupUnavailable"));
+    return;
+  }
+  applyBackupState(backup.state, backup.createdAt);
+}
+
+async function restoreBackupFile(event) {
+  const [file] = event.target.files;
+  event.target.value = "";
+  if (!file) return;
+
+  try {
+    if (file.size > 10000000) throw new Error("invalid");
+    const backup = JSON.parse(await file.text());
+    if (backup?.format !== BACKUP_FORMAT || !isValidBackupState(backup.state)) throw new Error("invalid");
+    if (backup.account?.key !== currentUser) {
+      showToast(t("backupWrongAccount"));
+      return;
+    }
+    applyBackupState(backup.state, backup.exportedAt);
+  } catch {
+    showToast(t("backupInvalid"));
+  } finally {
+    els.moreMenu.classList.remove("open");
+  }
+}
+
 function legacyPasswordHash(username, password) {
   const input = `${normalizeUsername(username)}:${password}:pink-fluffy-stories`;
   let fallback = 2166136261;
@@ -445,15 +593,43 @@ function loadState() {
 }
 
 function writeState(userKey = currentUser) {
-  if (!userKey) return;
-  localStorage.setItem(userStorageKey(userKey), JSON.stringify(state));
+  if (!userKey) return false;
+  const storageKey = userStorageKey(userKey);
+  const serializedState = JSON.stringify(state);
+  try {
+    localStorage.setItem(storageKey, serializedState);
+    return true;
+  } catch {
+    const backups = getAutomaticBackups(userKey);
+    const backupsKey = backupStorageKey(userKey);
+    while (backups.length) {
+      backups.pop();
+      try {
+        if (backups.length) localStorage.setItem(backupsKey, JSON.stringify(backups));
+        else localStorage.removeItem(backupsKey);
+        localStorage.setItem(storageKey, serializedState);
+        return true;
+      } catch {
+        // Keep removing the oldest recovery point until the current work fits.
+      }
+    }
+    return false;
+  }
 }
 
 function saveState(showIndicator = true) {
   if (!currentUser) return;
   clearTimeout(saveTimer);
   const userAtSave = currentUser;
-  writeState(userAtSave);
+  const stored = writeState(userAtSave);
+  if (!stored) {
+    els.saveState.classList.remove("saving");
+    els.saveState.classList.add("save-error");
+    els.saveState.lastElementChild.textContent = t("saveFailed");
+    return;
+  }
+  els.saveState.classList.remove("save-error");
+  scheduleAutomaticBackup();
   if (showIndicator) {
     els.saveState.classList.add("saving");
     els.saveState.lastElementChild.textContent = t("saving");
@@ -472,9 +648,11 @@ function flushState() {
     chapter.content = els.editor.innerHTML;
     chapter.title = els.chapterTitle.value.trim() || t("unnamedChapter");
   }
-  writeState();
+  const stored = writeState();
+  if (stored) createAutomaticBackup("autosave");
   els.saveState.classList.remove("saving");
-  els.saveState.lastElementChild.textContent = t("saved");
+  els.saveState.classList.toggle("save-error", !stored);
+  els.saveState.lastElementChild.textContent = t(stored ? "saved" : "saveFailed");
 }
 
 function getActiveBook() {
@@ -639,7 +817,9 @@ async function handleAuthSubmit(event) {
 function logout() {
   persistEditor();
   clearTimeout(saveTimer);
+  clearTimeout(backupTimer);
   writeState();
+  createAutomaticBackup("logout", true);
   currentUser = null;
   localStorage.removeItem(SESSION_KEY);
   state = createInitialState(language);
@@ -700,6 +880,7 @@ function renderActiveChapter() {
   }
 
   state.activeBookId = book.id;
+  state.activeChapterId = chapter.id;
   renderAppTitle();
   els.chapterTitle.value = chapter.title;
   els.breadcrumb.textContent = `${book.title} / ${chapter.title}`;
@@ -844,6 +1025,7 @@ function deleteBook(bookId) {
   const book = state.books.find((item) => item.id === bookId);
   if (!book || !window.confirm(t("deleteBookConfirm", { title: book.title }))) return;
   persistEditor();
+  createAutomaticBackup("before-delete", true);
   const index = state.books.findIndex((item) => item.id === bookId);
   state.books.splice(index, 1);
   if (!state.books.length) state.books.push(createBlankBook());
@@ -859,6 +1041,8 @@ function deleteChapterFromBook(bookId, chapterId) {
   const book = state.books.find((item) => item.id === bookId);
   const chapter = book?.chapters.find((item) => item.id === chapterId);
   if (!book || !chapter || !window.confirm(t("deleteChapterConfirm", { title: chapter.title }))) return;
+  persistEditor();
+  createAutomaticBackup("before-delete", true);
   const index = book.chapters.findIndex((item) => item.id === chapterId);
   book.chapters.splice(index, 1);
   if (!book.chapters.length) book.chapters.push({ id: uid(), title: t("defaultChapter"), content: "" });
@@ -1138,6 +1322,7 @@ els.duplicateChapter.addEventListener("click", () => {
 });
 
 els.clearFormatting.addEventListener("click", () => {
+  createAutomaticBackup("before-formatting", true);
   runCommand("removeFormat");
   els.moreMenu.classList.remove("open");
   showToast(t("formattingCleared"));
@@ -1152,6 +1337,10 @@ els.renameWorkspace.addEventListener("click", () => {
   els.moreMenu.classList.remove("open");
   openDialog("renameWorkspace");
 });
+els.downloadBackupButton.addEventListener("click", downloadBackup);
+els.restoreBackupButton.addEventListener("click", () => els.backupFileInput.click());
+els.restorePreviousButton.addEventListener("click", restorePreviousBackup);
+els.backupFileInput.addEventListener("change", restoreBackupFile);
 els.logoutButton.addEventListener("click", logout);
 
 els.openSidebar.addEventListener("click", () => document.body.classList.add("sidebar-open"));

@@ -60,7 +60,7 @@
           <button type="submit" class="primary-button auth-submit" id="authSubmit" data-i18n="login">Inloggen</button>
         </form>
 
-        <p class="privacy-note"><span aria-hidden="true">♡</span> <span data-i18n="localAccountNote">Je account en verhalen worden alleen in deze browser opgeslagen.</span></p>
+        <p class="privacy-note"><span aria-hidden="true">♡</span> <span data-i18n="localAccountNote">Je account, verhalen en automatische back-ups worden alleen in deze browser opgeslagen.</span></p>
       </div>
     </section>
 
@@ -129,6 +129,11 @@
               <button id="deleteChapter" class="danger" role="menuitem" data-i18n="deleteChapter">Hoofdstuk verwijderen</button>
               <span class="menu-separator"></span>
               <button id="renameWorkspace" role="menuitem" data-i18n="renameWorkspace">Titel schrijfruimte aanpassen</button>
+              <button id="downloadBackupButton" role="menuitem" data-i18n="downloadBackup">Back-up downloaden</button>
+              <button id="restoreBackupButton" role="menuitem" data-i18n="restoreBackupFile">Back-upbestand herstellen</button>
+              <button id="restorePreviousButton" role="menuitem" data-i18n="restorePreviousVersion">Vorige versie herstellen</button>
+              <input id="backupFileInput" type="file" accept="application/json,.json" hidden />
+              <span class="menu-separator"></span>
               <button id="logoutButton" role="menuitem" data-i18n="logout">Uitloggen</button>
             </div>
           </div>
