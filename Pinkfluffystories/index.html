@@ -42,7 +42,10 @@
         </div>
 
         <form class="auth-form" id="authForm">
-          <label for="usernameInput" data-i18n="username">Gebruikersnaam</label>
+          <label for="emailInput" data-i18n="email">E-mailadres</label>
+          <input id="emailInput" type="email" autocomplete="email" required />
+
+          <label for="usernameInput" id="usernameLabel" data-i18n="username">Gebruikersnaam</label>
           <input id="usernameInput" autocomplete="username" minlength="3" maxlength="30" required />
 
           <label for="passwordInput" data-i18n="password">Wachtwoord</label>
@@ -60,7 +63,7 @@
           <button type="submit" class="primary-button auth-submit" id="authSubmit" data-i18n="login">Inloggen</button>
         </form>
 
-        <p class="privacy-note"><span aria-hidden="true">♡</span> <span data-i18n="localAccountNote">Je account, verhalen en automatische back-ups worden alleen in deze browser opgeslagen.</span></p>
+        <p class="privacy-note"><span aria-hidden="true">♡</span> <span data-i18n="localAccountNote">Je account en verhalen worden veilig online gesynchroniseerd; lokale back-ups blijven beschikbaar.</span></p>
       </div>
     </section>
 
@@ -252,6 +255,8 @@
 
     <div class="toast" id="toast" role="status"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

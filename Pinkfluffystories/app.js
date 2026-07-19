@@ -7,6 +7,33 @@ const BACKUP_FORMAT = "pink-fluffy-stories-backup";
 const MAX_AUTOMATIC_BACKUPS = 12;
 const MAX_BACKUP_STORAGE_SIZE = 2500000;
 const BACKUP_DELAY = 2500;
+const CLOUD_SAVE_DELAY = 650;
+const MAX_CLOUD_BACKUPS = 30;
+
+const memoryStorage = new Map();
+const storage = {
+  getItem(key) {
+    try {
+      return window.localStorage.getItem(key);
+    } catch {
+      return memoryStorage.get(key) || null;
+    }
+  },
+  setItem(key, value) {
+    try {
+      window.localStorage.setItem(key, value);
+    } catch {
+      memoryStorage.set(key, value);
+    }
+  },
+  removeItem(key) {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      memoryStorage.delete(key);
+    }
+  },
+};
 
 const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 const clone = (value) => (typeof structuredClone === "function" ? structuredClone(value) : JSON.parse(JSON.stringify(value)));
@@ -20,13 +47,14 @@ const translations = {
     loginIntro: "Log in om je eigen boeken en hoofdstukken te openen.",
     registerEyebrow: "Jouw verhaal begint hier",
     registerHeading: "Maak je eigen schrijfruimte",
-    registerIntro: "Kies een gebruikersnaam en wachtwoord voor je persoonlijke bibliotheek.",
+    registerIntro: "Kies een e-mailadres, gebruikersnaam en wachtwoord voor je persoonlijke bibliotheek.",
     login: "Inloggen",
     register: "Account maken",
+    email: "E-mailadres",
     username: "Gebruikersnaam",
     password: "Wachtwoord",
     confirmPassword: "Herhaal wachtwoord",
-    localAccountNote: "Je account, verhalen en automatische back-ups worden alleen in deze browser opgeslagen.",
+    localAccountNote: "Je account en verhalen worden veilig online gesynchroniseerd; lokale back-ups blijven beschikbaar.",
     downloadBackup: "Back-up downloaden",
     restoreBackupFile: "Back-upbestand herstellen",
     restorePreviousVersion: "Vorige versie herstellen",
@@ -100,8 +128,10 @@ const translations = {
     passwordTooShort: "Gebruik minimaal 6 tekens voor je wachtwoord.",
     passwordsMismatch: "De wachtwoorden zijn niet hetzelfde.",
     usernameExists: "Deze gebruikersnaam bestaat al.",
-    invalidLogin: "Gebruikersnaam of wachtwoord is niet juist.",
+    invalidLogin: "E-mailadres of wachtwoord is niet juist.",
     accountCreated: "Account gemaakt. Welkom!",
+    checkEmail: "Controleer je e-mail en bevestig je account voordat je inlogt.",
+    cloudUnavailable: "Online inloggen is tijdelijk niet beschikbaar. Controleer je internetverbinding.",
     loggedOut: "Je bent uitgelogd.",
   },
   en: {
@@ -111,13 +141,14 @@ const translations = {
     loginIntro: "Log in to open your own books and chapters.",
     registerEyebrow: "Your story starts here",
     registerHeading: "Create your own writing space",
-    registerIntro: "Choose a username and password for your personal library.",
+    registerIntro: "Choose an email address, username, and password for your personal library.",
     login: "Log in",
     register: "Create account",
+    email: "Email address",
     username: "Username",
     password: "Password",
     confirmPassword: "Repeat password",
-    localAccountNote: "Your account, stories, and automatic backups are stored only in this browser.",
+    localAccountNote: "Your account and stories are synced securely online; local backups remain available.",
     downloadBackup: "Download backup",
     restoreBackupFile: "Restore backup file",
     restorePreviousVersion: "Restore previous version",
@@ -191,16 +222,32 @@ const translations = {
     passwordTooShort: "Use at least 6 characters for your password.",
     passwordsMismatch: "The passwords do not match.",
     usernameExists: "This username already exists.",
-    invalidLogin: "The username or password is incorrect.",
+    invalidLogin: "The email address or password is incorrect.",
     accountCreated: "Account created. Welcome!",
+    checkEmail: "Check your email and confirm your account before logging in.",
+    cloudUnavailable: "Online login is temporarily unavailable. Check your internet connection.",
     loggedOut: "You have been logged out.",
   },
 };
 
-let language = localStorage.getItem(LANGUAGE_KEY) === "en" ? "en" : "nl";
-let currentUser = getValidSession();
+const cloudClient = window.supabase && window.SUPABASE_CONFIG
+  ? window.supabase.createClient(window.SUPABASE_CONFIG.url, window.SUPABASE_CONFIG.publishableKey, {
+      auth: {
+        storage,
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      },
+    })
+  : null;
+
+let language = storage.getItem(LANGUAGE_KEY) === "en" ? "en" : "nl";
+let currentCloudUser = null;
+let currentUser = cloudClient ? null : getValidSession();
 let state = currentUser ? loadState() : createInitialState(language);
 let saveTimer;
+let cloudSaveTimer;
+let cloudSaveChain = Promise.resolve();
 let backupTimer;
 let toastTimer;
 let dialogAction = null;
@@ -218,6 +265,8 @@ const els = {
   authSubmit: document.querySelector("#authSubmit"),
   loginTab: document.querySelector("#loginTab"),
   registerTab: document.querySelector("#registerTab"),
+  emailInput: document.querySelector("#emailInput"),
+  usernameLabel: document.querySelector("#usernameLabel"),
   usernameInput: document.querySelector("#usernameInput"),
   passwordInput: document.querySelector("#passwordInput"),
   confirmPasswordInput: document.querySelector("#confirmPasswordInput"),
@@ -287,7 +336,7 @@ function normalizeUsername(value) {
 
 function getAccounts() {
   try {
-    const accounts = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || "[]");
+    const accounts = JSON.parse(storage.getItem(ACCOUNTS_KEY) || "[]");
     return Array.isArray(accounts) ? accounts : [];
   } catch {
     return [];
@@ -295,11 +344,11 @@ function getAccounts() {
 }
 
 function saveAccounts(accounts) {
-  localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+  storage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
 }
 
 function getValidSession() {
-  const session = localStorage.getItem(SESSION_KEY);
+  const session = storage.getItem(SESSION_KEY);
   if (!session) return null;
   return getAccounts().some((account) => account.key === session) ? session : null;
 }
@@ -315,7 +364,7 @@ function backupStorageKey(userKey) {
 function getAutomaticBackups(userKey = currentUser) {
   if (!userKey) return [];
   try {
-    const backups = JSON.parse(localStorage.getItem(backupStorageKey(userKey)) || "[]");
+    const backups = JSON.parse(storage.getItem(backupStorageKey(userKey)) || "[]");
     return Array.isArray(backups) ? backups.filter((backup) => backup?.state?.books?.length) : [];
   } catch {
     return [];
@@ -328,7 +377,7 @@ function saveAutomaticBackups(userKey, backups) {
 
   while (trimmed.length) {
     try {
-      localStorage.setItem(backupStorageKey(userKey), JSON.stringify(trimmed));
+      storage.setItem(backupStorageKey(userKey), JSON.stringify(trimmed));
       return true;
     } catch {
       if (trimmed.length === 1) return false;
@@ -338,19 +387,154 @@ function saveAutomaticBackups(userKey, backups) {
   return false;
 }
 
+function cloudUsername(user = currentCloudUser) {
+  return user?.user_metadata?.username?.trim() || user?.email?.split("@")[0] || "Account";
+}
+
+async function syncStateToCloud(stateSnapshot = clone(state)) {
+  if (!cloudClient || !currentCloudUser) return false;
+  try {
+    const { error } = await cloudClient.from("writing_spaces").upsert(
+      {
+        user_id: currentCloudUser.id,
+        username: cloudUsername(),
+        state: stateSnapshot,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id" },
+    );
+    if (error) throw error;
+    els.saveState.classList.remove("saving", "save-error");
+    els.saveState.lastElementChild.textContent = t("saved");
+    return true;
+  } catch (error) {
+    console.warn("Cloud save failed", error?.message || error);
+    els.saveState.classList.remove("saving");
+    els.saveState.classList.add("save-error");
+    els.saveState.lastElementChild.textContent = t("saveFailed");
+    return false;
+  }
+}
+
+function scheduleCloudSave() {
+  if (!cloudClient || !currentCloudUser) return;
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = setTimeout(() => {
+    const snapshot = clone(state);
+    cloudSaveChain = cloudSaveChain.then(() => syncStateToCloud(snapshot));
+  }, CLOUD_SAVE_DELAY);
+}
+
+async function saveCloudBackup(reason, backupState) {
+  if (!cloudClient || !currentCloudUser) return;
+  try {
+    const userId = currentCloudUser.id;
+    const { error } = await cloudClient.from("writing_backups").insert({ user_id: userId, state: backupState });
+    if (error) throw error;
+
+    const { data: surplus } = await cloudClient
+      .from("writing_backups")
+      .select("id")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .range(MAX_CLOUD_BACKUPS, MAX_CLOUD_BACKUPS + 99);
+    if (surplus?.length) await cloudClient.from("writing_backups").delete().in("id", surplus.map((backup) => backup.id));
+  } catch (error) {
+    console.warn(`Cloud backup failed (${reason})`, error?.message || error);
+  }
+}
+
+async function loadCloudState(user) {
+  const { data, error } = await cloudClient
+    .from("writing_spaces")
+    .select("state")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (error) throw error;
+  if (isValidBackupState(data?.state)) return clone(data.state);
+
+  const username = cloudUsername(user);
+  try {
+    const localState = JSON.parse(storage.getItem(userStorageKey(normalizeUsername(username))) || "null");
+    if (isValidBackupState(localState)) return localState;
+  } catch {
+    // Continue with the older standalone storage format.
+  }
+
+  try {
+    const legacyState = JSON.parse(storage.getItem(LEGACY_STORAGE_KEY) || "null");
+    if (isValidBackupState(legacyState)) return legacyState;
+  } catch {
+    // Start with a clean writing space when no valid local state exists.
+  }
+  return createInitialState(language);
+}
+
+async function enterCloudSession(user) {
+  currentCloudUser = user;
+  currentUser = user.id;
+  state = await loadCloudState(user);
+  showApp();
+  await syncStateToCloud(clone(state));
+}
+
+async function handleCloudAuth(username, email, password) {
+  if (!cloudClient) {
+    els.authError.textContent = t("cloudUnavailable");
+    return;
+  }
+
+  els.authSubmit.disabled = true;
+  try {
+    if (authMode === "register") {
+      const { data, error } = await cloudClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { username },
+          emailRedirectTo: window.SUPABASE_CONFIG.siteUrl,
+        },
+      });
+      if (error) throw error;
+      if (!data.session) {
+        setAuthMode("login");
+        els.emailInput.value = email;
+        els.authError.classList.add("success");
+        els.authError.textContent = t("checkEmail");
+        return;
+      }
+      await enterCloudSession(data.user);
+      showToast(t("accountCreated"));
+      return;
+    }
+
+    const { data, error } = await cloudClient.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    await enterCloudSession(data.user);
+  } catch (error) {
+    els.authError.classList.remove("success");
+    els.authError.textContent = authMode === "login" ? t("invalidLogin") : error?.message || t("cloudUnavailable");
+  } finally {
+    els.authSubmit.disabled = false;
+  }
+}
+
 function createAutomaticBackup(reason = "automatic", force = false) {
   if (!currentUser || !state?.books?.length) return false;
   const backups = getAutomaticBackups();
   const serializedState = JSON.stringify(state);
   if (!force && backups[0] && JSON.stringify(backups[0].state) === serializedState) return true;
 
+  const backupState = JSON.parse(serializedState);
   backups.unshift({
     version: 1,
     createdAt: new Date().toISOString(),
     reason,
-    state: JSON.parse(serializedState),
+    state: backupState,
   });
-  return saveAutomaticBackups(currentUser, backups);
+  const localSaved = saveAutomaticBackups(currentUser, backups);
+  if (currentCloudUser) void saveCloudBackup(reason, backupState);
+  return localSaved || Boolean(currentCloudUser);
 }
 
 function scheduleAutomaticBackup() {
@@ -421,10 +605,20 @@ function downloadBackup() {
   showToast(t("backupDownloaded"));
 }
 
-function restorePreviousBackup() {
+async function restorePreviousBackup() {
   flushState();
   const currentState = JSON.stringify(state);
-  const backup = getAutomaticBackups().find((entry) => JSON.stringify(entry.state) !== currentState);
+  let backup = getAutomaticBackups().find((entry) => JSON.stringify(entry.state) !== currentState);
+  if (!backup && cloudClient && currentCloudUser) {
+    const { data } = await cloudClient
+      .from("writing_backups")
+      .select("state, created_at")
+      .eq("user_id", currentCloudUser.id)
+      .order("created_at", { ascending: false })
+      .limit(MAX_CLOUD_BACKUPS);
+    const cloudBackup = data?.find((entry) => JSON.stringify(entry.state) !== currentState);
+    if (cloudBackup) backup = { state: cloudBackup.state, createdAt: cloudBackup.created_at };
+  }
   if (!backup) {
     els.moreMenu.classList.remove("open");
     showToast(t("backupUnavailable"));
@@ -442,7 +636,11 @@ async function restoreBackupFile(event) {
     if (file.size > 10000000) throw new Error("invalid");
     const backup = JSON.parse(await file.text());
     if (backup?.format !== BACKUP_FORMAT || !isValidBackupState(backup.state)) throw new Error("invalid");
-    if (backup.account?.key !== currentUser) {
+    const backupUsername = normalizeUsername(backup.account?.username || backup.account?.key || "");
+    const belongsToCurrentAccount =
+      backup.account?.key === currentUser ||
+      (currentCloudUser && backupUsername === normalizeUsername(cloudUsername()));
+    if (!belongsToCurrentAccount) {
       showToast(t("backupWrongAccount"));
       return;
     }
@@ -578,7 +776,7 @@ function createBlankBook() {
 
 function loadState() {
   try {
-    const stored = localStorage.getItem(userStorageKey(currentUser));
+    const stored = storage.getItem(userStorageKey(currentUser));
     if (!stored) return createInitialState(language);
     const parsed = JSON.parse(stored);
     if (!parsed.books?.length) return createInitialState(language);
@@ -597,7 +795,8 @@ function writeState(userKey = currentUser) {
   const storageKey = userStorageKey(userKey);
   const serializedState = JSON.stringify(state);
   try {
-    localStorage.setItem(storageKey, serializedState);
+    storage.setItem(storageKey, serializedState);
+    scheduleCloudSave();
     return true;
   } catch {
     const backups = getAutomaticBackups(userKey);
@@ -605,9 +804,10 @@ function writeState(userKey = currentUser) {
     while (backups.length) {
       backups.pop();
       try {
-        if (backups.length) localStorage.setItem(backupsKey, JSON.stringify(backups));
-        else localStorage.removeItem(backupsKey);
-        localStorage.setItem(storageKey, serializedState);
+        if (backups.length) storage.setItem(backupsKey, JSON.stringify(backups));
+        else storage.removeItem(backupsKey);
+        storage.setItem(storageKey, serializedState);
+        scheduleCloudSave();
         return true;
       } catch {
         // Keep removing the oldest recovery point until the current work fits.
@@ -634,10 +834,12 @@ function saveState(showIndicator = true) {
     els.saveState.classList.add("saving");
     els.saveState.lastElementChild.textContent = t("saving");
   }
-  saveTimer = setTimeout(() => {
-    els.saveState.classList.remove("saving");
-    els.saveState.lastElementChild.textContent = t("saved");
-  }, showIndicator ? 350 : 0);
+  if (!currentCloudUser) {
+    saveTimer = setTimeout(() => {
+      els.saveState.classList.remove("saving");
+      els.saveState.lastElementChild.textContent = t("saved");
+    }, showIndicator ? 350 : 0);
+  }
 }
 
 function flushState() {
@@ -650,6 +852,11 @@ function flushState() {
   }
   const stored = writeState();
   if (stored) createAutomaticBackup("autosave");
+  if (stored && currentCloudUser) {
+    clearTimeout(cloudSaveTimer);
+    const snapshot = clone(state);
+    cloudSaveChain = cloudSaveChain.then(() => syncStateToCloud(snapshot));
+  }
   els.saveState.classList.remove("saving");
   els.saveState.classList.toggle("save-error", !stored);
   els.saveState.lastElementChild.textContent = t(stored ? "saved" : "saveFailed");
@@ -665,6 +872,7 @@ function getActiveChapter() {
 }
 
 function getCurrentAccount() {
+  if (currentCloudUser) return { key: currentCloudUser.id, username: cloudUsername() };
   return getAccounts().find((account) => account.key === currentUser);
 }
 
@@ -712,6 +920,14 @@ function updateAuthModeText() {
   els.registerTab.classList.toggle("active", registering);
   els.loginTab.setAttribute("aria-selected", String(!registering));
   els.registerTab.setAttribute("aria-selected", String(registering));
+  els.emailInput.hidden = !cloudClient;
+  els.emailInput.disabled = !cloudClient;
+  els.emailInput.required = Boolean(cloudClient);
+  const hideUsername = Boolean(cloudClient) && !registering;
+  els.usernameLabel.hidden = hideUsername;
+  els.usernameInput.hidden = hideUsername;
+  els.usernameInput.disabled = hideUsername;
+  els.usernameInput.required = !hideUsername;
   els.confirmPasswordInput.required = registering;
   els.confirmPasswordInput.disabled = !registering;
   document.querySelector(".auth-copy .eyebrow").textContent = t(registering ? "registerEyebrow" : "welcomeEyebrow");
@@ -723,6 +939,7 @@ function updateAuthModeText() {
 
 function setAuthMode(mode) {
   authMode = mode;
+  els.authError.classList.remove("success");
   els.authError.textContent = "";
   updateAuthModeText();
 }
@@ -742,23 +959,38 @@ function showLogin() {
   els.moreMenu.classList.remove("open");
   els.authForm.reset();
   els.authError.textContent = "";
-  setAuthMode(getAccounts().length ? "login" : "register");
-  setTimeout(() => els.usernameInput.focus(), 50);
+  setAuthMode(cloudClient || getAccounts().length ? "login" : "register");
+  setTimeout(() => (cloudClient ? els.emailInput : els.usernameInput).focus(), 50);
 }
 
 async function handleAuthSubmit(event) {
   event.preventDefault();
   els.authError.textContent = "";
   const username = els.usernameInput.value.trim();
+  const email = els.emailInput.value.trim();
   const userKey = normalizeUsername(username);
   const password = els.passwordInput.value;
 
-  if (username.length < 3) {
-    els.authError.textContent = t("usernameTooShort");
-    return;
-  }
   if (password.length < 6) {
     els.authError.textContent = t("passwordTooShort");
+    return;
+  }
+
+  if (cloudClient) {
+    if (authMode === "register" && username.length < 3) {
+      els.authError.textContent = t("usernameTooShort");
+      return;
+    }
+    if (authMode === "register" && password !== els.confirmPasswordInput.value) {
+      els.authError.textContent = t("passwordsMismatch");
+      return;
+    }
+    await handleCloudAuth(username, email, password);
+    return;
+  }
+
+  if (username.length < 3) {
+    els.authError.textContent = t("usernameTooShort");
     return;
   }
 
@@ -779,12 +1011,12 @@ async function handleAuthSubmit(event) {
     accounts.push({ key: userKey, username, passwordHash });
     saveAccounts(accounts);
     currentUser = userKey;
-    localStorage.setItem(SESSION_KEY, currentUser);
+    storage.setItem(SESSION_KEY, currentUser);
 
     let migrated = null;
     if (accounts.length === 1) {
       try {
-        migrated = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY));
+        migrated = JSON.parse(storage.getItem(LEGACY_STORAGE_KEY));
       } catch {
         migrated = null;
       }
@@ -809,19 +1041,27 @@ async function handleAuthSubmit(event) {
   }
 
   currentUser = existing.key;
-  localStorage.setItem(SESSION_KEY, currentUser);
+  storage.setItem(SESSION_KEY, currentUser);
   state = loadState();
   showApp();
 }
 
-function logout() {
+async function logout() {
   persistEditor();
   clearTimeout(saveTimer);
   clearTimeout(backupTimer);
+  clearTimeout(cloudSaveTimer);
   writeState();
   createAutomaticBackup("logout", true);
+  if (cloudClient && currentCloudUser) {
+    await cloudSaveChain;
+    await syncStateToCloud(clone(state));
+    await saveCloudBackup("logout", clone(state));
+    await cloudClient.auth.signOut();
+    currentCloudUser = null;
+  }
   currentUser = null;
-  localStorage.removeItem(SESSION_KEY);
+  storage.removeItem(SESSION_KEY);
   state = createInitialState(language);
   showLogin();
 }
@@ -1130,7 +1370,7 @@ function updateToolbarState() {
 
 function changeLanguage(value) {
   language = value === "en" ? "en" : "nl";
-  localStorage.setItem(LANGUAGE_KEY, language);
+  storage.setItem(LANGUAGE_KEY, language);
   applyTranslations();
 }
 
@@ -1364,6 +1604,24 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") flushState();
 });
 
-applyTranslations();
-if (currentUser) showApp();
-else showLogin();
+async function initializeApp() {
+  applyTranslations();
+  if (!cloudClient) {
+    if (currentUser) showApp();
+    else showLogin();
+    return;
+  }
+
+  try {
+    const { data, error } = await cloudClient.auth.getSession();
+    if (error) throw error;
+    if (data.session?.user) await enterCloudSession(data.session.user);
+    else showLogin();
+  } catch (error) {
+    console.warn("Cloud initialization failed", error?.message || error);
+    showLogin();
+    els.authError.textContent = t("cloudUnavailable");
+  }
+}
+
+void initializeApp();
