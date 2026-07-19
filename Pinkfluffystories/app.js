@@ -2,6 +2,11 @@ const LEGACY_STORAGE_KEY = "pink-fluffy-stories-v1";
 const ACCOUNTS_KEY = "pink-fluffy-accounts-v1";
 const SESSION_KEY = "pink-fluffy-session-v1";
 const LANGUAGE_KEY = "pink-fluffy-language-v1";
+const BACKUP_KEY_PREFIX = "pink-fluffy-stories-backups-v1-";
+const BACKUP_FORMAT = "pink-fluffy-stories-backup";
+const MAX_AUTOMATIC_BACKUPS = 12;
+const MAX_BACKUP_STORAGE_SIZE = 2500000;
+const BACKUP_DELAY = 2500;
 
 const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 const clone = (value) => (typeof structuredClone === "function" ? structuredClone(value) : JSON.parse(JSON.stringify(value)));
@@ -21,7 +26,16 @@ const translations = {
     username: "Gebruikersnaam",
     password: "Wachtwoord",
     confirmPassword: "Herhaal wachtwoord",
-    localAccountNote: "Je account en verhalen worden alleen in deze browser opgeslagen.",
+    localAccountNote: "Je account, verhalen en automatische back-ups worden alleen in deze browser opgeslagen.",
+    downloadBackup: "Back-up downloaden",
+    restoreBackupFile: "Back-upbestand herstellen",
+    restorePreviousVersion: "Vorige versie herstellen",
+    backupDownloaded: "Back-up gedownload",
+    backupRestored: "Back-up hersteld",
+    backupUnavailable: "Er is nog geen eerdere versie beschikbaar.",
+    backupInvalid: "Dit is geen geldige Pink Fluffy Stories-back-up.",
+    backupWrongAccount: "Deze back-up hoort bij een ander account.",
+    restoreBackupConfirm: "De versie van {date} herstellen? Je huidige versie wordt eerst veilig bewaard.",
     myLibrary: "Mijn bibliotheek",
     newBook: "Nieuw boek",
     storiesSaved: "Jouw verhalen, veilig bewaard",
@@ -102,7 +116,16 @@ const translations = {
     username: "Username",
     password: "Password",
     confirmPassword: "Repeat password",
-    localAccountNote: "Your account and stories are stored only in this browser.",
+    localAccountNote: "Your account, stories, and automatic backups are stored only in this browser.",
+    downloadBackup: "Download backup",
+    restoreBackupFile: "Restore backup file",
+    restorePreviousVersion: "Restore previous version",
+    backupDownloaded: "Backup downloaded",
+    backupRestored: "Backup restored",
+    backupUnavailable: "No earlier version is available yet.",
+    backupInvalid: "This is not a valid Pink Fluffy Stories backup.",
+    backupWrongAccount: "This backup belongs to another account.",
+    restoreBackupConfirm: "Restore the version from {date}? Your current version will be saved first.",
     myLibrary: "My library",
     newBook: "New book",
     storiesSaved: "Your stories, safely kept",
@@ -176,6 +199,7 @@ let language = localStorage.getItem(LANGUAGE_KEY) === "en" ? "en" : "nl";
 let currentUser = getValidSession();
 let state = currentUser ? loadState() : createInitialState(language);
 let saveTimer;
+let backupTimer;
 let toastTimer;
 let dialogAction = null;
 let draggedChapter = null;
@@ -204,6 +228,10 @@ const els = {
   accountName: document.querySelector("#accountName"),
   appTitle: document.querySelector("#appTitle"),
   logoutButton: document.querySelector("#logoutButton"),
+  downloadBackupButton: document.querySelector("#downloadBackupButton"),
+  restoreBackupButton: document.querySelector("#restoreBackupButton"),
+  restorePreviousButton: document.querySelector("#restorePreviousButton"),
+  backupFileInput: document.querySelector("#backupFileInput"),
   renameWorkspace: document.querySelector("#renameWorkspace"),
   bookTree: document.querySelector("#bookTree"),
   editor: document.querySelector("#editor"),
