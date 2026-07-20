@@ -2,7 +2,13 @@ const artists = [
   {
     id: "wendeline-jansen",
     name: "Wendeline Jansen",
-    works: [],
+    works: [
+      {
+        src: "Wendeline Jansen/IMG_1481.JPG",
+        alt: "Schilderij van een overgroeide doorgang tussen verweerde gebouwen in Vigevano",
+        title: "Vigevano"
+      }
+    ],
     description: "",
     text: [
       "Vigevano, Pavia, Italië",
