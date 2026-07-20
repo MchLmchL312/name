@@ -123,10 +123,6 @@ const artists = [
     name: "Machiel van Soest",
     works: [
       {
-        src: "assets/artists/machiel-van-soest/Machiel.jpg",
-        alt: "Schilderij met twee figuren en een centraal abstract lichaam"
-      },
-      {
         src: "assets/artists/machiel-van-soest/IMG_1851.JPG",
         alt: "Het schilderij van Machiel van Soest op een ezel in het atelier",
         label: "Atelierbeeld"
