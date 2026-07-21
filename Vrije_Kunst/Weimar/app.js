@@ -123,18 +123,18 @@ const artists = [
     name: "Machiel van Soest",
     works: [
       {
-        src: "Machiel van Soest/IMG_1877.jpg",
-        alt: "Geschilderd portret van Han van Meegeren in roodbruine tinten",
-        label: "Han van Meegeren"
+        src: "Machiel van Soest/Vrije_Kunst_logo.png",
+        alt: "Beeldmerk van Vrije Kunst met de letters V en K",
+        label: "Vrije Kunst"
       },
       {
         src: "Machiel van Soest/Machiel.jpg",
         alt: "Schilderij van Machiel van Soest met twee figuren en een centraal abstract lichaam"
       },
       {
-        src: "Machiel van Soest/Vrije_Kunst_logo.png",
-        alt: "Beeldmerk van Vrije Kunst met de letters V en K",
-        label: "Vrije Kunst"
+        src: "Machiel van Soest/IMG_1877.jpg",
+        alt: "Geschilderd portret van Han van Meegeren in roodbruine tinten",
+        label: "Han van Meegeren"
       }
     ],
     description: "",
