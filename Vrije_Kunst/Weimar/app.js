@@ -128,9 +128,13 @@ const artists = [
         label: "Han van Meegeren"
       },
       {
-        src: "assets/artists/machiel-van-soest/IMG_1851.JPG",
-        alt: "Het schilderij van Machiel van Soest op een ezel in het atelier",
-        label: "Atelierbeeld"
+        src: "Machiel van Soest/Machiel.jpg",
+        alt: "Schilderij van Machiel van Soest met twee figuren en een centraal abstract lichaam"
+      },
+      {
+        src: "Machiel van Soest/Vrije_Kunst_logo.png",
+        alt: "Beeldmerk van Vrije Kunst met de letters V en K",
+        label: "Vrije Kunst"
       }
     ],
     description: "",
