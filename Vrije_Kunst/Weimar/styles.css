@@ -602,6 +602,12 @@ footer a:last-child {
   background: var(--paper);
 }
 
+.works-gallery[data-artist="machiel-van-soest"] .catalogue-work img {
+  max-height: none;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+}
+
 .catalogue-work figcaption {
   padding: 17px 0 0;
 }

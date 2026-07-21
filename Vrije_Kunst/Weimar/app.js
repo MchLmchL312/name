@@ -207,6 +207,7 @@ function openArtist(artistId, updateHash = true) {
   const artist = artists[artistIndex];
   dialogTitle.textContent = artist.name;
   dialogIndex.textContent = `Deelnemer ${String(artistIndex + 1).padStart(2, "0")} / ${String(artists.length).padStart(2, "0")}`;
+  dialogWork.dataset.artist = artist.id;
   renderWorks(artist.works);
   appendParagraphs(dialogDescription, artist.description);
   appendParagraphs(dialogText, artist.text);
