@@ -123,6 +123,11 @@ const artists = [
     name: "Machiel van Soest",
     works: [
       {
+        src: "Machiel van Soest/IMG_1877.jpg",
+        alt: "Geschilderd portret van Han van Meegeren in roodbruine tinten",
+        label: "Han van Meegeren"
+      },
+      {
         src: "assets/artists/machiel-van-soest/IMG_1851.JPG",
         alt: "Het schilderij van Machiel van Soest op een ezel in het atelier",
         label: "Atelierbeeld"
