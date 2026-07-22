@@ -35,8 +35,8 @@ const artists = [
       "Ik kwam uit bij een indringende zwart-witfoto van een historische gebeurtenis van vlak na de bevrijding van Nederland in mei 1945.",
       "De enorme menigte is hier niet samengekomen om feest te vieren, maar om getuige te zijn van een volksgericht: het kaalknippen en vernederen van ‘moffenmeiden’. Dit was de (veelal denigrerende) term voor Nederlandse vrouwen die tijdens de bezetting een relatie of intiem contact hadden gehad met Duitse soldaten. In het midden zijn twee jonge vrouwen te zien die zojuist publiekelijk zijn kaalgeschoren.",
       "Kenmerken van dit schilderij:",
-      "• Compositie: het toont een overweldigende menigte vol hoeden en figuren die hun armen in de lucht steken en naar voren bewegen.",
-      "• Kleurgebruik: het werk is uitgevoerd in een monochroom palet van sepia- en aardetinten (hoofdzakelijk bruinen: Stil de Grainbrun, gebrande omber en sienna, Gris chaud).",
+      "• Compositie: het toont een overweldigende menigte die allen naar het centrum kijken.",
+      "• Kleurgebruik: het werk is uitgevoerd in een monochroom sepia- en aardetintenpalet (hoofdzakelijk bruinen: Stil de Grain brun, gebrande omber en sienna, Gris chaud).",
       "• Focus: centraal in de menigte zijn de twee vrouwen te zien tussen verschillende andere personages, geschilderd in donkerrood en warm grijs.",
       "De zwart-witfoto is genomen op 8 mei 1945 in de Van der Helsstraat in Utrecht door fotograaf Hogeweg.",
       "De ‘Intocht van Christus in Brussel’ (2,58 meter hoog en 4,31 meter breed) is te bewonderen in het J. Paul Getty Museum in Los Angeles."
