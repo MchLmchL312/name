@@ -172,7 +172,18 @@ const artists = [
     description: "",
     text: []
   },
-  { id: "marleen-elders", name: "Marleen Elders", works: [], description: "", text: [] },
+  {
+    id: "marleen-elders",
+    name: "Marleen Elders",
+    works: [
+      {
+        src: "assets/artists/marleen-elders/IMG_1903_rechtgezet.jpg",
+        alt: "Schilderij met een paard, hond, uil, nar en vrouwenportret in een cirkelvormige compositie"
+      }
+    ],
+    description: "",
+    text: []
+  },
   {
     id: "machiel-van-soest",
     name: "Machiel van Soest",
@@ -180,7 +191,8 @@ const artists = [
       {
         src: "assets/vrije-kunst-logo.png",
         alt: "Beeldmerk van Vrije Kunst met de letters V en K",
-        label: "Vrije Kunst logo"
+        label: "Vrije Kunst logo",
+        featured: false
       },
       {
         src: "assets/artists/machiel-van-soest/Machiel.jpg",
@@ -205,7 +217,24 @@ const dialogWork = document.querySelector("#dialog-work");
 const dialogDescription = document.querySelector("#dialog-description");
 const dialogText = document.querySelector("#dialog-text");
 const closeButton = document.querySelector(".dialog-close");
+const featuredImage = document.querySelector("#featured-image");
+const featuredCaption = document.querySelector("#featured-caption");
 let returnFocus = null;
+
+function renderRandomFeaturedWork() {
+  const featuredWorks = artists.flatMap((artist) =>
+    artist.works
+      .filter((work) => work.featured !== false)
+      .map((work) => ({ artist, work }))
+  );
+  if (featuredWorks.length === 0 || !featuredImage || !featuredCaption) return;
+
+  const { artist, work } = featuredWorks[Math.floor(Math.random() * featuredWorks.length)];
+  const workTitle = work.title || work.label || "";
+  featuredImage.src = work.src;
+  featuredImage.alt = work.alt || `Werk van ${artist.name}`;
+  featuredCaption.textContent = workTitle ? `${artist.name} · ${workTitle}` : artist.name;
+}
 
 function appendParagraphs(container, paragraphs) {
   container.replaceChildren();
@@ -308,6 +337,8 @@ window.addEventListener("popstate", () => {
     closeArtist(false);
   }
 });
+
+renderRandomFeaturedWork();
 
 const initialArtist = window.location.hash.slice(1);
 if (artists.some((artist) => artist.id === initialArtist)) {
