@@ -655,6 +655,10 @@ footer a:last-child {
   border-top: 1px solid var(--line);
 }
 
+#dialog-text p + p {
+  border-top: 0;
+}
+
 @keyframes dialog-in {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }

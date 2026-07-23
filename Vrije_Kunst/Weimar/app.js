@@ -4,7 +4,7 @@ const artists = [
     name: "Wendeline Jansen",
     works: [
       {
-        src: "Wendeline Jansen/IMG_1481.JPG",
+        src: "assets/artists/wendeline-jansen/vigevano.jpg",
         alt: "Schilderij van een overgroeide doorgang tussen verweerde gebouwen in Vigevano",
         title: "Vigevano"
       }
@@ -23,7 +23,7 @@ const artists = [
     name: "Petra Zwarts",
     works: [
       {
-        src: "Petra Zwarts/De menigte Petra Zwarts.jpeg",
+        src: "assets/artists/petra-zwarts/de-menigte.jpg",
         alt: "Schilderij van een grote menigte rond twee centraal afgebeelde vrouwen",
         title: "De menigte"
       }
@@ -42,7 +42,34 @@ const artists = [
       "De ‘Intocht van Christus in Brussel’ (2,58 meter hoog en 4,31 meter breed) is te bewonderen in het J. Paul Getty Museum in Los Angeles."
     ]
   },
-  { id: "jos-van-niekerk", name: "Jos van Niekerk", works: [], description: "", text: [] },
+  {
+    id: "jos-van-niekerk",
+    name: "Jos van Niekerk",
+    works: [
+      {
+        src: "assets/artists/jos-van-niekerk/IMG_8566_klein.jpg",
+        alt: "Schilderij van een man met zonnebril die een motorboot bestuurt"
+      },
+      {
+        src: "assets/artists/jos-van-niekerk/IMG_8567_klein.jpg",
+        alt: "Schilderij van kleurrijke stropdassen die aan boomtakken hangen"
+      },
+      {
+        src: "assets/artists/jos-van-niekerk/IMG_8595_klein.jpg",
+        alt: "Tweeluik van een heuvelachtig landschap met boerderijen en een kasteel"
+      },
+      {
+        src: "assets/artists/jos-van-niekerk/IMG_8598_klein.jpg",
+        alt: "Schilderij van een boerderij in een heuvelachtig landschap"
+      },
+      {
+        src: "assets/artists/jos-van-niekerk/IMG_8599_klein.jpg",
+        alt: "Schilderij van een kasteel tussen akkers en bomen"
+      }
+    ],
+    description: "",
+    text: []
+  },
   {
     id: "ank-de-boer",
     name: "Ank de Boer",
@@ -86,7 +113,16 @@ const artists = [
     description: "",
     text: []
   },
-  { id: "annemieke-jansen", name: "Annemieke Jansen", works: [], description: "", text: [] },
+  {
+    id: "annemieke-jansen",
+    name: "Annemieke Jansen",
+    works: [],
+    description: "",
+    text: [
+      "Op een miezerige avond fietste ik van Wassenaar naar Den Haag over de Benoordenhoutseweg. Als je de Landscheidingsweg overgestoken bent, is er een sloot langs het fietspad. Struiken langs de sloot en grasvelden aan de andere kant, ik zie er weleens een lama. Dan het stuk grond waar eerst een tuincentrum was, gebeurt al jaren niks mee. Nu was het donker en zag ik weinig. Bruggetje over de sloot, zijweg. En verderop lichten en gebouwen. De Amerikaanse ambassade, not a friendly place anymore. Ik voelde me opstandig worden en stopte mijn fiets. Waarom staan daar bij de opgang naar de ambassade geen protestborden? ‘Trump is Fascist’ of ‘ICE OUT’… Ik pakte mijn telefoon uit mijn jaszak en maakte een foto. Toen ging ik weer fietsen en maakte foto’s tijdens het fietsen. Ik had the thrilling sensation dat ik gepakt zou kunnen worden voor unauthorized picture taking. Toen ik erlangs was gefietst keek ik naar het resultaat. Supergave foto’s met groene strepen (de struiken langs de sloot), gele en rode strepen (de verlichte ramen van het gebouw en de buitenverlichting). Je ziet het voorbijflitsen zoals je de bomen langs ziet flitsen als je in de trein zit. Maar de kleuren zijn in het donker heel anders dan overdag. Ik dacht meteen dat ik daar iets mee moest doen.",
+      "Ik ben geen fotograaf, ik schilder. Met deze foto’s als leidraad en inspiratie ben ik gaan schilderen. Ik heb geprobeerd de beweging van het fietsen weer te geven en ook mijn gevoelens van boosheid. De afbeelding ging een eigen leven leiden. Dat is het leuke van schilderen. Opperste concentratie en tegelijk niet zeker weten wat je aan het doen bent, maar wel zeker weten dat het goed gaat. En als je denkt klaar te zijn vraag je je tegelijkertijd af waarom. Waarom zou het nu af zijn? Ik ben laag over laag gaan schilderen. Ik heb drie van deze schilderijen gemaakt, voor deze tentoonstelling hang ik de twee donkerste op. Ze zouden nog donkerder kunnen worden, maar ik ben gestopt. Het derde schilderij heeft wat meer kleur. Die hangt op dit moment bij de IAC, Weimarstraat 23. Het zijn mijn impressies van het stukje Verenigde Staten in Nederland."
+    ]
+  },
   { id: "joanne-de-mooij", name: "Joanne de Mooij", works: [], description: "", text: [] },
   {
     id: "thea-van-der-heijden",
@@ -123,16 +159,16 @@ const artists = [
     name: "Machiel van Soest",
     works: [
       {
-        src: "Machiel van Soest/Vrije_Kunst_logo.png",
+        src: "assets/vrije-kunst-logo.png",
         alt: "Beeldmerk van Vrije Kunst met de letters V en K",
         label: "Vrije Kunst"
       },
       {
-        src: "Machiel van Soest/Machiel.jpg",
+        src: "assets/artists/machiel-van-soest/Machiel.jpg",
         alt: "Schilderij van Machiel van Soest met twee figuren en een centraal abstract lichaam"
       },
       {
-        src: "Machiel van Soest/IMG_1877.jpg",
+        src: "assets/artists/machiel-van-soest/IMG_1877.jpg",
         alt: "Geschilderd portret van Han van Meegeren in roodbruine tinten",
         label: "Han van Meegeren"
       }
