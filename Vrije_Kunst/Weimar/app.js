@@ -48,23 +48,31 @@ const artists = [
     works: [
       {
         src: "assets/artists/jos-van-niekerk/IMG_8566_klein.jpg",
-        alt: "Schilderij van een man met zonnebril die een motorboot bestuurt"
+        alt: "Schilderij van een man met zonnebril die een motorboot bestuurt",
+        title: "Snelle Pelle",
+        description: "Pelle is onze kleinzoon en regelmatig trekken we eropuit, soms met een snelle sloep, en varen we over de Vliet, prachtig water omzoomd met mooi groen. We praten weer even bij en soms, met frisse wind in de haren, lekker zigzaggend over het water. Heerlijk om dit te schilderen, eerst een grisaille gemaakt en later geglaceerd."
       },
       {
         src: "assets/artists/jos-van-niekerk/IMG_8567_klein.jpg",
-        alt: "Schilderij van kleurrijke stropdassen die aan boomtakken hangen"
+        alt: "Schilderij van kleurrijke stropdassen die aan boomtakken hangen",
+        title: "Dassen aan de wilgen",
+        description: "Ik ben al langere tijd gepensioneerd en vanaf dat moment gaan schilderen. Dat geeft me veel plezier, ook steeds weer een nieuw motief bedenken. Er is veel wat de moeite waard is om te schilderen, motieven in overvloed. Ik maak ook vaak foto’s wanneer ik ergens door word getroffen. Onlangs keek ik met mijn kleinzoon, die is gaan studeren, naar de dassen in mijn kledingkast. Hij had dassen nodig voor onder zijn donkere pak. Ik heb er veel hele mooie met allerlei herinneringen, maar draag ze na mijn pensionering nog maar zelden. Dus hij kon kiezen wat hij wilde en ging happy naar huis. Wat doe ik met de rest, dacht ik? Ik hang ze aan de wilgen. Dus ik ben eropuit gegaan om een mooie wilg in een mooie weideachtergrond te vinden, zodat de dassen een goed contrast vormen. Ik vond die wilg bij landgoed Ter Horst in Wassenaar, een knotwilg, geen treurwilg, want ik ben heel tevreden met mijn gepensioneerde leven met olieverf en de penselen."
       },
       {
         src: "assets/artists/jos-van-niekerk/IMG_8595_klein.jpg",
-        alt: "Tweeluik van een heuvelachtig landschap met boerderijen en een kasteel"
+        alt: "Tweeluik van een heuvelachtig landschap met boerderijen en een kasteel",
+        title: "Apostelhoeve en Chateau Neercanne",
+        description: "Het landschap ten zuiden van Maastricht, met daarin de loop van het riviertje de Jeker, is heel mooi. Ik kwam er al jaren, want mijn broer woonde er dichtbij. Vooral het zicht vanuit het Jekerdal op een oude witte boerderij boven op de heuvel is prachtig, zo’n mooi silhouet. Ook het glooiende dal is heel mooi. Maar op een zeker moment is mijn broer overleden. Toen ik er na een paar jaar weer een keertje langskwam, ben ik gestopt en heb er een foto van gemaakt. Later pas kwam ik op het idee er een schilderij van te maken en hoorde ik dat het de Apostelhoeve heette. Tijdens de schildercursus van Machiel van Soest ben ik hiermee begonnen, een werk van 40 × 40 cm in olie. Toen ik ermee klaar was, bedacht ik dat het Jekerdal nog verder doorloopt, met ook Chateau Neercanne, waar we met mijn broer menig feest hebben gevierd. Enfin, zo ontstond het idee er een tweede schilderij naast te gaan maken, met het doorlopende dal en daarop ook Chateau Neercanne, apart maar wel verbonden met het eerste schilderij. Ik heb met deze twee schilderijen een mooie herinnering aan mijn broer."
       },
       {
         src: "assets/artists/jos-van-niekerk/IMG_8598_klein.jpg",
-        alt: "Schilderij van een boerderij in een heuvelachtig landschap"
+        alt: "Schilderij van een boerderij in een heuvelachtig landschap",
+        title: "Apostelhoeve"
       },
       {
         src: "assets/artists/jos-van-niekerk/IMG_8599_klein.jpg",
-        alt: "Schilderij van een kasteel tussen akkers en bomen"
+        alt: "Schilderij van een kasteel tussen akkers en bomen",
+        title: "Chateau Neercanne"
       }
     ],
     description: "",
@@ -116,7 +124,18 @@ const artists = [
   {
     id: "annemieke-jansen",
     name: "Annemieke Jansen",
-    works: [],
+    works: [
+      {
+        src: "assets/artists/annemieke-jansen/american-embassy-1.jpg",
+        alt: "Donker abstract schilderij met diagonale lichte banen",
+        title: "American Embassy 1"
+      },
+      {
+        src: "assets/artists/annemieke-jansen/american-embassy-2.jpg",
+        alt: "Donker schilderij van verlichte gebouwen in een nachtelijk landschap",
+        title: "American Embassy 2"
+      }
+    ],
     description: "",
     text: [
       "Op een miezerige avond fietste ik van Wassenaar naar Den Haag over de Benoordenhoutseweg. Als je de Landscheidingsweg overgestoken bent, is er een sloot langs het fietspad. Struiken langs de sloot en grasvelden aan de andere kant, ik zie er weleens een lama. Dan het stuk grond waar eerst een tuincentrum was, gebeurt al jaren niks mee. Nu was het donker en zag ik weinig. Bruggetje over de sloot, zijweg. En verderop lichten en gebouwen. De Amerikaanse ambassade, not a friendly place anymore. Ik voelde me opstandig worden en stopte mijn fiets. Waarom staan daar bij de opgang naar de ambassade geen protestborden? ‘Trump is Fascist’ of ‘ICE OUT’… Ik pakte mijn telefoon uit mijn jaszak en maakte een foto. Toen ging ik weer fietsen en maakte foto’s tijdens het fietsen. Ik had the thrilling sensation dat ik gepakt zou kunnen worden voor unauthorized picture taking. Toen ik erlangs was gefietst keek ik naar het resultaat. Supergave foto’s met groene strepen (de struiken langs de sloot), gele en rode strepen (de verlichte ramen van het gebouw en de buitenverlichting). Je ziet het voorbijflitsen zoals je de bomen langs ziet flitsen als je in de trein zit. Maar de kleuren zijn in het donker heel anders dan overdag. Ik dacht meteen dat ik daar iets mee moest doen.",
@@ -161,11 +180,12 @@ const artists = [
       {
         src: "assets/vrije-kunst-logo.png",
         alt: "Beeldmerk van Vrije Kunst met de letters V en K",
-        label: "Vrije Kunst"
+        label: "Vrije Kunst logo"
       },
       {
         src: "assets/artists/machiel-van-soest/Machiel.jpg",
-        alt: "Schilderij van Machiel van Soest met twee figuren en een centraal abstract lichaam"
+        alt: "Schilderij van Machiel van Soest met twee figuren en een centraal abstract lichaam",
+        title: "Neuropa"
       },
       {
         src: "assets/artists/machiel-van-soest/IMG_1877.jpg",
