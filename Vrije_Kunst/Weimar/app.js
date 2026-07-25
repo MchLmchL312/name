@@ -167,6 +167,41 @@ const artists = [
         title: "Zonder titel",
         meta: "2026 · Olieverf op doek · 30 × 30 cm",
         description: "Na het maken van precieze vlakken, vrij werken met het paletmes. Na afronding zag ik mijn wandelingen langs de Prüm in Duitsland erin terug. Langs het water, de wind door de bomen, het zachte licht door de bladeren."
+      },
+      {
+        src: "assets/artists/thea-van-der-heijden/2025 schapen.jpg",
+        alt: "Schilderij van een kudde schapen in zachte aardetinten",
+        title: "Schapen",
+        meta: "2025",
+        description: "In de cursus lag de focus op het Apelles-palet, ook wel het Zorn-palet genoemd. Het is een beperkt palet en bestaat uit titaanwit, marszwart, geelbruin of gele oker en vermiljoenrood. Het is vernoemd naar de beroemde schilder Apelles uit het oude Griekenland. Om hiermee te werken heb ik schapen als onderwerp gekozen."
+      },
+      {
+        src: "assets/artists/thea-van-der-heijden/2026 portret van een schaap.jpg",
+        alt: "Geschilderd portret van een schaap in zachte aardetinten",
+        title: "Portret van een schaap",
+        meta: "2026",
+        description: "Hoewel het schaap een kuddedier is, denk ik dat elk dier een eigen karakter heeft."
+      },
+      {
+        src: "assets/artists/thea-van-der-heijden/2026 als Morandi.jpg",
+        alt: "Stilleven met flessen, vazen en potjes in zachte kleuren",
+        title: "Als Morandi",
+        meta: "2026",
+        description: "Ik ben een groot bewonderaar van de beroemde Italiaanse kunstenaar Giorgio Morandi, vooral bekend om zijn ingetogen stillevens van flessen, vazen en potjes. Hij gebruikte zachte, matte en neutrale kleuren. Ik wilde dat op mijn eigen wijze en in mijn eigen kleuren vormgeven."
+      },
+      {
+        src: "assets/artists/thea-van-der-heijden/2026 schets van een koe.jpg",
+        alt: "Losse zwart-witte schets van een staande koe",
+        title: "Schets van een koe",
+        meta: "2026",
+        description: "Na schapen wilde ik proberen koeien te schilderen. Daarvoor begon ik met schetsen."
+      },
+      {
+        src: "assets/artists/thea-van-der-heijden/2026 koeien.jpg",
+        alt: "Schilderij van twee rustende zwart-witte koeien",
+        title: "Koeien",
+        meta: "2026",
+        description: "Koeien kunnen zo tevreden in de weide liggen te herkauwen. Dit zijn twee tevreden koeien."
       }
     ],
     description: "",
