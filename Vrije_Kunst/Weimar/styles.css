@@ -660,6 +660,41 @@ footer a:last-child {
   border-top: 1px solid var(--line);
 }
 
+.empty-copy.has-work-details {
+  min-height: 0;
+  border: 0;
+}
+
+.work-details {
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+
+.work-details:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.work-details dl {
+  display: grid;
+  grid-template-columns: minmax(88px, .75fr) minmax(0, 1.25fr);
+  gap: 5px 16px;
+  margin: 0;
+}
+
+.work-details dt {
+  color: var(--muted);
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.work-details dd {
+  margin: 0;
+  font-size: .9rem;
+  line-height: 1.4;
+}
+
 #dialog-text p + p {
   border-top: 0;
 }

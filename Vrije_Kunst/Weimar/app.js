@@ -9,7 +9,9 @@ const artists = [
         title: "Vigevano"
       }
     ],
-    description: "",
+    description: [
+      { title: "Vigevano", artist: "Wendeline Jansen", year: "2026", technique: "Olieverf op doek", size: "60 × 60 cm" }
+    ],
     text: [
       "Vigevano, Pavia, Italië",
       "Interieur, exterieur. Beide onderwerpen fascineren mij, of het nu oude ruïnes zijn of strakke moderne architectuur. Het is ook toevallig het onderwerp om mee te dingen naar een wedstrijd.",
@@ -28,7 +30,10 @@ const artists = [
         title: "De menigte"
       }
     ],
-    description: "",
+    description: [
+      { title: "De menigte", artist: "Petra Zwarts", year: "2026", technique: "Olieverf op doek", size: "80 × 92 cm" },
+      { title: "Zonder titel", artist: "Petra Zwarts", year: "2026", technique: "Olieverf op doek", size: "79 × 46 cm" }
+    ],
     text: [
       "Een tijdje geleden zag ik een documentaire over het schilderij ‘De blijde intocht van Christus in Brussel’ van de Belgische schilder James Ensor (1889).",
       "Hierdoor geïnspireerd zocht ik naar een beeld van een menigte om een olieverfschilderij van te maken.",
@@ -75,7 +80,12 @@ const artists = [
         title: "Chateau Neercanne"
       }
     ],
-    description: "",
+    description: [
+      { title: "Snelle Pelle", artist: "Jos van Niekerk", year: "2026", technique: "Olieverf op papier", size: "30 × 40 cm" },
+      { title: "Dassen aan de wilgen", artist: "Jos van Niekerk", year: "2026", technique: "Olieverf op papier", size: "30 × 40 cm" },
+      { title: "Apostelhoeve", artist: "Jos van Niekerk", year: "2026", technique: "Olieverf op doek", size: "40 × 40 cm" },
+      { title: "Chateau Neercanne", artist: "Jos van Niekerk", year: "2026", technique: "Olieverf op doek", size: "40 × 40 cm" }
+    ],
     text: []
   },
   {
@@ -85,40 +95,55 @@ const artists = [
       {
         src: "assets/artists/ank-de-boer/ank1r.jpg",
         alt: "Schilderij van een wandelpad onder grillige boomtakken",
+        title: "Zonder titel",
         description: "Dit doek ademt de herinnering aan talloze wandelingen door het vertrouwde duinlandschap."
       },
       {
         src: "assets/artists/ank-de-boer/ank2r.jpg",
         alt: "Schilderij van een herder met een kudde in een boslandschap",
+        title: "Zonder titel",
         description: "Dit doek brengt een ode aan de herder die zijn kudde door de Hollandsche duinen gidst."
       },
       {
         src: "assets/artists/ank-de-boer/ank3r.jpg",
         alt: "Schilderij van een kust met strand en grijze zee",
+        title: "Zonder titel",
         description: "Een schilderij dat geen uitleg behoeft, maar puur draait om het gevoel van ruimte aan de Algarvekust."
       },
       {
         src: "assets/artists/ank-de-boer/ank4r.jpg",
         alt: "Schilderij van een waterrijk landschap onder een lichte lucht",
+        title: "Zonder titel",
         description: "Een doek dat de kijker uitnodigt om simpelweg adem te halen en uit te kijken over het Friese land."
       },
       {
         src: "assets/artists/ank-de-boer/ank5r.jpg",
         alt: "Stilleven met planten in een donkere pot tegen een roze achtergrond",
+        title: "Zonder titel",
         description: "Stilleven"
       },
       {
         src: "assets/artists/ank-de-boer/ank6r.jpg",
         alt: "Schilderij van een beschutte tuin met stoelen",
+        title: "Zonder titel",
         description: "Retraitehoekje"
       },
       {
         src: "assets/artists/ank-de-boer/ank7r.jpg",
         alt: "Schilderij van een dynamische zee rond zandbanken en rotsen",
+        title: "Zonder titel",
         description: "De zee in al haar ongetemde dynamiek."
       }
     ],
-    description: "",
+    description: [
+      { title: "Zonder titel", artist: "Ank de Boer", year: "2026", technique: "Olieverf op papier", size: "50 × 32 cm" },
+      { title: "Zonder titel", artist: "Ank de Boer", year: "2026", technique: "Olieverf op doek", size: "40 × 50 cm" },
+      { title: "Zonder titel", artist: "Ank de Boer", year: "2026", technique: "Olieverf op papier", size: "50 × 37 cm" },
+      { title: "Zonder titel", artist: "Ank de Boer", year: "2026", technique: "Olieverf op papier", size: "50 × 37 cm" },
+      { title: "Zonder titel", artist: "Ank de Boer", year: "2026", technique: "Olieverf op papier", size: "30 × 50 cm" },
+      { title: "Zonder titel", artist: "Ank de Boer", year: "2026", technique: "Olieverf op papier", size: "30 × 48 cm" },
+      { title: "Zonder titel", artist: "Ank de Boer", year: "2026", technique: "Olieverf op papier", size: "50 × 38 cm" }
+    ],
     text: []
   },
   {
@@ -136,13 +161,15 @@ const artists = [
         title: "American Embassy 2"
       }
     ],
-    description: "",
+    description: [
+      { title: "American Embassy 1", artist: "Annemieke Jansen", year: "2026", technique: "Olieverf op doek", size: "80 × 100 cm" },
+      { title: "American Embassy 2", artist: "Annemieke Jansen", year: "2026", technique: "Olieverf op doek", size: "80 × 100 cm" }
+    ],
     text: [
       "Op een miezerige avond fietste ik van Wassenaar naar Den Haag over de Benoordenhoutseweg. Als je de Landscheidingsweg overgestoken bent, is er een sloot langs het fietspad. Struiken langs de sloot en grasvelden aan de andere kant, ik zie er weleens een lama. Dan het stuk grond waar eerst een tuincentrum was, gebeurt al jaren niks mee. Nu was het donker en zag ik weinig. Bruggetje over de sloot, zijweg. En verderop lichten en gebouwen. De Amerikaanse ambassade, not a friendly place anymore. Ik voelde me opstandig worden en stopte mijn fiets. Waarom staan daar bij de opgang naar de ambassade geen protestborden? ‘Trump is Fascist’ of ‘ICE OUT’… Ik pakte mijn telefoon uit mijn jaszak en maakte een foto. Toen ging ik weer fietsen en maakte foto’s tijdens het fietsen. Ik had the thrilling sensation dat ik gepakt zou kunnen worden voor unauthorized picture taking. Toen ik erlangs was gefietst keek ik naar het resultaat. Supergave foto’s met groene strepen (de struiken langs de sloot), gele en rode strepen (de verlichte ramen van het gebouw en de buitenverlichting). Je ziet het voorbijflitsen zoals je de bomen langs ziet flitsen als je in de trein zit. Maar de kleuren zijn in het donker heel anders dan overdag. Ik dacht meteen dat ik daar iets mee moest doen.",
       "Ik ben geen fotograaf, ik schilder. Met deze foto’s als leidraad en inspiratie ben ik gaan schilderen. Ik heb geprobeerd de beweging van het fietsen weer te geven en ook mijn gevoelens van boosheid. De afbeelding ging een eigen leven leiden. Dat is het leuke van schilderen. Opperste concentratie en tegelijk niet zeker weten wat je aan het doen bent, maar wel zeker weten dat het goed gaat. En als je denkt klaar te zijn vraag je je tegelijkertijd af waarom. Waarom zou het nu af zijn? Ik ben laag over laag gaan schilderen. Ik heb drie van deze schilderijen gemaakt, voor deze tentoonstelling hang ik de twee donkerste op. Ze zouden nog donkerder kunnen worden, maar ik ben gestopt. Het derde schilderij heeft wat meer kleur. Die hangt op dit moment bij de IAC, Weimarstraat 23. Het zijn mijn impressies van het stukje Verenigde Staten in Nederland."
     ]
   },
-  { id: "joanne-de-mooij", name: "Joanne de Mooij", works: [], description: "", text: [] },
   {
     id: "thea-van-der-heijden",
     name: "Thea van der Heijden",
@@ -151,14 +178,14 @@ const artists = [
         src: "assets/artists/thea-van-der-heijden/2026 compositie XI.jpg",
         alt: "Abstract-geometrisch schilderij in groen, grijs en crème",
         title: "2026 compositie XI",
-        meta: "Olieverf op doek · 40 × 40 cm",
+        meta: "2026 · Olieverf op doek · 40 × 40 cm",
         description: "Dit schilderij is bij toeval ontstaan; zoekend naar een nieuw project voor de cursus ‘Olieverf’. Intuïtief heb ik de lijnen (al dan niet bestaand) gevolgd die ik op het doek zag. De kleuren kies ik niet, die kiezen mij."
       },
       {
         src: "assets/artists/thea-van-der-heijden/2026 compositie XII.jpg",
         alt: "Abstract-geometrisch schilderij in rood, roze, grijs en crème",
         title: "2026 compositie XII",
-        meta: "Olieverf op doek · 40 × 40 cm",
+        meta: "2026 · Olieverf op doek · 40 × 40 cm",
         description: "De totstandkoming van dit schilderij was een moeizaam proces. Ik vond dat ‘2026 compositie XI’ een vervolg moest krijgen. Zoekend naar een verbinding met ‘2026 compositie XI’ is dit het resultaat."
       },
       {
@@ -172,39 +199,49 @@ const artists = [
         src: "assets/artists/thea-van-der-heijden/2025 schapen.jpg",
         alt: "Schilderij van een kudde schapen in zachte aardetinten",
         title: "Schapen",
-        meta: "2025",
+        meta: "2026 · Olieverf op papier · 40 × 30 cm",
         description: "In de cursus lag de focus op het Apelles-palet, ook wel het Zorn-palet genoemd. Het is een beperkt palet en bestaat uit titaanwit, marszwart, geelbruin of gele oker en vermiljoenrood. Het is vernoemd naar de beroemde schilder Apelles uit het oude Griekenland. Om hiermee te werken heb ik schapen als onderwerp gekozen."
       },
       {
         src: "assets/artists/thea-van-der-heijden/2026 portret van een schaap.jpg",
         alt: "Geschilderd portret van een schaap in zachte aardetinten",
         title: "Portret van een schaap",
-        meta: "2026",
+        meta: "2026 · Olieverf op papier · 30 × 20 cm",
         description: "Hoewel het schaap een kuddedier is, denk ik dat elk dier een eigen karakter heeft."
       },
       {
         src: "assets/artists/thea-van-der-heijden/2026 als Morandi.jpg",
         alt: "Stilleven met flessen, vazen en potjes in zachte kleuren",
         title: "Als Morandi",
-        meta: "2026",
+        meta: "2026 · Olieverf op papier · 30 × 42 cm",
         description: "Ik ben een groot bewonderaar van de beroemde Italiaanse kunstenaar Giorgio Morandi, vooral bekend om zijn ingetogen stillevens van flessen, vazen en potjes. Hij gebruikte zachte, matte en neutrale kleuren. Ik wilde dat op mijn eigen wijze en in mijn eigen kleuren vormgeven."
       },
       {
         src: "assets/artists/thea-van-der-heijden/2026 schets van een koe.jpg",
         alt: "Losse zwart-witte schets van een staande koe",
         title: "Schets van een koe",
-        meta: "2026",
+        meta: "2026 · Olieverf op papier · 24 × 18 cm",
         description: "Na schapen wilde ik proberen koeien te schilderen. Daarvoor begon ik met schetsen."
       },
       {
         src: "assets/artists/thea-van-der-heijden/2026 koeien.jpg",
         alt: "Schilderij van twee rustende zwart-witte koeien",
         title: "Koeien",
-        meta: "2026",
+        meta: "2026 · Olieverf op papier · 20 × 30 cm",
         description: "Koeien kunnen zo tevreden in de weide liggen te herkauwen. Dit zijn twee tevreden koeien."
       }
     ],
-    description: "",
+    description: [
+      { title: "2026 compositie XI", artist: "Thea van der Heijden", year: "2026", technique: "Olieverf op doek", size: "40 × 40 cm" },
+      { title: "2026 compositie XII", artist: "Thea van der Heijden", year: "2026", technique: "Olieverf op doek", size: "40 × 40 cm" },
+      { title: "Zonder titel", artist: "Thea van der Heijden", year: "2026", technique: "Olieverf op doek", size: "30 × 30 cm" },
+      { title: "Schapen", artist: "Thea van der Heijden", year: "2026", technique: "Olieverf op papier", size: "40 × 30 cm" },
+      { title: "Portret van een schaap", artist: "Thea van der Heijden", year: "2026", technique: "Olieverf op papier", size: "30 × 20 cm" },
+      { title: "Als Morandi", artist: "Thea van der Heijden", year: "2026", technique: "Olieverf op papier", size: "30 × 42 cm" },
+      { title: "Schets van een koe", artist: "Thea van der Heijden", year: "2026", technique: "Olieverf op papier", size: "24 × 18 cm" },
+      { title: "Koeien", artist: "Thea van der Heijden", year: "2026", technique: "Olieverf op papier", size: "20 × 30 cm" },
+      { title: "Zonder titel", artist: "Thea van der Heijden", year: "2026", technique: "Olieverf op papier", size: "20 × 30 cm" }
+    ],
     text: []
   },
   {
@@ -213,10 +250,13 @@ const artists = [
     works: [
       {
         src: "assets/artists/marleen-elders/IMG_1903_rechtgezet.jpg",
-        alt: "Schilderij met een paard, hond, uil, nar en vrouwenportret in een cirkelvormige compositie"
+        alt: "Schilderij met een paard, hond, uil, nar en vrouwenportret in een cirkelvormige compositie",
+        title: "Zonder titel"
       }
     ],
-    description: "",
+    description: [
+      { title: "Zonder titel", artist: "Marleen Elders", year: "2026", technique: "Olieverf op doek", size: "50 × 50 cm" }
+    ],
     text: []
   },
   {
@@ -240,7 +280,11 @@ const artists = [
         label: "Han van Meegeren"
       }
     ],
-    description: "",
+    description: [
+      { title: "Vrije Kunst logo", artist: "Machiel van Soest", year: "2026", technique: "Viltstift op papier", size: "33 × 33 cm" },
+      { title: "Neuropa", artist: "Machiel van Soest", year: "2026", technique: "Olieverf op doek", size: "100 × 100 cm" },
+      { title: "Han van Meegeren", artist: "Machiel van Soest", year: "2026", technique: "Aquarelinkt op aquarelpapier", size: "42 × 59,4 cm" }
+    ],
     text: []
   }
 ];
@@ -278,6 +322,35 @@ function appendParagraphs(container, paragraphs) {
     const p = document.createElement("p");
     p.textContent = paragraph;
     container.append(p);
+  });
+}
+
+function renderWorkDetails(container, works) {
+  container.replaceChildren();
+  const items = Array.isArray(works) ? works : [];
+  container.classList.toggle("has-work-details", items.length > 0);
+
+  items.forEach((work) => {
+    const article = document.createElement("article");
+    article.className = "work-details";
+
+    const details = document.createElement("dl");
+    [
+      ["Titel", work.title],
+      ["Kunstenaar", work.artist],
+      ["Jaar", work.year],
+      ["Techniek", work.technique],
+      ["Formaat", work.size]
+    ].forEach(([label, value]) => {
+      const term = document.createElement("dt");
+      term.textContent = label;
+      const description = document.createElement("dd");
+      description.textContent = value;
+      details.append(term, description);
+    });
+
+    article.append(details);
+    container.append(article);
   });
 }
 
@@ -329,7 +402,7 @@ function openArtist(artistId, updateHash = true) {
   dialogIndex.textContent = `Deelnemer ${String(artistIndex + 1).padStart(2, "0")} / ${String(artists.length).padStart(2, "0")}`;
   dialogWork.dataset.artist = artist.id;
   renderWorks(artist.works);
-  appendParagraphs(dialogDescription, artist.description);
+  renderWorkDetails(dialogDescription, artist.description);
   appendParagraphs(dialogText, artist.text);
 
   if (!dialog.open) dialog.showModal();
