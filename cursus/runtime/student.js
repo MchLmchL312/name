@@ -2,6 +2,7 @@ const DB_NAME = 'machiel-les-toegang';
 const STORE = 'sleutels';
 const KEY_NAME = 'seizoen';
 const COURSE_BASE = '/cursus';
+const YOUTUBE_EMBED_LABEL = '__youtube_embed_v1__';
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
@@ -90,6 +91,31 @@ function safeUrl(value) {
   }
 }
 
+function youtubeVideoId(value) {
+  if (typeof value !== 'string') return '';
+  const trimmed = value.trim();
+  if (/^[A-Za-z0-9_-]{11}$/.test(trimmed)) return trimmed;
+  try {
+    const url = new URL(trimmed);
+    const host = url.hostname.toLowerCase().replace(/^www\./, '');
+    const parts = url.pathname.split('/').filter(Boolean);
+    let id = '';
+    if (host === 'youtu.be') id = parts[0] || '';
+    if (['youtube.com', 'm.youtube.com', 'music.youtube.com', 'youtube-nocookie.com'].includes(host)) {
+      if (url.pathname === '/watch') id = url.searchParams.get('v') || '';
+      if (['embed', 'shorts', 'live'].includes(parts[0])) id = parts[1] || '';
+    }
+    return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : '';
+  } catch {
+    return '';
+  }
+}
+
+function youtubeEmbedUrl(value) {
+  const id = youtubeVideoId(value);
+  return id ? `https://www.youtube-nocookie.com/embed/${id}` : '';
+}
+
 function safeRichText(html) {
   const allowed = new Set(['P', 'BR', 'STRONG', 'EM', 'U', 'S', 'H2', 'H3', 'UL', 'OL', 'LI', 'BLOCKQUOTE', 'A']);
   const parsed = new DOMParser().parseFromString(html, 'text/html');
@@ -152,7 +178,28 @@ function renderBlock(block) {
     });
     wrapper.append(gallery);
   }
-  if (block.type === 'button' || block.type === 'externalLink') {
+  if (block.type === 'externalLink' && block.label === YOUTUBE_EMBED_LABEL) {
+    const embedUrl = youtubeEmbedUrl(block.url);
+    if (embedUrl) {
+      const embed = document.createElement('div');
+      embed.className = 'youtube-embed';
+      const frame = document.createElement('iframe');
+      frame.src = embedUrl;
+      frame.title = 'YouTube-video';
+      frame.loading = 'lazy';
+      frame.referrerPolicy = 'strict-origin-when-cross-origin';
+      frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      frame.allowFullscreen = true;
+      embed.append(frame);
+      wrapper.append(embed);
+    } else {
+      const warning = document.createElement('p');
+      warning.className = 'youtube-warning';
+      warning.textContent = 'Plak een geldige YouTube-link in het videoblok.';
+      wrapper.append(warning);
+    }
+  }
+  if (block.type === 'button' || (block.type === 'externalLink' && block.label !== YOUTUBE_EMBED_LABEL)) {
     const link = document.createElement('a');
     link.className = block.type === 'button' ? 'published-button' : 'published-link';
     link.href = safeUrl(block.href || block.url);
