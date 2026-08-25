@@ -153,6 +153,45 @@
         min-width: 0;
       }
 
+      .choice.has-image {
+        position: relative;
+        isolation: isolate;
+        color: #fff;
+        background: #292421;
+      }
+
+      .choice-image {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .choice.has-image::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: linear-gradient(
+          180deg,
+          rgba(10, 10, 10, 0.2) 0%,
+          rgba(10, 10, 10, 0.55) 56%,
+          rgba(10, 10, 10, 0.82) 100%
+        );
+      }
+
+      .choice.has-image > span {
+        position: relative;
+        z-index: 2;
+      }
+
+      .choice.courses .choice-image {
+        object-position: center 38%;
+      }
+
       .choice:hover,
       .choice:focus-visible {
         transform: translateY(-3px);
@@ -191,6 +230,15 @@
         max-width: 24rem;
         color: var(--muted);
         font-size: 1rem;
+      }
+
+      .choice.has-image .label,
+      .choice.has-image p:not(.label) {
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .choice.has-image h2 {
+        text-shadow: 0 2px 18px rgba(0, 0, 0, 0.34);
       }
 
       .current {
@@ -443,7 +491,8 @@
         </div>
 
         <div class="choices">
-          <a class="choice work" href="boards/">
+          <a class="choice work has-image" href="boards/">
+            <img class="choice-image" src="PTP/5/image_1.jpg" alt="" aria-hidden="true" decoding="async">
             <span>
               <p class="label">Werk</p>
               <h2>Boards</h2>
@@ -452,7 +501,8 @@
             <span class="arrow" aria-hidden="true">&rarr;</span>
           </a>
 
-          <a class="choice courses" href="kunstlessen/" target="_blank" rel="noopener noreferrer">
+          <a class="choice courses has-image" href="kunstlessen/" target="_blank" rel="noopener noreferrer">
+            <img class="choice-image" src="kunstlessen/Vrij_schilderen_Machiel_van_Soest%20%20(1).JPG" alt="" aria-hidden="true" loading="lazy" decoding="async">
             <span>
               <p class="label">Cursussen</p>
               <h2>Schilderen</h2>
