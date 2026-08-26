@@ -579,22 +579,19 @@ dd {
 .exhibition-card .ext-link {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-top: 6px;
-  color: var(--blue);
-  font-size: 0.78rem;
-  font-weight: 700;
+  gap: 4px;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .exhibition-card .ext-link svg {
   flex: none;
-  width: 12px;
-  height: 12px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  width: 10px;
+  height: 10px;
 }
 
 .exhibition-card:hover .ext-link {
