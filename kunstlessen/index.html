@@ -77,15 +77,24 @@
     <a class="skip-link" href="#main">Naar inhoud</a>
 
     <header class="site-header" aria-label="Hoofdnavigatie">
-      <a class="brand" href="#top" aria-label="Schilderlessen Machiel van Soest">
-        <span>Machiel van Soest</span>
-        <small>Schilderlessen 2026 - 2027</small>
-      </a>
-      <nav class="nav-links" aria-label="Pagina">
+      <div class="header-bar">
+        <a class="brand" href="#top" aria-label="Schilderlessen Machiel van Soest">
+          <span>Machiel van Soest</span>
+          <small>Schilderlessen 2026 - 2027</small>
+        </a>
+        <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Menu openen">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <nav class="nav-links" id="navLinks" aria-label="Pagina">
         <a href="#cursussen">Cursussen</a>
         <a href="#workshops">Workshops</a>
         <a href="#online">Online</a>
-        <a href="#tentoonstellingen">Cursisten</a>
+        <a href="#exposities">Exposities</a>
         <a href="#docent">Docent</a>
         <a href="#contact">Contact</a>
       </nav>
@@ -98,21 +107,20 @@
         <p class="eyebrow">Schilderen, tekenen, kijken en ontdekken</p>
         <h1 id="hero-title">Ontwikkel je eigen beeldtaal</h1>
         <p class="hero-copy">
-          Lessen voor beginners en gevorderden die meer willen dan een opdracht uitvoeren:
-          leer kijken, krijg grip op techniek en vind vrijheid in je eigen werk.
+          Voor beginners en gevorderden die verder willen dan het uitvoeren van een opdracht:
+          leer scherper kijken, krijg grip op techniek en vind je eigen vrijheid als maker.
         </p>
         <div class="hero-actions" aria-label="Belangrijkste acties">
           <a class="button primary" href="#cursussen">Bekijk cursussen</a>
-          <a class="button secondary" href="mailto:machielvansoest@outlook.com?subject=Proefles%20schilderen&body=Hallo%20Machiel%2C%0A%0AIk%20wil%20graag%20informatie%20over%20een%20proefles.">Vraag proefles aan</a>
-          <a class="button ghost" href="mailto:machielvansoest@outlook.com?subject=Workshops%20schilderen&body=Hallo%20Machiel%2C%0A%0AIk%20wil%20graag%20informatie%20over%20de%20workshops.">Mail over workshops</a>
+          <a class="button secondary" href="mailto:machielvansoest@outlook.com?subject=Proefles%20schilderen&body=Hallo%20Machiel%2C%0A%0AIk%20wil%20graag%20informatie%20over%20een%20proefles.">Vraag een proefles aan</a>
         </div>
       </div>
     </section>
 
     <aside class="trust-strip" aria-label="Korte kenmerken">
-      <p><strong>Voor elk niveau</strong> beginners en gevorderden</p>
-      <p><strong>Persoonlijke begeleiding</strong> techniek, beeldtaal en experiment</p>
-      <p><strong>Meer dan les</strong> voorbeeldlessen, excursies en tentoonstellingen</p>
+      <p><strong>Voor elk niveau</strong> beginners en gevorderden werken naast elkaar</p>
+      <p><strong>Persoonlijke begeleiding</strong> aandacht voor techniek, beeldtaal en experiment</p>
+      <p><strong>Buiten het atelier</strong> voorbeeldlessen, excursies en exposities</p>
     </aside>
 
     <main id="main">
@@ -121,8 +129,8 @@
           <p class="eyebrow">Kies je route</p>
           <h2 id="route-title">Welke les past bij jou?</h2>
           <p>
-            Je hoeft nog niet precies te weten wat je wilt maken. Kies de ingang die het dichtst
-            bij je vraag ligt; de lessen bewegen mee met je niveau en ontwikkeling.
+            Weet je nog niet precies wat je wilt maken? Kies de ingang die het dichtst bij je vraag
+            ligt — de lessen bewegen mee met je niveau en ontwikkeling.
           </p>
         </div>
         <div class="route-grid" aria-label="Keuzehulp">
@@ -154,7 +162,7 @@
           <p class="eyebrow">Cursussen</p>
           <h2 id="courses-title">Schilderlessen met ruimte voor je eigen handschrift</h2>
           <p>
-            De actuele data, prijzen en betaling lopen via de officiele cursuspagina's.
+            De actuele data, prijzen en betaling lopen via de officiële cursuspagina's.
             Hier vind je de kern van elke cursus en de juiste aanmeldroute.
           </p>
         </div>
@@ -278,9 +286,9 @@
           <p class="eyebrow">Workshops</p>
           <h2 id="workshop-title">Workshops op aanvraag</h2>
           <p>
-            Verschillende workshops zijn mogelijk, van modeltekenen en lezingen kunstgeschiedenis
-            tot een thema op verzoek. In overleg kan een workshop worden aangepast aan een groep,
-            gelegenheid of specifieke vraag.
+            Van modeltekenen tot een lezing kunstgeschiedenis: verschillende workshops zijn
+            mogelijk, ook op een thema naar keuze. In overleg pas ik een workshop aan op de
+            groep, de gelegenheid of een specifieke vraag.
           </p>
         </div>
         <div class="workshop-panel">
@@ -309,8 +317,8 @@
           <p class="eyebrow">Online lessen</p>
           <h2 id="online-title">Leren vanuit je eigen atelier</h2>
           <p>
-            De online lessen zijn bedoeld voor cursisten die zelfstandig willen werken met
-            opdrachten, instructiefilms en eventueel persoonlijke feedback.
+            De online lessen zijn bedoeld voor wie zelfstandig wil werken met opdrachten,
+            instructiefilms en eventueel persoonlijke feedback.
           </p>
         </div>
         <div class="online-grid">
@@ -333,13 +341,13 @@
         </div>
       </section>
 
-      <section class="section exhibitions-section" id="tentoonstellingen" aria-labelledby="exhibitions-title">
+      <section class="section exhibitions-section" id="exposities" aria-labelledby="exhibitions-title">
         <div class="section-heading">
           <p class="eyebrow">Cursisten exposeren ook</p>
           <h2 id="exhibitions-title">Wat uit de lessen kan groeien</h2>
           <p>
-            De lessen blijven niet altijd binnen het atelier. Cursisten tonen werk in presentaties,
-            tentoonstellingen en eigen projecten, van OPEN Delft tot kleine galeries.
+            De lessen blijven niet altijd binnen het atelier. Cursisten tonen hun werk in
+            presentaties, tentoonstellingen en eigen projecten, van OPEN Delft tot kleine galeries.
           </p>
         </div>
         <div class="exhibition-grid">
