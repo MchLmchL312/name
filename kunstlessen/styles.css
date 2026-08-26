@@ -569,11 +569,36 @@ dd {
   background: #120f0d;
 }
 
-.exhibition-card span {
+.exhibition-card .card-label {
   display: block;
   min-height: 68px;
   padding: 16px;
   font-weight: 800;
+}
+
+.exhibition-card .ext-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  color: var(--blue);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.exhibition-card .ext-link svg {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.exhibition-card:hover .ext-link {
+  color: var(--clay);
 }
 
 .about-layout {
