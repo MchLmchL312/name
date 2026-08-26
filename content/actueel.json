@@ -3,33 +3,11 @@
     "id": "item-1783147706692",
     "label": "Updates",
     "title": "Vrije Kunst",
-    "href": "https://www.machielvansoest.nl/Vrije_Kunst/",
+    "href": "",
     "text": "Vrije Kunst Logo",
     "image": "uploads/actueel/nieuwe-update-1783147789791-vrije-kunst-logo.png",
     "visible": true,
     "embed": false,
     "order": 1
-  },
-  {
-    "id": "vrije-kunst",
-    "label": "Updates",
-    "title": "Vrije Kunst",
-    "href": "https://www.instagram.com/p/DaNBNYYtO-F/",
-    "text": "@ Weimarstraat 300 Den Haag",
-    "image": "",
-    "visible": true,
-    "embed": true,
-    "order": 2
-  },
-  {
-    "id": "item-1783353662780",
-    "label": "Updates",
-    "title": "Rijswijk",
-    "href": "",
-    "text": "",
-    "image": "uploads/actueel/nieuwe-update-1783353759990-board46.jpg",
-    "visible": true,
-    "embed": false,
-    "order": 3
   }
 ]
