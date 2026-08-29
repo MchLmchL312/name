@@ -424,6 +424,11 @@
         background: var(--violet);
       }
 
+      .choice.shop .arrow {
+        color: #35283a;
+        background: #d2a08c;
+      }
+
       .choice.work:hover .arrow,
       .choice.work:focus-visible .arrow {
         background: var(--accent-dark);
@@ -447,6 +452,11 @@
       .choice.free-art:hover .arrow,
       .choice.free-art:focus-visible .arrow {
         background: var(--violet-dark);
+      }
+
+      .choice.shop:hover .arrow,
+      .choice.shop:focus-visible .arrow {
+        background: #c28c77;
       }
 
       @media (max-width: 720px) {
@@ -516,6 +526,14 @@
               <p class="label">Alleen cursisten</p>
               <h2>Cursisten login</h2>
               <p>Open de beveiligde cursusomgeving met het seizoenswachtwoord.</p>
+            </span>
+            <span class="arrow" aria-hidden="true">&rarr;</span>
+          </a>
+
+          <a class="choice shop has-image" href="sale/" aria-label="Ga naar de webshop">
+            <img class="choice-image" src="sale/winkelwagen.jpg?v=20260829" alt="" aria-hidden="true" loading="lazy" decoding="async">
+            <span>
+              <h2>Webshop</h2>
             </span>
             <span class="arrow" aria-hidden="true">&rarr;</span>
           </a>
