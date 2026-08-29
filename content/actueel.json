@@ -9,16 +9,5 @@
     "visible": true,
     "embed": false,
     "order": 1
-  },
-  {
-    "id": "item-1787995043735",
-    "label": "Updates",
-    "title": "webshop",
-    "href": "https://www.machielvansoest.nl/sale",
-    "text": "",
-    "image": "https://www.machielvansoest.nl/sale/winkelwagen.jpg",
-    "visible": true,
-    "embed": false,
-    "order": 2
   }
 ]
