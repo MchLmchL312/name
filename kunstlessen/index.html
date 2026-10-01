@@ -13,12 +13,14 @@
     <meta property="og:title" content="Schilderlessen 2026 - 2027 | Machiel van Soest">
     <meta property="og:description" content="Schilderlessen, workshops en online lessen voor beginners en gevorderden in Delft, Den Haag en omgeving.">
     <meta property="og:url" content="https://www.machielvansoest.nl/kunstlessen/">
-    <meta property="og:image" content="https://www.machielvansoest.nl/kunstlessen/Vrij_schilderen_Machiel_van_Soest%20%20(1).JPG">
+    <meta property="og:image" content="https://www.machielvansoest.nl/kunstlessen/img/og-schilderlessen.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
     <title>Schilderlessen 2026 - 2027 | Machiel van Soest</title>
     <link rel="icon" href="../favicon.ico?v=3" sizes="any">
     <link rel="icon" href="../favicon_MchL.png?v=3" type="image/png">
-    <link rel="stylesheet" href="styles.css?v=2">
+    <link rel="stylesheet" href="styles.css?v=3">
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -91,19 +93,16 @@
         </button>
       </div>
       <nav class="nav-links" id="navLinks" aria-label="Pagina">
-        <a href="#cursussen">Cursussen</a>
-        <a href="#workshops">Workshops</a>
-        <a href="#online">Online</a>
+        <a href="#cursussen">Aanbod</a>
         <a href="#exposities">Exposities</a>
         <a href="#docent">Docent</a>
         <a href="#contact">Contact</a>
+        <a class="nav-cta" href="mailto:machielvansoest@outlook.com?subject=Proefles%20schilderen&body=Hallo%20Machiel%2C%0A%0AIk%20wil%20graag%20informatie%20over%20een%20proefles.">Proefles aanvragen</a>
       </nav>
     </header>
 
-    <section class="hero" id="top" aria-labelledby="hero-title">
-      <img class="hero-image" src="Vrij_schilderen_Machiel_van_Soest%20%20(1).JPG" alt="Cursisten schilderen in het atelier">
-      <div class="hero-overlay"></div>
-      <div class="hero-content">
+    <section class="hero-tiles" id="top" aria-labelledby="hero-title">
+      <div class="hero-main">
         <p class="eyebrow">Schilderen, tekenen, kijken en ontdekken</p>
         <h1 id="hero-title">Ontwikkel je eigen beeldtaal</h1>
         <p class="hero-copy">
@@ -111,237 +110,203 @@
           leer scherper kijken, krijg grip op techniek en vind je eigen vrijheid als maker.
         </p>
         <div class="hero-actions" aria-label="Belangrijkste acties">
-          <a class="button primary" href="#cursussen">Bekijk cursussen</a>
-          <a class="button secondary" href="mailto:machielvansoest@outlook.com?subject=Proefles%20schilderen&body=Hallo%20Machiel%2C%0A%0AIk%20wil%20graag%20informatie%20over%20een%20proefles.">Vraag een proefles aan</a>
+          <a class="button primary" href="#cursussen">Bekijk het aanbod</a>
+          <a class="button outline-light" href="mailto:machielvansoest@outlook.com?subject=Proefles%20schilderen&body=Hallo%20Machiel%2C%0A%0AIk%20wil%20graag%20informatie%20over%20een%20proefles.">Vraag een proefles aan</a>
         </div>
+        <ul class="hero-points" aria-label="Kenmerken">
+          <li>Voor elk niveau</li>
+          <li>Persoonlijke begeleiding</li>
+          <li>Excursies &amp; exposities</li>
+        </ul>
       </div>
+      <img class="hero-photo" src="img/vrij-schilderen-1.webp" alt="Cursisten schilderen in het atelier" fetchpriority="high">
+
+      <h2 class="mini-heading">Lesrooster 2026 – 2027</h2>
+      <a class="day-tile loc-iac" href="#iac">
+        <span class="day" aria-hidden="true">Wo</span>
+        <span class="day-info">
+          <small>Woensdagmiddag</small>
+          <strong>Olieverfcursus</strong>
+          <span>IAC Den Haag</span>
+        </span>
+      </a>
+      <a class="day-tile loc-vak" href="#vrij-schilderen">
+        <span class="day" aria-hidden="true">Do</span>
+        <span class="day-info">
+          <small>Donderdagmiddag</small>
+          <strong>Vrij schilderen</strong>
+          <span>De VAK Delft</span>
+        </span>
+      </a>
+      <a class="day-tile loc-vak" href="#vervolg">
+        <span class="day" aria-hidden="true">Do</span>
+        <span class="day-info">
+          <small>Donderdagavond</small>
+          <strong>Tekenen &amp; schilderen vervolg</strong>
+          <span>De VAK Delft</span>
+        </span>
+      </a>
+      <a class="day-tile loc-vak" href="#abstract">
+        <span class="day" aria-hidden="true">Vr</span>
+        <span class="day-info">
+          <small>Vrijdagmiddag</small>
+          <strong>Abstract schilderen</strong>
+          <span>De VAK Delft</span>
+        </span>
+      </a>
     </section>
 
-    <aside class="trust-strip" aria-label="Korte kenmerken">
-      <p><strong>Voor elk niveau</strong> beginners en gevorderden werken naast elkaar</p>
-      <p><strong>Persoonlijke begeleiding</strong> aandacht voor techniek, beeldtaal en experiment</p>
-      <p><strong>Buiten het atelier</strong> voorbeeldlessen, excursies en exposities</p>
-    </aside>
-
     <main id="main">
-      <section class="section intro-section" aria-labelledby="route-title">
+      <section class="section" id="cursussen" aria-labelledby="courses-title">
         <div class="section-heading">
-          <p class="eyebrow">Kies je route</p>
-          <h2 id="route-title">Welke les past bij jou?</h2>
+          <p class="eyebrow">Aanbod</p>
+          <h2 id="courses-title">Cursussen, workshops en online lessen</h2>
           <p>
-            Weet je nog niet precies wat je wilt maken? Kies de ingang die het dichtst bij je vraag
-            ligt — de lessen bewegen mee met je niveau en ontwikkeling.
-          </p>
-        </div>
-        <div class="route-grid" aria-label="Keuzehulp">
-          <a class="route-card" href="#vrij-schilderen">
-            <span>Vrij experimenteren</span>
-            <strong>Vrij schilderen</strong>
-          </a>
-          <a class="route-card" href="#abstract">
-            <span>Leren bouwen met vorm, vlak en kleur</span>
-            <strong>Abstract schilderen</strong>
-          </a>
-          <a class="route-card" href="#vervolg">
-            <span>Verder met eigen werk en thema's</span>
-            <strong>Tekenen &amp; schilderen vervolg</strong>
-          </a>
-          <a class="route-card" href="#iac">
-            <span>Olieverf en klassieke opbouw</span>
-            <strong>Olieverfcursus IAC</strong>
-          </a>
-          <a class="route-card" href="#workshops">
-            <span>Verdieping op aanvraag</span>
-            <strong>Workshops</strong>
-          </a>
-        </div>
-      </section>
-
-      <section class="section courses-section" id="cursussen" aria-labelledby="courses-title">
-        <div class="section-heading">
-          <p class="eyebrow">Cursussen</p>
-          <h2 id="courses-title">Schilderlessen met ruimte voor je eigen handschrift</h2>
-          <p>
-            De actuele data, prijzen en betaling lopen via de officiële cursuspagina's.
-            Hier vind je de kern van elke cursus en de juiste aanmeldroute.
+            De lessen bewegen mee met je niveau en ontwikkeling. Actuele data, prijzen en
+            betaling lopen via de officiële cursuspagina's van De VAK en IAC.
           </p>
         </div>
 
-        <div class="offer-grid">
-          <article class="offer-card" id="vrij-schilderen">
-            <img src="Vrij_schilderen_Machiel_van_Soest%20%20(4).JPG" alt="Atelier met schildersezels en cursisten">
-            <div class="offer-body">
-              <p class="label">De VAK Delft</p>
+        <div class="tile-grid">
+          <article class="tile loc-vak" id="vrij-schilderen">
+            <div class="tile-media">
+              <img src="img/vrij-schilderen-4.webp" alt="Atelier met schildersezels en cursisten" loading="lazy">
+              <span class="badge">De VAK Delft</span>
+            </div>
+            <div class="tile-body">
+              <p class="when">Donderdagmiddag</p>
               <h3>Vrij schilderen</h3>
-              <p>
-                Experimenteer, ontdek je eigen beeldtaal en ontwikkel een persoonlijk handschrift.
-                Abstract, figuratief en realistisch werk komen samen via dezelfde bouwstenen:
-                lijn, vlak, verhouding, licht en kleur.
-              </p>
-              <dl>
-                <div>
-                  <dt>Past bij</dt>
-                  <dd>Beginners en gevorderden die vrijer willen werken</dd>
-                </div>
-                <div>
-                  <dt>Je werkt aan</dt>
-                  <dd>Compositie, kleur, materiaal, eigen keuzes en groepsbespreking</dd>
-                </div>
-                <div>
-                  <dt>Lesmoment</dt>
-                  <dd>Donderdagmiddag</dd>
-                </div>
-              </dl>
-              <a class="text-link" href="https://vak-delft.nl/cursus/kunstcursus/">Naar aanmelding Vrij schilderen</a>
+              <p>Experimenteer, ontdek je eigen beeldtaal en ontwikkel een persoonlijk handschrift.</p>
+              <p class="fit"><strong>Past bij</strong> beginners en gevorderden die vrijer willen werken</p>
+              <details>
+                <summary>Meer over deze cursus</summary>
+                <p>
+                  Abstract, figuratief en realistisch werk komen samen via dezelfde bouwstenen:
+                  lijn, vlak, verhouding, licht en kleur.
+                </p>
+                <p><strong>Je werkt aan</strong> compositie, kleur, materiaal, eigen keuzes en groepsbespreking.</p>
+              </details>
+              <a class="tile-cta" href="https://vak-delft.nl/cursus/kunstcursus/">Aanmelden bij De VAK</a>
             </div>
           </article>
 
-          <article class="offer-card" id="abstract">
-            <img src="abstract-Machiel_van_Soest%20(1).JPG" alt="Cursisten werken aan schilderijen in het atelier">
-            <div class="offer-body">
-              <p class="label">De VAK Delft</p>
+          <article class="tile loc-vak" id="abstract">
+            <div class="tile-media">
+              <img src="img/abstract-schilderen-1.webp" alt="Cursisten werken aan schilderijen in het atelier" loading="lazy">
+              <span class="badge">De VAK Delft</span>
+            </div>
+            <div class="tile-body">
+              <p class="when">Vrijdagmiddag</p>
               <h3>Abstract schilderen</h3>
-              <p>
-                Abstract hoeft niet moeilijk of afstandelijk te zijn. Je leert kijken naar lijn,
-                vlak, compositie, licht en kleur, en gebruikt opdrachten en kunstgeschiedenis om
-                tot eigen abstract werk te komen.
-              </p>
-              <dl>
-                <div>
-                  <dt>Past bij</dt>
-                  <dd>Iedereen die abstract wil leren kijken en maken</dd>
-                </div>
-                <div>
-                  <dt>Je werkt aan</dt>
-                  <dd>Oefeningen, persoonlijke wensen en inspiratie uit kunstgeschiedenis</dd>
-                </div>
-                <div>
-                  <dt>Lesmoment</dt>
-                  <dd>Vrijdagmiddag</dd>
-                </div>
-              </dl>
-              <a class="text-link" href="https://vak-delft.nl/cursus/abstract-schilderen/">Naar aanmelding Abstract schilderen</a>
+              <p>Abstract hoeft niet moeilijk of afstandelijk te zijn: leer kijken naar lijn, vlak, compositie, licht en kleur.</p>
+              <p class="fit"><strong>Past bij</strong> iedereen die abstract wil leren kijken en maken</p>
+              <details>
+                <summary>Meer over deze cursus</summary>
+                <p>
+                  Je gebruikt opdrachten en kunstgeschiedenis om tot eigen abstract werk te komen.
+                </p>
+                <p><strong>Je werkt aan</strong> oefeningen, persoonlijke wensen en inspiratie uit kunstgeschiedenis.</p>
+              </details>
+              <a class="tile-cta" href="https://vak-delft.nl/cursus/abstract-schilderen/">Aanmelden bij De VAK</a>
             </div>
           </article>
 
-          <article class="offer-card" id="vervolg">
-            <img src="Vrij_schilderen_Machiel_van_Soest%20%20(2).jpg" alt="Schilderwerk op een ezel in het atelier">
-            <div class="offer-body">
-              <p class="label">De VAK Delft</p>
+          <article class="tile loc-vak" id="vervolg">
+            <div class="tile-media">
+              <img class="focus-top" src="img/vrij-schilderen-2.webp" alt="Schilderwerk op een ezel in het atelier" loading="lazy">
+              <span class="badge">De VAK Delft</span>
+            </div>
+            <div class="tile-body">
+              <p class="when">Donderdagavond</p>
               <h3>Tekenen &amp; schilderen vervolg</h3>
-              <p>
-                Voor wie verder wil bouwen aan eigen werk. Je verdiept technieken, materialen en
-                ondergronden, met thema's die onverwachte invalshoeken geven op stilleven,
-                landschap en portret.
-              </p>
-              <dl>
-                <div>
-                  <dt>Past bij</dt>
-                  <dd>Cursisten met ervaring die willen doorgroeien</dd>
-                </div>
-                <div>
-                  <dt>Je werkt aan</dt>
-                  <dd>Compositie, vorm, restvorm, kleurschema en contrastwerking</dd>
-                </div>
-                <div>
-                  <dt>Lesmoment</dt>
-                  <dd>Donderdagavond</dd>
-                </div>
-              </dl>
-              <a class="text-link" href="https://vak-delft.nl/cursus/tekenen-schilderen-vervolg/">Naar aanmelding vervolg</a>
+              <p>Voor wie verder wil bouwen aan eigen werk, techniek, materialen en ondergronden.</p>
+              <p class="fit"><strong>Past bij</strong> cursisten met ervaring die willen doorgroeien</p>
+              <details>
+                <summary>Meer over deze cursus</summary>
+                <p>
+                  Thema's geven onverwachte invalshoeken op stilleven, landschap en portret.
+                </p>
+                <p><strong>Je werkt aan</strong> compositie, vorm, restvorm, kleurschema en contrastwerking.</p>
+              </details>
+              <a class="tile-cta" href="https://vak-delft.nl/cursus/tekenen-schilderen-vervolg/">Aanmelden bij De VAK</a>
             </div>
           </article>
 
-          <article class="offer-card" id="iac">
-            <img src="abstract-Machiel_van_Soest%20(3).jpg" alt="Schilderijen en werkplekken in het atelier">
-            <div class="offer-body">
-              <p class="label">IAC Den Haag</p>
-              <h3>Olieverfcursus IAC</h3>
-              <p>
-                Een cursus voor wie zich wil verdiepen in olieverf, opbouw en schildertechniek.
-                De praktische informatie en inschrijving lopen via IAC Den Haag.
+          <article class="tile loc-iac" id="iac">
+            <div class="tile-media">
+              <img src="img/abstract-schilderen-3.webp" alt="Schilderijen en werkplekken in het atelier" loading="lazy">
+              <span class="badge">IAC Den Haag</span>
+            </div>
+            <div class="tile-body">
+              <p class="when">Woensdagmiddag</p>
+              <h3>Olieverfcursus</h3>
+              <p>Verdiep je in olieverf, opbouw en schildertechniek.</p>
+              <p class="fit"><strong>Past bij</strong> makers die met olieverf en schilderkundige opbouw willen werken</p>
+              <details>
+                <summary>Meer over deze cursus</summary>
+                <p>De praktische informatie en inschrijving lopen via IAC Den Haag.</p>
+                <p><strong>Je werkt aan</strong> materiaalbeheersing, toonwaarde, kleur en een stevig schilderproces.</p>
+              </details>
+              <a class="tile-cta" href="https://www.iacdenhaag.nl/">Naar IAC Den Haag</a>
+            </div>
+          </article>
+
+          <article class="tile loc-workshop" id="workshops">
+            <div class="tile-media">
+              <img src="img/workshop-grisaille.webp" alt="Cursisten werken aan portretten in grijstinten" loading="lazy">
+              <span class="badge">Op aanvraag</span>
+            </div>
+            <div class="tile-body">
+              <p class="when">In overleg</p>
+              <h3>Workshops &amp; masterclasses</h3>
+              <p>Van modeltekenen tot een lezing kunstgeschiedenis, ook op een thema naar keuze.</p>
+              <p class="fit"><strong>Gegeven</strong> Masterclass Grisaille, Picasso, erotiek in de kunst</p>
+              <details>
+                <summary>Meer over workshops</summary>
+                <p>
+                  Bij de Masterclass Grisaille behandelen we de techniek van de oude meesters:
+                  eerst tekening, dan licht en donker, daarna kleur. Andere workshops kunnen
+                  vertrekken vanuit een kunstenaar, een periode, een onderwerp of een praktische
+                  teken- of schildervraag.
+                </p>
+                <p>
+                  In overleg pas ik een workshop aan op de groep, de gelegenheid of een
+                  specifieke vraag.
+                </p>
+              </details>
+              <a class="tile-cta" href="mailto:machielvansoest@outlook.com?subject=Workshops%20en%20masterclasses&body=Hallo%20Machiel%2C%0A%0AIk%20wil%20graag%20informatie%20over%20workshops%20of%20een%20masterclass.">Mail over workshops</a>
+            </div>
+          </article>
+
+          <article class="tile loc-online" id="online">
+            <div class="tile-media tile-graphic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="64" height="64"><circle cx="12" cy="12" r="10.5"></circle><path d="M10 8.2v7.6l6-3.8z"></path></svg>
+              <span class="badge">Online</span>
+            </div>
+            <div class="tile-body">
+              <p class="when">In je eigen tempo</p>
+              <h3>Online lessen</h3>
+              <p>Opdrachten en instructiefilms om vanuit je eigen atelier te werken, eventueel met persoonlijke feedback.</p>
+              <p class="fit">
+                <strong>Voorbeeldlessen</strong>
+                <a href="https://drive.google.com/file/d/18TMNMjhpFv6RtfUMvyoxgjWqVgv1yZPr/view" aria-label="Bekijk voorbeeldles 1">les 1</a> ·
+                <a href="https://drive.google.com/file/d/1N7gdP-vX1LnVidZN0tMLm1gdTsm6vhn0/view" aria-label="Bekijk voorbeeldles 2">les 2</a>
               </p>
-              <dl>
-                <div>
-                  <dt>Past bij</dt>
-                  <dd>Makers die met olieverf en schilderkundige opbouw willen werken</dd>
-                </div>
-                <div>
-                  <dt>Je werkt aan</dt>
-                  <dd>Materiaalbeheersing, toonwaarde, kleur en een stevig schilderproces</dd>
-                </div>
-                <div>
-                  <dt>Lesmoment</dt>
-                  <dd>Woensdagmiddag</dd>
-                </div>
-              </dl>
-              <a class="text-link" href="https://www.iacdenhaag.nl/">Bekijk IAC Den Haag</a>
+              <details>
+                <summary>Meer over online lessen</summary>
+                <p>
+                  Bekijk instructies wanneer het jou uitkomt, werk in je eigen tempo en gebruik de
+                  opdrachten als houvast voor onderzoek, techniek en eigen beeldontwikkeling.
+                </p>
+                <p><a href="mailto:machielvansoest@outlook.com?subject=Online%20schilderlessen&body=Hallo%20Machiel%2C%0A%0AIk%20wil%20graag%20informatie%20over%20online%20schilderlessen.">Mail over online lessen</a></p>
+              </details>
+              <a class="tile-cta" href="painting_course_website.html">Bekijk online pilot</a>
             </div>
           </article>
         </div>
       </section>
 
-      <section class="section workshop-section" id="workshops" aria-labelledby="workshop-title">
-        <div class="section-heading narrow">
-          <p class="eyebrow">Workshops</p>
-          <h2 id="workshop-title">Workshops op aanvraag</h2>
-          <p>
-            Van modeltekenen tot een lezing kunstgeschiedenis: verschillende workshops zijn
-            mogelijk, ook op een thema naar keuze. In overleg pas ik een workshop aan op de
-            groep, de gelegenheid of een specifieke vraag.
-          </p>
-        </div>
-        <div class="workshop-panel">
-          <img src="extra%20foto's/Machiel_van_Soest%20(4).JPG" alt="Cursisten werken aan portretten in grijstinten">
-          <div>
-            <p class="label">Gegeven workshops en masterclasses</p>
-            <h3>Masterclass Grisaille, Picasso, erotiek in de kunst</h3>
-            <p>
-              Bij de Masterclass Grisaille behandelen we de techniek van de oude meesters:
-              eerst tekening, dan licht en donker, daarna kleur. Andere workshops kunnen
-              vertrekken vanuit een kunstenaar, een periode, een onderwerp of een praktische
-              teken- of schildervraag.
-            </p>
-            <ul class="check-list">
-              <li>Modeltekenen</li>
-              <li>Lezing kunstgeschiedenis</li>
-              <li>Thema en gelegenheid op aanvraag</li>
-            </ul>
-            <a class="button primary" href="mailto:machielvansoest@outlook.com?subject=Workshops%20en%20masterclasses&body=Hallo%20Machiel%2C%0A%0AIk%20wil%20graag%20informatie%20over%20workshops%20of%20een%20masterclass.">Mail over workshops</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="section online-section" id="online" aria-labelledby="online-title">
-        <div class="section-heading">
-          <p class="eyebrow">Online lessen</p>
-          <h2 id="online-title">Leren vanuit je eigen atelier</h2>
-          <p>
-            De online lessen zijn bedoeld voor wie zelfstandig wil werken met opdrachten,
-            instructiefilms en eventueel persoonlijke feedback.
-          </p>
-        </div>
-        <div class="online-grid">
-          <div class="online-copy">
-            <h3>Flexibel, maar wel met structuur</h3>
-            <p>
-              Bekijk instructies wanneer het jou uitkomt, werk in je eigen tempo en gebruik de
-              opdrachten als houvast voor onderzoek, techniek en eigen beeldontwikkeling.
-            </p>
-            <div class="button-row">
-              <a class="button secondary-dark" href="painting_course_website.html">Bekijk online pilot</a>
-              <a class="button outline" href="mailto:machielvansoest@outlook.com?subject=Online%20schilderlessen&body=Hallo%20Machiel%2C%0A%0AIk%20wil%20graag%20informatie%20over%20online%20schilderlessen.">Mail over online lessen</a>
-            </div>
-          </div>
-          <div class="lesson-links" aria-label="Voorbeeldlessen">
-            <h3>Voorbeeldlessen</h3>
-            <a href="https://drive.google.com/file/d/18TMNMjhpFv6RtfUMvyoxgjWqVgv1yZPr/view">Bekijk voorbeeldles 1</a>
-            <a href="https://drive.google.com/file/d/1N7gdP-vX1LnVidZN0tMLm1gdTsm6vhn0/view">Bekijk voorbeeldles 2</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="section exhibitions-section" id="exposities" aria-labelledby="exhibitions-title">
+      <section class="band" id="exposities" aria-labelledby="exhibitions-title">
         <div class="section-heading">
           <p class="eyebrow">Cursisten exposeren ook</p>
           <h2 id="exhibitions-title">Wat uit de lessen kan groeien</h2>
@@ -350,75 +315,53 @@
             presentaties, tentoonstellingen en eigen projecten, van OPEN Delft tot kleine galeries.
           </p>
         </div>
-        <div class="exhibition-grid">
-          <a class="exhibition-card" href="https://spectacular-heliotrope-cf53a3.netlify.app/" target="_blank" rel="noopener">
-            <img src="vrije_kunst_poster.jpg" alt="Poster Vrije Kunst Delft">
-            <span class="card-label">
-              Vrije Kunst
-              <span class="ext-link">
-                <svg aria-hidden="true" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"></path></svg>
-                Bekijk website
-              </span>
-            </span>
+        <div class="gallery">
+          <a class="gallery-tile" href="https://spectacular-heliotrope-cf53a3.netlify.app/" target="_blank" rel="noopener">
+            <img src="vrije_kunst_poster.jpg" alt="Poster Vrije Kunst Delft" loading="lazy">
+            <span class="gallery-label">Vrije Kunst <small>Website ↗</small></span>
           </a>
-          <a class="exhibition-card poster-card" href="vrij-schilderen-expositie-vak-delft.webp">
+          <a class="gallery-tile" href="vrij-schilderen-expositie-vak-delft.webp">
             <img src="vrij-schilderen-expositie-vak-delft.webp" alt="Poster expositie Vrij schilderen bij De VAK Delft" loading="lazy">
-            <span class="card-label">Vrij schilderen - De VAK Delft</span>
+            <span class="gallery-label">Vrij schilderen <small>De VAK Delft</small></span>
           </a>
-          <a class="exhibition-card poster-card" href="https://www.machielvansoest.nl/Vrije_Kunst/" target="_blank" rel="noopener">
+          <a class="gallery-tile" href="https://www.machielvansoest.nl/Vrije_Kunst/" target="_blank" rel="noopener">
             <img src="vrije-kunst-weimars-wijkpaleis.webp" alt="Poster Vrije Kunst bij Weimar's Wijkpaleis" loading="lazy">
-            <span class="card-label">
-              Vrije Kunst - Wijkpaleis
-              <span class="ext-link">
-                <svg aria-hidden="true" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"></path></svg>
-                Bekijk website
-              </span>
-            </span>
+            <span class="gallery-label">Vrije Kunst – Wijkpaleis <small>Website ↗</small></span>
           </a>
-          <a class="exhibition-card" href="BIC%20OPEN.pdf">
-            <img src="abstract-Machiel_van_Soest%20(2).jpg" alt="Abstract schilderwerk in blauw en kleur">
-            <span class="card-label">BIC OPEN</span>
+          <a class="gallery-tile" href="BIC%20OPEN.pdf">
+            <img src="img/abstract-schilderen-2.webp" alt="Abstract schilderwerk in blauw en kleur" loading="lazy">
+            <span class="gallery-label">BIC OPEN <small>PDF</small></span>
           </a>
-          <a class="exhibition-card" href="UItnodiging-Galerie_Mieneke_Meij.jpg">
-            <img src="UItnodiging-Galerie_Mieneke_Meij.jpg" alt="Uitnodiging Galerie Mieneke Meij">
-            <span class="card-label">Hobby-Galerie-Meij</span>
+          <a class="gallery-tile" href="img/uitnodiging-galerie-mieneke-meij.webp">
+            <img src="img/uitnodiging-galerie-mieneke-meij.webp" alt="Uitnodiging Galerie Mieneke Meij" loading="lazy">
+            <span class="gallery-label">Hobby-Galerie-Meij <small>Uitnodiging</small></span>
           </a>
-          <a class="exhibition-card" href="https://www.machielvansoest.nl/MG/" target="_blank" rel="noopener">
-            <img src="installatieMG.jpg" alt="Installatie met werk van Moniek">
-            <span class="card-label">
-              Moniek
-              <span class="ext-link">
-                <svg aria-hidden="true" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"></path></svg>
-                Bekijk website
-              </span>
-            </span>
+          <a class="gallery-tile" href="https://www.machielvansoest.nl/MG/" target="_blank" rel="noopener">
+            <img src="img/installatie-mg.webp" alt="Installatie met werk van Moniek" loading="lazy">
+            <span class="gallery-label">Moniek <small>Website ↗</small></span>
           </a>
-          <a class="exhibition-card" href="Uitnodiging-kleurrijk-werk.JPG">
-            <img src="Uitnodiging-kleurrijk-werk.JPG" alt="Uitnodiging Kleurrijk Werk">
-            <span class="card-label">Kleurrijk Werk</span>
+          <a class="gallery-tile" href="img/uitnodiging-kleurrijk-werk.webp">
+            <img src="img/uitnodiging-kleurrijk-werk.webp" alt="Uitnodiging Kleurrijk Werk" loading="lazy">
+            <span class="gallery-label">Kleurrijk Werk <small>Uitnodiging</small></span>
           </a>
-          <a class="exhibition-card" href="Charlotte.JPG">
-            <img src="Charlotte.JPG" alt="Tentoonstelling met werk van Charlotte">
-            <span class="card-label">Charlotte</span>
+          <a class="gallery-tile" href="img/expositie-charlotte.webp">
+            <img src="img/expositie-charlotte.webp" alt="Tentoonstelling met werk van Charlotte" loading="lazy">
+            <span class="gallery-label">Charlotte <small>Tentoonstelling</small></span>
           </a>
         </div>
       </section>
 
-      <section class="section about-section" id="docent" aria-labelledby="about-title">
-        <div class="about-layout">
-          <img src="Vrij_schilderen_Machiel_van_Soest%20%20(3).JPG" alt="Atelieropstelling met schilderijen en ezels">
-          <div>
+      <section class="section" id="docent" aria-labelledby="about-title">
+        <div class="about-tiles">
+          <img class="about-photo" src="img/vrij-schilderen-3.webp" alt="Atelieropstelling met schilderijen en ezels" loading="lazy">
+          <div class="about-text">
             <p class="eyebrow">Over de docent</p>
             <h2 id="about-title">Machiel van Soest</h2>
             <p>
-              Machiel van Soest is beeldend kunstenaar, opgeleid aan de Koninklijke Academie
-              van Beeldende Kunsten in Den Haag en de Rijksakademie in Amsterdam. In 1995 won
-              hij de Koninklijke Prijs voor Schilderkunst.
-            </p>
-            <p>
-              Kunst maken, professioneel of niet, ziet hij als een fundamentele menselijke
-              uiting. Het vormt de drijfveer achter zijn werk als docent: door te maken kun
-              je je vrij voelen, de wereld onderzoeken en werkelijk leren kijken.
+              Machiel van Soest is beeldend kunstenaar. Kunst maken, professioneel of niet, ziet
+              hij als een fundamentele menselijke uiting. Het vormt de drijfveer achter zijn werk
+              als docent: door te maken kun je je vrij voelen, de wereld onderzoeken en werkelijk
+              leren kijken.
             </p>
             <p>
               Als kunstenaar en docent zoekt hij de verbinding met de praktijk van amateurs.
@@ -427,66 +370,68 @@
               een bijzondere vrijheid: kunst als persoonlijke vorm van mens-zijn.
             </p>
           </div>
+          <ul class="fact-tiles" aria-label="Opleiding en prijzen">
+            <li><small>Opleiding</small>Koninklijke Academie van Beeldende Kunsten, Den Haag</li>
+            <li><small>Opleiding</small>Rijksakademie, Amsterdam</li>
+            <li><small>1995</small>Koninklijke Prijs voor Schilderkunst</li>
+          </ul>
         </div>
-      </section>
 
-      <section class="testimonials-section" aria-labelledby="testimonials-title">
-        <div class="section-heading">
-          <p class="eyebrow">Reacties van deelnemers</p>
-          <h2 id="testimonials-title">Ervaring in de lessen</h2>
-        </div>
-        <div class="testimonial-grid">
-          <figure>
-            <blockquote>Ik voelde me vanaf het begin veilig en op mijn gemak in de groep. Er was ruimte om jezelf te zijn, vragen te stellen en je vrij te ontwikkelen.</blockquote>
-            <figcaption>Deelnemer</figcaption>
-          </figure>
-          <figure>
-            <blockquote>De lessen brachten me niet alleen technisch verder, maar hielpen me ook dichter bij mijn eigen beeldtaal en vrijheid te komen. Dank voor de ruimte, het kijken en het geloof in ontwikkeling.</blockquote>
-            <figcaption>Suzanne</figcaption>
-          </figure>
-          <figure>
-            <blockquote>Veel geleerd van de oude meesters. Ik vond het een erg leuke cursus en vooral inspirerend om op een andere manier te leren schilderen.</blockquote>
-            <figcaption>Thomien</figcaption>
-          </figure>
-          <figure>
-            <blockquote>Dank voor de inspirerende cursus. Ik heb heel veel geleerd, vooral hoe je naar een schilderij kijkt. Leerzaam en gezellig.</blockquote>
-            <figcaption>Paul</figcaption>
-          </figure>
-          <figure>
-            <blockquote>Ook van mij veel dank. Het was echt heel inspirerend om deze techniek te leren!</blockquote>
-            <figcaption>Sytske</figcaption>
-          </figure>
-        </div>
-      </section>
-
-      <section class="partners-section" aria-labelledby="partners-title">
-        <div class="partners-inner">
-          <p id="partners-title">Teken- en schilderlessen, lezingen &amp; workshops verzorgd voor o.a.:</p>
-          <div class="logo-grid" aria-label="Organisaties en locaties">
-            <img src="logo/De-VAK-logo-kleur-tbv-mails-Klantenservice.png" alt="De VAK">
-            <img src="logo/IAC.png" alt="IAC Den Haag">
-            <img src="logo/agora.jpg" alt="Wijkvereniging Voorburg West Agora">
-            <img src="logo/kabk-logo.jpg" alt="Royal Academy of Art The Hague">
-            <img src="logo/logo-nb.png" alt="Nicolaas Beets">
-            <img src="logo/favicon-amateurspalet.png" alt="Amateurspalet">
-            <img src="logo/Schermafbeelding%202026-05-16%20130444.png" alt="ST Joost School of Art and Design">
+        <div class="quotes" aria-labelledby="testimonials-title">
+          <h3 class="mini-heading" id="testimonials-title">Reacties van deelnemers</h3>
+          <div class="quote-grid">
+            <figure class="quote-feature">
+              <blockquote>De lessen brachten me niet alleen technisch verder, maar hielpen me ook dichter bij mijn eigen beeldtaal en vrijheid te komen. Dank voor de ruimte, het kijken en het geloof in ontwikkeling.</blockquote>
+              <figcaption>Suzanne</figcaption>
+            </figure>
+            <figure>
+              <blockquote>Ik voelde me vanaf het begin veilig en op mijn gemak in de groep. Er was ruimte om jezelf te zijn, vragen te stellen en je vrij te ontwikkelen.</blockquote>
+              <figcaption>Deelnemer</figcaption>
+            </figure>
+            <figure>
+              <blockquote>Veel geleerd van de oude meesters. Ik vond het een erg leuke cursus en vooral inspirerend om op een andere manier te leren schilderen.</blockquote>
+              <figcaption>Thomien</figcaption>
+            </figure>
+            <figure>
+              <blockquote>Dank voor de inspirerende cursus. Ik heb heel veel geleerd, vooral hoe je naar een schilderij kijkt. Leerzaam en gezellig.</blockquote>
+              <figcaption>Paul</figcaption>
+            </figure>
+            <figure>
+              <blockquote>Ook van mij veel dank. Het was echt heel inspirerend om deze techniek te leren!</blockquote>
+              <figcaption>Sytske</figcaption>
+            </figure>
           </div>
         </div>
       </section>
 
-      <section class="contact-section" id="contact" aria-labelledby="contact-title">
-        <div>
-          <p class="eyebrow">Contact en nieuwsbrief</p>
-          <h2 id="contact-title">Blijf op de hoogte van lessen en workshops</h2>
-          <p>
-            Mail voor vragen over workshops, online lessen of een proefles. Je kunt je ook per
-            mail aanmelden voor de nieuwsbrief.
-          </p>
+      <section class="partners" aria-labelledby="partners-title">
+        <p id="partners-title">Teken- en schilderlessen, lezingen &amp; workshops verzorgd voor o.a.:</p>
+        <div class="logo-grid" aria-label="Organisaties en locaties">
+          <img src="logo/De-VAK-logo-kleur-tbv-mails-Klantenservice.png" alt="De VAK" loading="lazy">
+          <img src="logo/iac-den-haag.png" alt="IAC Den Haag" loading="lazy">
+          <img src="logo/agora.jpg" alt="Wijkvereniging Voorburg West Agora" loading="lazy">
+          <img src="logo/kabk-logo.jpg" alt="Royal Academy of Art The Hague" loading="lazy">
+          <img src="logo/logo-nb.png" alt="Nicolaas Beets" loading="lazy">
+          <img src="logo/favicon-amateurspalet.png" alt="Amateurspalet" loading="lazy">
+          <img src="logo/Schermafbeelding%202026-05-16%20130444.png" alt="ST Joost School of Art and Design" loading="lazy">
         </div>
-        <div class="contact-actions">
-          <a class="button primary" href="mailto:machielvansoest@outlook.com?subject=Nieuwsbrief%20kunstlessen&body=Hallo%20Machiel%2C%0A%0AIk%20schrijf%20me%20graag%20in%20voor%20de%20nieuwsbrief.">Inschrijven nieuwsbrief</a>
-          <a class="button secondary" href="mailto:machielvansoest@outlook.com?subject=Vraag%20over%20schilderlessen&body=Hallo%20Machiel%2C%0A%0AIk%20heb%20een%20vraag%20over%20de%20schilderlessen.">Mail Machiel</a>
-          <a class="button outline-light" href="https://www.instagram.com/kunstlessen_machiel/">Instagram</a>
+      </section>
+
+      <section class="section contact-wrap" id="contact" aria-labelledby="contact-title">
+        <div class="contact-tile">
+          <div>
+            <p class="eyebrow">Contact en nieuwsbrief</p>
+            <h2 id="contact-title">Blijf op de hoogte van lessen en workshops</h2>
+            <p>
+              Mail voor vragen over workshops, online lessen of een proefles. Je kunt je ook per
+              mail aanmelden voor de nieuwsbrief.
+            </p>
+          </div>
+          <div class="contact-actions">
+            <a class="button primary" href="mailto:machielvansoest@outlook.com?subject=Nieuwsbrief%20kunstlessen&body=Hallo%20Machiel%2C%0A%0AIk%20schrijf%20me%20graag%20in%20voor%20de%20nieuwsbrief.">Inschrijven nieuwsbrief</a>
+            <a class="button secondary" href="mailto:machielvansoest@outlook.com?subject=Vraag%20over%20schilderlessen&body=Hallo%20Machiel%2C%0A%0AIk%20heb%20een%20vraag%20over%20de%20schilderlessen.">Mail Machiel</a>
+            <a class="button outline-light" href="https://www.instagram.com/kunstlessen_machiel/">Instagram</a>
+          </div>
         </div>
       </section>
     </main>

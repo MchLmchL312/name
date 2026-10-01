@@ -1,4 +1,4 @@
-const headerLinks = Array.from(document.querySelectorAll(".nav-links a"));
+const headerLinks = Array.from(document.querySelectorAll('.nav-links a[href^="#"]'));
 const sections = headerLinks
   .map((link) => document.querySelector(link.getAttribute("href")))
   .filter(Boolean);
