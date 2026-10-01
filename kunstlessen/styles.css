@@ -390,6 +390,10 @@ h3 {
   border-radius: var(--radius-lg);
 }
 
+.hero-photo.focus-top {
+  object-position: center 22%;
+}
+
 .hero-tiles .mini-heading {
   grid-column: 1 / -1;
   margin-top: 14px;
@@ -545,6 +549,14 @@ h3 {
   gap: 20px;
 }
 
+.tile-grid.two-up {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tile-grid.two-up .tile-media {
+  aspect-ratio: 2 / 1;
+}
+
 .tile {
   display: flex;
   flex-direction: column;
@@ -589,6 +601,13 @@ h3 {
     radial-gradient(circle at 18% 22%, rgba(255, 250, 243, 0.28), transparent 38%),
     radial-gradient(circle at 85% 90%, rgba(31, 29, 25, 0.28), transparent 45%),
     linear-gradient(135deg, var(--ochre), #7d531b);
+}
+
+.tile-graphic.is-blue {
+  background:
+    radial-gradient(circle at 18% 22%, rgba(255, 250, 243, 0.22), transparent 38%),
+    radial-gradient(circle at 85% 90%, rgba(31, 29, 25, 0.3), transparent 45%),
+    linear-gradient(135deg, var(--blue), #1d3a47);
 }
 
 .tile-graphic svg {
@@ -769,6 +788,36 @@ h3 {
   margin-top: 0;
 }
 
+/* Uitgelicht aanbod binnen een tegel, zoals een te boeken masterclass */
+.tile-note {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--white));
+}
+
+.tile-note .label {
+  margin: 0;
+  color: var(--accent);
+}
+
+.tile-note strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.1rem;
+}
+
+.tile-body .tile-note-meta {
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.tile-note a::after {
+  content: " →";
+}
+
 /* Tegels zonder foto: waarom online en vormen */
 
 .feature-grid {
@@ -851,10 +900,6 @@ h3 {
 
 /* Prijzen */
 
-.online-subheading {
-  margin: 44px 0 16px;
-}
-
 .price-table-wrap {
   margin-top: 20px;
   overflow-x: auto;
@@ -904,14 +949,6 @@ h3 {
   border-bottom: 0;
 }
 
-.price-note {
-  max-width: 760px;
-  margin: 14px 0 0;
-  color: var(--muted);
-  font-size: 0.92rem;
-}
-
-.price-note a,
 .price-actions p a {
   color: var(--clay);
   font-weight: 800;
@@ -976,6 +1013,77 @@ h3 {
   font-family: inherit;
   font-size: 1.15rem;
   font-weight: 800;
+}
+
+.steps-extra {
+  margin-top: 20px;
+}
+
+.feature-tile a {
+  color: var(--clay);
+  font-weight: 800;
+}
+
+/* Compositieschema's */
+
+.schema-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.schema-tile {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  box-shadow: var(--tile-shadow);
+}
+
+.schema-tile svg {
+  width: 100%;
+  height: auto;
+  margin-bottom: 8px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.schema-tile svg * {
+  vector-effect: non-scaling-stroke;
+}
+
+.schema-tile svg .frame {
+  stroke: var(--line);
+  stroke-width: 2;
+}
+
+.schema-tile svg .dots {
+  stroke-width: 8;
+}
+
+.schema-tile strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.1rem;
+}
+
+.schema-tile span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.feature-tile.is-highlight {
+  margin-top: 20px;
+  border-color: rgba(154, 106, 38, 0.35);
+  background: #fbf3e6;
 }
 
 /* Stappen */
@@ -1745,9 +1853,15 @@ fieldset.form-field {
   }
 
   .tile-grid,
+  .tile-grid.two-up,
   .lesson-grid,
   .feature-grid.two-up {
     grid-template-columns: 1fr;
+  }
+
+  .schema-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
   }
 
   .tile.horizontal {

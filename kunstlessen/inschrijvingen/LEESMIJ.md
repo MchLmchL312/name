@@ -49,6 +49,15 @@ Zolang dit nog niet is ingesteld, komen inschrijvingen via Formspree in je mailb
 - De kolommen **Betaald** en **Toegang gegeven** zijn voor jezelf: vul daar bijvoorbeeld
   "ja" in als iemand betaald heeft of de inloggegevens heeft gekregen.
 
+## Een nieuwe online cursus toevoegen
+
+1. Kopieer `online-cursus-compositie.html` naar een nieuwe naam, bijvoorbeeld
+   `online-cursus-kleur.html`, en pas de teksten aan. Geef het formulier onderaan
+   (`data-cursus="..."`) een nieuwe, korte naam, bijvoorbeeld `kleur`.
+2. Voeg de cursus toe bij `cursussen` in `online.js`, met dezelfde korte naam als `id`.
+   Dan staat hij meteen in het inschrijfformulier.
+3. Zet een tegel voor de cursus op `online-cursussen.html` (kopieer een bestaande tegel).
+
 ## Aanpassen
 
 - Geen mail meer bij elke inschrijving? Zet in het script `MAIL_BIJ_INSCHRIJVING = false`.

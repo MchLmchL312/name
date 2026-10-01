@@ -10,11 +10,18 @@ const ONLINE = {
   // Spreadsheet: https://docs.google.com/spreadsheets/d/1Iv0csoZ6Ul0guls-PrSVyLlluriyryCisr2vkhIBlkQ/edit
   inschrijfUrl: "https://script.google.com/macros/s/AKfycbwTf2ZhIJ8JGqfxQTOei12EkzvVs3gJIi1yzy8x0LHSeJkGSNk00C6kdc554z5TkbTt/exec",
 
+  // De cursussen waarvoor je je kunt inschrijven. Een nieuwe cursus: voeg hem hier toe,
+  // maak een eigen cursuspagina en zet een tegel op online-cursussen.html.
   cursussen: [
     {
       id: "drie-piramides",
       naam: "Grip op schilderen",
       pagina: "online-cursus-drie-piramides.html",
+    },
+    {
+      id: "compositie",
+      naam: "Compositie",
+      pagina: "online-cursus-compositie.html",
     },
   ],
 
