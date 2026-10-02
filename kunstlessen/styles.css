@@ -1309,6 +1309,10 @@ h3 {
   border-radius: var(--radius-lg);
 }
 
+.about-photo.focus-left {
+  object-position: 16% center;
+}
+
 .about-text {
   padding: 40px;
   border: 1px solid var(--line);
