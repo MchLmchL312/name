@@ -603,13 +603,6 @@ h3 {
     linear-gradient(135deg, var(--ochre), #7d531b);
 }
 
-.tile-graphic.is-blue {
-  background:
-    radial-gradient(circle at 18% 22%, rgba(255, 250, 243, 0.22), transparent 38%),
-    radial-gradient(circle at 85% 90%, rgba(31, 29, 25, 0.3), transparent 45%),
-    linear-gradient(135deg, var(--blue), #1d3a47);
-}
-
 .tile-graphic svg {
   fill: none;
   stroke: var(--white);
@@ -859,114 +852,6 @@ h3 {
   color: var(--accent);
 }
 
-.feature-tile .meter {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin-top: auto;
-  padding-top: 6px;
-  color: var(--ink);
-  font-size: 0.82rem;
-  font-weight: 700;
-}
-
-.dots {
-  display: inline-flex;
-  gap: 4px;
-}
-
-.dots i {
-  width: 10px;
-  height: 10px;
-  border: 1.5px solid var(--accent);
-  border-radius: 50%;
-}
-
-.dots i.on {
-  background: var(--accent);
-}
-
-.feature-tile .price {
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
-  color: var(--ink);
-}
-
-.feature-tile .price strong {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.35rem;
-}
-
-/* Prijzen */
-
-.price-table-wrap {
-  margin-top: 20px;
-  overflow-x: auto;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  background: var(--white);
-  box-shadow: var(--tile-shadow);
-}
-
-.price-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.95rem;
-}
-
-.price-table caption {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
-.price-table th,
-.price-table td {
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--line);
-  text-align: left;
-  vertical-align: top;
-}
-
-.price-table thead th {
-  color: var(--muted);
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.price-table tbody th {
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.price-table tbody tr:last-child > * {
-  border-bottom: 0;
-}
-
-.price-actions p a {
-  color: var(--clay);
-  font-weight: 800;
-}
-
-.price-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 14px 20px;
-  margin-top: 24px;
-}
-
-.price-actions p {
-  margin: 0;
-  color: var(--muted);
-}
-
 /* Modules */
 
 .lesson-grid {
@@ -1000,12 +885,6 @@ h3 {
   font-size: 0.92rem;
 }
 
-.lesson-tile.is-more {
-  border-style: dashed;
-  background: transparent;
-  box-shadow: none;
-}
-
 .mini-badge.num {
   width: 44px;
   height: 44px;
@@ -1024,64 +903,277 @@ h3 {
   font-weight: 800;
 }
 
-/* Compositieschema's */
+/* Prijsblok: één vorm, alles inbegrepen */
 
-.schema-grid {
+.price-card {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.schema-tile {
-  display: grid;
-  align-content: start;
-  gap: 4px;
-  padding: 16px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  overflow: hidden;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--white);
   box-shadow: var(--tile-shadow);
 }
 
-.schema-tile svg {
-  width: 100%;
-  height: auto;
-  margin-bottom: 8px;
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.price-main {
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  padding: 36px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(185, 130, 56, 0.3), transparent 50%),
+    var(--ink);
+  color: var(--white);
 }
 
-.schema-tile svg * {
-  vector-effect: non-scaling-stroke;
+.price-main .label {
+  margin: 0;
+  color: #f1c27a;
 }
 
-.schema-tile svg .frame {
-  stroke: var(--line);
-  stroke-width: 2;
+.price-amount {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1.05;
 }
 
-.schema-tile svg .dots {
-  stroke-width: 8;
+.price-start {
+  margin: 0;
+  color: rgba(255, 250, 243, 0.8);
 }
 
-.schema-tile strong {
+.price-start strong {
+  color: var(--white);
+}
+
+.price-main .button {
+  justify-self: start;
+  margin-top: 8px;
+}
+
+.price-includes {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+  margin: 0;
+  padding: 32px 36px;
+  list-style: none;
+}
+
+.price-includes li {
+  position: relative;
+  padding-left: 32px;
+}
+
+.price-includes li::before {
+  content: "✓";
+  position: absolute;
+  top: 2px;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--white);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+/* Ritme van de online cursus */
+
+.rhythm-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rhythm-facts li {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--white);
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.rhythm-facts strong {
+  display: block;
+  color: var(--accent);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.2rem;
+}
+
+.rhythm {
+  display: grid;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.rhythm-flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 30px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rhythm-flow li {
+  position: relative;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--white);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.rhythm-flow li:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  top: 50%;
+  right: -22px;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.rhythm-flow .is-optional {
+  border-style: dashed;
+  color: var(--muted);
+}
+
+.rhythm-flow .is-meet {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--white);
+}
+
+.cycles {
+  display: grid;
+  gap: 22px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cycle {
+  display: grid;
+  gap: 10px;
+}
+
+.cycle-title {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cycle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.week,
+.meet {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border-radius: 14px;
+}
+
+.week {
+  border: 1px solid var(--line);
+  background: var(--white);
+  box-shadow: var(--tile-shadow);
+}
+
+.week h4,
+.meet h4 {
+  margin: 0;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 1.1rem;
+  line-height: 1.2;
 }
 
-.schema-tile span {
+.week p,
+.meet p {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.week p {
   color: var(--muted);
-  font-size: 0.88rem;
 }
 
-.feature-tile.is-highlight {
-  margin-top: 20px;
+.week .week-nr,
+.meet .week-nr {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.week .week-send {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.week .week-mail {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+  font-size: 0.84rem;
+}
+
+.week .week-mail::before {
+  content: "✉ ";
+  color: var(--accent);
+}
+
+.meet {
+  justify-content: center;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(185, 130, 56, 0.3), transparent 50%),
+    var(--ink);
+  color: var(--white);
+}
+
+.meet .week-nr {
+  color: #f1c27a;
+}
+
+.meet p:not(.week-nr) {
+  color: rgba(255, 250, 243, 0.8);
+}
+
+.cycle.is-final .meet {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(255, 250, 243, 0.18), transparent 50%),
+    var(--clay);
+}
+
+.cycle.is-final .meet .week-nr {
+  color: #f6d49c;
+}
+
+.cycles + .feature-grid {
+  margin-top: 22px;
+}
+
+.feature-tile.is-soft {
   border-color: rgba(154, 106, 38, 0.35);
   background: #fbf3e6;
 }
@@ -1463,65 +1555,6 @@ body:has(.signup-dialog[open]) {
   justify-self: start;
 }
 
-fieldset.form-field {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-.form-field legend {
-  margin-bottom: 8px;
-  padding: 0;
-  font-size: 0.94rem;
-}
-
-.choice-cards {
-  display: grid;
-  gap: 10px;
-}
-
-.choice-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 13px 16px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: #fff;
-  cursor: pointer;
-  transition: border-color 160ms ease, background 160ms ease;
-}
-
-.choice-card:hover {
-  border-color: var(--accent);
-}
-
-.choice-card:has(input:checked) {
-  border-color: var(--accent);
-  background: rgba(154, 106, 38, 0.08);
-  box-shadow: inset 0 0 0 1px var(--accent);
-}
-
-.choice-card input {
-  flex: none;
-  width: 18px;
-  height: 18px;
-  margin: 3px 0 0;
-  accent-color: var(--accent);
-}
-
-.choice-card span {
-  display: grid;
-  line-height: 1.35;
-}
-
-.choice-card small {
-  color: var(--muted);
-  font-size: 0.86rem;
-  font-weight: 500;
-}
-
 .price-summary {
   margin: 0;
   padding: 14px 16px;
@@ -1763,6 +1796,14 @@ fieldset.form-field {
     grid-template-columns: 1fr;
   }
 
+  .rhythm-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .price-card {
+    grid-template-columns: 1fr;
+  }
+
   .steps li + li {
     border-left: 0;
     border-top: 1px solid var(--line);
@@ -1859,9 +1900,27 @@ fieldset.form-field {
     grid-template-columns: 1fr;
   }
 
-  .schema-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+  .cycle-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .price-main,
+  .price-includes {
+    padding: 26px 22px;
+  }
+
+  .rhythm-flow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+  }
+
+  .rhythm-flow li:not(:last-child)::after {
+    content: "↓";
+    top: 100%;
+    right: auto;
+    left: 18px;
+    transform: none;
   }
 
   .tile.horizontal {
@@ -1884,20 +1943,6 @@ fieldset.form-field {
 
   .dialog-inner {
     padding: 28px 18px 22px;
-  }
-
-  .price-table {
-    font-size: 0.88rem;
-  }
-
-  .price-table th,
-  .price-table td {
-    padding: 10px 8px;
-  }
-
-  .price-table thead th {
-    font-size: 0.64rem;
-    letter-spacing: 0.02em;
   }
 
   .feature-tile {

@@ -51,7 +51,7 @@ Zolang dit nog niet is ingesteld, komen inschrijvingen via Formspree in je mailb
 
 ## Een nieuwe online cursus toevoegen
 
-1. Kopieer `online-cursus-compositie.html` naar een nieuwe naam, bijvoorbeeld
+1. Kopieer `online-cursus-drie-piramides.html` naar een nieuwe naam, bijvoorbeeld
    `online-cursus-kleur.html`, en pas de teksten aan. Geef het formulier onderaan
    (`data-cursus="..."`) een nieuwe, korte naam, bijvoorbeeld `kleur`.
 2. Voeg de cursus toe bij `cursussen` in `online.js`, met dezelfde korte naam als `id`.
@@ -63,5 +63,5 @@ Zolang dit nog niet is ingesteld, komen inschrijvingen via Formspree in je mailb
 - Geen mail meer bij elke inschrijving? Zet in het script `MAIL_BIJ_INSCHRIJVING = false`.
 - Het script gewijzigd? Kies **Implementeren → Implementaties beheren → potloodje →
   Versie: Nieuwe versie → Implementeren**. De URL blijft hetzelfde.
-- Prijzen, vormen en het aantal lessen per pakket pas je aan bovenin `kunstlessen/online.js`.
-  Die gegevens verschijnen dan automatisch op de hoofdpagina, de cursuspagina en in het formulier.
+- De prijs en de startdatum van de volgende klas pas je aan bovenin `kunstlessen/online.js`.
+  Die verschijnen dan automatisch op het overzicht, de cursuspagina en in het formulier.

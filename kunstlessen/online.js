@@ -1,6 +1,9 @@
-/* Online cursussen: vormen, prijzen en inschrijving.
- * De hoofdpagina, de cursuspagina's en het inschrijfformulier lezen allemaal uit dit blok,
- * dus een prijs of vorm hoef je maar op één plek aan te passen.
+/* Online cursussen: prijs, startdatum en inschrijving.
+ * Het overzicht, de cursuspagina en het inschrijfformulier lezen allemaal uit dit blok,
+ * dus de prijs en de startdatum pas je maar op één plek aan.
+ *
+ * Er is één vorm: 6 weken, elke week een lesvideo, drie opdrachten van twee weken,
+ * drie online besprekingen via Google Meet en maximaal 8 cursisten.
  *
  * ================= PAS HIER AAN =================
  */
@@ -10,6 +13,12 @@ const ONLINE = {
   // Spreadsheet: https://docs.google.com/spreadsheets/d/1Iv0csoZ6Ul0guls-PrSVyLlluriyryCisr2vkhIBlkQ/edit
   inschrijfUrl: "https://script.google.com/macros/s/AKfycbwTf2ZhIJ8JGqfxQTOei12EkzvVs3gJIi1yzy8x0LHSeJkGSNk00C6kdc554z5TkbTt/exec",
 
+  // Prijs van de hele cursus (6 weken) in euro's, bijvoorbeeld 195. null = "Prijs volgt".
+  prijs: null,
+
+  // Startdatum van de volgende klas, bijvoorbeeld "maandag 11 januari 2027". Leeg = "volgt".
+  volgendeStart: "",
+
   // De cursussen waarvoor je je kunt inschrijven. Een nieuwe cursus: voeg hem hier toe,
   // maak een eigen cursuspagina en zet een tegel op online-cursussen.html.
   cursussen: [
@@ -18,46 +27,12 @@ const ONLINE = {
       naam: "Grip op schilderen",
       pagina: "online-cursus-drie-piramides.html",
     },
-    {
-      id: "compositie",
-      naam: "Compositie",
-      pagina: "online-cursus-compositie.html",
-    },
-  ],
-
-  // Uit hoeveel lessen kan iemand kiezen?
-  pakketten: [4, 8, 12],
-
-  // prijsPerLes: bedrag in euro's (bijvoorbeeld 25) of null zolang de prijs nog niet vastligt.
-  // begeleiding: 1, 2 of 3 stippen op de meter.
-  vormen: [
-    {
-      naam: "Zelfstandig",
-      ondertitel: "Zonder feedback",
-      omschrijving: "Je volgt de lessen met uitleg, voorbeelden en opdrachten en werkt in je eigen tempo.",
-      begeleiding: 1,
-      prijsPerLes: null,
-    },
-    {
-      naam: "Feedback per e-mail",
-      ondertitel: "Schriftelijke feedback",
-      omschrijving: "Je stuurt per les een foto van je werk in en krijgt persoonlijke feedback per e-mail.",
-      begeleiding: 2,
-      prijsPerLes: null,
-    },
-    {
-      naam: "Feedback via Zoom",
-      ondertitel: "Persoonlijk gesprek",
-      omschrijving: "Je bespreekt je werk samen met mij in een Zoom-meeting en krijgt direct feedback.",
-      begeleiding: 3,
-      prijsPerLes: null,
-    },
   ],
 };
 /* ============ HIERONDER NIETS AANPASSEN ============ */
 {
   const FORMSPREE_URL = "https://formspree.io/f/mzzvdvzr";
-  // € 25 voor hele bedragen, € 22,50 als er centen zijn.
+  // € 195 voor hele bedragen, € 192,50 als er centen zijn.
   const euro = (waarde) => {
     const afgerond = Math.round(waarde * 100) / 100;
     return new Intl.NumberFormat("nl-NL", {
@@ -67,44 +42,14 @@ const ONLINE = {
       maximumFractionDigits: 2,
     }).format(afgerond);
   };
+  const prijsTekst = typeof ONLINE.prijs === "number" ? euro(ONLINE.prijs) : "Prijs volgt";
+  const startTekst = ONLINE.volgendeStart || "volgt";
 
-  const esc = (text) =>
-    String(text).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-
-  const bedrag = (vorm, lessen) =>
-    typeof vorm.prijsPerLes === "number" ? euro(vorm.prijsPerLes * lessen) : null;
-
-  const stippen = (aantal) => {
-    const rondjes = [1, 2, 3].map((i) => `<i${i <= aantal ? ' class="on"' : ""}></i>`).join("");
-    return `<span class="dots" role="img" aria-label="${aantal} van 3">${rondjes}</span>`;
-  };
-
-  // Tegels met de vormen.
-  document.querySelectorAll("[data-vormen]").forEach((grid) => {
-    grid.innerHTML = ONLINE.vormen
-      .map((vorm) => {
-        const perLes = bedrag(vorm, 1);
-        return `<article class="feature-tile">
-          <p class="label">${esc(vorm.ondertitel)}</p>
-          <h3>${esc(vorm.naam)}</h3>
-          <p>${esc(vorm.omschrijving)}</p>
-          <p class="meter">Persoonlijke begeleiding ${stippen(vorm.begeleiding)}</p>
-          <p class="price">${perLes ? `<strong>${perLes}</strong> per les` : "<strong>Prijs volgt</strong>"}</p>
-        </article>`;
-      })
-      .join("");
+  document.querySelectorAll("[data-prijs]").forEach((el) => {
+    el.textContent = prijsTekst;
   });
-
-  // Prijstabel: per les en per pakket, voor elke vorm.
-  document.querySelectorAll("[data-prijstabel]").forEach((table) => {
-    const rij = (label, lessen) =>
-      `<tr><th scope="row">${label}</th>${ONLINE.vormen.map((v) => `<td>${bedrag(v, lessen) || "volgt"}</td>`).join("")}</tr>`;
-    const pakketten = ONLINE.pakketten.filter((n) => n > 1).map((n) => rij(`${n} lessen`, n));
-    const bijschrift = table.querySelector("caption");
-    table.innerHTML = `<thead><tr><th scope="col">Aantal lessen</th>${ONLINE.vormen
-      .map((v) => `<th scope="col">${esc(v.naam)}</th>`)
-      .join("")}</tr></thead><tbody>${rij("Per les", 1)}${pakketten.join("")}</tbody>`;
-    if (bijschrift) table.prepend(bijschrift);
+  document.querySelectorAll("[data-start]").forEach((el) => {
+    el.textContent = startTekst;
   });
 
   // Inschrijfformulier in een venster.
@@ -112,38 +57,14 @@ const ONLINE = {
   const form = document.getElementById("inschrijfForm");
 
   if (dialog && form) {
-    const lessenKeuze = form.elements.lessen;
-    const samenvatting = form.querySelector("[data-samenvatting]");
     const status = form.querySelector(".form-status");
     const bedankt = dialog.querySelector("[data-bedankt]");
+    const cursus = ONLINE.cursussen.find((c) => c.id === form.dataset.cursus) || ONLINE.cursussen[0];
+    const samenvatting = `${cursus.naam} · 6 weken · start ${startTekst} · ${prijsTekst.toLowerCase()}`;
 
-    form.elements.cursus.innerHTML = ONLINE.cursussen
-      .map((c) => `<option value="${esc(c.naam)}"${c.id === form.dataset.cursus ? " selected" : ""}>${esc(c.naam)}</option>`)
-      .join("");
-    lessenKeuze.innerHTML = ONLINE.pakketten.map((n) => `<option value="${n} lessen">${n} lessen</option>`).join("");
-    form.querySelector("[data-vorm-keuze]").innerHTML = ONLINE.vormen
-      .map((v) => {
-        const perLes = bedrag(v, 1);
-        return `<label class="choice-card">
-          <input type="radio" name="vorm" value="${esc(v.naam)}" required>
-          <span><strong>${esc(v.naam)}</strong><small>${esc(v.ondertitel)}${perLes ? ` · ${perLes} per les` : ""}</small></span>
-        </label>`;
-      })
-      .join("");
-
-    const werkSamenvattingBij = () => {
-      const lessen = parseInt(lessenKeuze.value, 10);
-      const vorm = ONLINE.vormen.find((v) => v.naam === form.elements.vorm.value);
-      let tekst = "Kies een vorm om de prijs te zien.";
-      if (vorm) {
-        const totaal = bedrag(vorm, lessen);
-        tekst = `${lessen} lessen · ${vorm.naam} · ${totaal ? `totaal ${totaal}` : "prijs volgt"}`;
-      }
-      samenvatting.textContent = tekst;
-      form.elements.prijs.value = vorm ? tekst : "";
-    };
-    form.addEventListener("change", werkSamenvattingBij);
-    werkSamenvattingBij();
+    form.elements.cursus.value = cursus.naam;
+    form.elements.prijs.value = samenvatting;
+    form.querySelector("[data-samenvatting]").textContent = samenvatting;
 
     const openVenster = () => {
       if (typeof dialog.showModal === "function") dialog.showModal();
@@ -170,7 +91,6 @@ const ONLINE = {
       const knop = form.querySelector('[type="submit"]');
       const knopTekst = knop.textContent;
 
-      werkSamenvattingBij();
       form.elements.pagina.value = location.href;
       status.hidden = true;
       knop.disabled = true;
