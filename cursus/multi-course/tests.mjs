@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync, unlinkSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { contextFor, assertWritePaths, lessonSlug } from './context.js';
-import { prepareCourse, createCourse, derive, encrypt, freshSecurity, scaffold } from './creation.js';
-import { installAtelierBoundary } from './atelier-boundary.js';
+import { prepareCourse, createCourse, derive, encrypt, freshSecurity, scaffold, adminHtml } from './creation.js';
+import { installAtelierBoundary, isNewSystemPath } from './atelier-boundary.js';
 
 const filesToClean = [];
 process.on('exit', () => { for (const path of filesToClean) try { unlinkSync(path); } catch {} });
@@ -221,6 +221,22 @@ test('Boundary blocks path traversal, sibling writes and reserved lesson address
   assert.throws(() => lessonSlug('beheer', context));
 });
 
+test('Existing course HTML without ssr still mounts the online administrator', async () => {
+  // This is the loader contract: without ssr, the deployed client silently returns.
+  const attrs = new Map();
+  const root = { textContent: '', setAttribute(name, value) { attrs.set(name, value); }, hasAttribute(name) { return attrs.has(name); } };
+  let mounted = false;
+  const mount = element => () => { if (element.hasAttribute('ssr')) mounted = true; };
+  const document = { getElementById(id) { assert.equal(id, 'admin-gate'); return root; } };
+  const fetch = async path => new Response(JSON.stringify(path.endsWith('course.json') ? { id: 'online', name: 'Online cursus' } : { version: 1, verifier: 'test' }));
+  const importModule = async path => path.includes('client.') ? { default: mount } : path.includes('rich-heading') ? { installRichHeadingButtons() {} } : { default() {} };
+  const source = readFileSync(new URL('admin-entry.js', import.meta.url), 'utf8').replace("import { currentContext } from './context.js';", '').replaceAll('import(', 'importModule(');
+  const run = new (Object.getPrototypeOf(async function () {}).constructor)('currentContext', 'document', 'fetch', 'importModule', 'globalThis', source);
+  await run(() => contextFor('online'), document, fetch, importModule, {});
+  assert.equal(mounted, true, 'Already-created online course must mount');
+  assert.match(adminHtml('Volgende cursus'), /<div id="admin-gate" ssr>/, 'Future courses include the loader marker');
+});
+
 test('Atelier restore preserves new subsystem while retaining original lesson entries', async () => {
   const repo = mockRepo();
   for (const path of ['cursus/index.html', 'cursus/content/security.json', 'cursus/media/old.webp', 'cursus/beheer/index.html', 'cursus/cursussen/online/index.html', 'cursus/multi-course/admin.js', 'cursus/content/courses.json']) repo.files.set(path, `DATA ${path}`);
@@ -250,6 +266,6 @@ test('Atelier restore preserves new subsystem while retaining original lesson en
 test('Existing tracked atelier files have no changes outside the requested beheer entry', () => {
   const root = new URL('../', import.meta.url);
   const changed = execFileSync('git', ['-c', 'safe.directory=C:/Users/machi/Documents/GitHub/name', 'diff', '--name-only', '--', '.'], { cwd: root }).toString().trim().split(/\r?\n/).filter(Boolean);
-  assert.deepEqual(changed, ['cursus/beheer/index.html']);
+  assert.deepEqual(changed.filter(path => !isNewSystemPath(path)), []);
   for (const path of ['index.html', 'runtime/student.js', 'assets/AdminGate.j8ckIzFX.js', 'content/security.json', 'content/admin-auth.json']) assert.ok(readFileSync(new URL(path, root)).length > 0);
 });

@@ -1,5 +1,9 @@
 import { currentContext } from './context.js';
 const root = document.getElementById('admin-gate');
+// Existing course HTML may predate the mount marker. Apply it at runtime so
+// already-created courses are repaired without rewriting their content or auth.
+root.setAttribute('ssr', '');
+root.textContent = 'Lesbeheer wordt geopend…';
 try {
   const context = currentContext();
   const metadataResponse = await fetch(`${context.base}/course.json`, { cache: 'no-store' });
@@ -10,7 +14,7 @@ try {
   if (authResponse.status === 404) {
     const message = document.createElement('p'); message.textContent = 'Deze cursus moet nog worden ingericht.';
     const link = document.createElement('a'); link.href = `/cursus/beheer/?inrichten=${encodeURIComponent(context.id)}`; link.textContent = 'Cursus inrichten';
-    root.className = 'auth-card setup-card'; root.append(message, link);
+    root.className = 'auth-card setup-card'; root.replaceChildren(message, link);
   } else {
     if (!authResponse.ok) throw new Error('De cursuslogin kon niet worden geladen. Probeer het later opnieuw.');
     const auth = await authResponse.json();

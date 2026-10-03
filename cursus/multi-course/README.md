@@ -47,3 +47,13 @@ wachtwoorden en decryptiesleutels zijn nodig om de beschermde inhoud te lezen.
 Wachtwoorden en GitHub-sleutels worden door het aanmaakformulier niet bewaard.
 Publicatie vindt pas plaats wanneer je het formulier zelf indient. Deze wijziging
 bevat geen live publicatie en geen wachtwoordrotatie.
+
+Voor een volledige lokale editorcontrole: `node multi-course/browser-fixture.mjs`.
+Open `http://127.0.0.1:8124/cursus/cursussen/editor-test/beheer/` en gebruik het
+uitsluitend voor deze tijdelijke test bedoelde wachtwoord `editor-test-admin`.
+De fixture maakt records alleen in het servergeheugen en gebruikt een aparte
+browserdatabase. Controleer inloggen, **Maak de eerste pagina**, titel aanpassen
+en **Voorbeeld**. Er worden geen echte cursusbestanden of GitHub-gegevens geschreven.
+Ook beheerpagina's zonder het oorspronkelijke `ssr`-kenmerk worden ondersteund:
+`admin-entry.js` voegt dit vóór het mounten toe, zodat eerder aangemaakte cursussen
+werken zonder nieuwe wachtwoordinstelling of wijziging aan de cursusinhoud.
