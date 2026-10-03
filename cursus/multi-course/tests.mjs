@@ -5,6 +5,7 @@ import { execFileSync } from 'node:child_process';
 import { contextFor, assertWritePaths, lessonSlug } from './context.js';
 import { prepareCourse, createCourse, derive, encrypt, freshSecurity, scaffold, adminHtml } from './creation.js';
 import { installAtelierBoundary, isNewSystemPath } from './atelier-boundary.js';
+import { findStudentCourses, rememberStudentAccess } from './student-access.js';
 
 const filesToClean = [];
 process.on('exit', () => { for (const path of filesToClean) try { unlinkSync(path); } catch {} });
@@ -221,6 +222,56 @@ test('Boundary blocks path traversal, sibling writes and reserved lesson address
   assert.throws(() => lessonSlug('beheer', context));
 });
 
+test('Shared student entrance selects the matching course and preserves atelier access', async () => {
+  const repo = mockRepo();
+  await seedCourse(repo, 'cursus', passwords.atelier);
+  await seedCourse(repo, 'cursus/cursussen/gateway-online', passwords.online);
+  await seedCourse(repo, 'cursus/cursussen/gateway-next', passwords.extra);
+  repo.files.set('cursus/content/courses.json', JSON.stringify({ version: 1, courses: [
+    { id: 'gateway-online', name: 'Online', configured: true },
+    { id: 'gateway-next', name: 'Volgende cursus', configured: true },
+    { id: 'not-ready', name: 'Nog niet ingericht', configured: false }
+  ] }));
+  const before = new Map(repo.files); repo.snapshot(); globalThis.fetch = repo.fetch;
+  const legacyStores = new Map([['sleutels', new Map([['seizoen', 'existing-atelier-access']])]]);
+  databases.set('machiel-les-toegang', legacyStores);
+  const reads = [];
+  const readJson = async path => {
+    reads.push(path);
+    if (!repo.files.has(path.slice(1))) throw new Error('Unavailable');
+    return JSON.parse(repo.files.get(path.slice(1)));
+  };
+  const online = await findStudentCourses(passwords.online[1], readJson);
+  assert.equal(online.incomplete, false);
+  assert.deepEqual(online.matches.map(match => match.course.id), ['gateway-online']);
+  assert.equal(online.matches[0].key.extractable, false);
+  assert.deepEqual(online.matches[0].key.usages, ['decrypt']);
+  assert.equal(reads.some(path => path.includes('not-ready')), false);
+  assert.equal(reads.some(path => path.includes(passwords.online[1])), false, 'Passwords never enter request paths');
+  assert.equal(await rememberStudentAccess(online.matches[0]), '/cursus/cursussen/gateway-online/');
+  const student = await studentFor('gateway-online');
+  assert.deepEqual(await student.loadManifest(await student.readKey()), [], 'Target course uses the remembered key without another login');
+  assert.equal(databases.get('machiel-les-toegang'), legacyStores);
+  assert.equal(legacyStores.get('sleutels').get('seizoen'), 'existing-atelier-access');
+  const atelier = await findStudentCourses(passwords.atelier[1], readJson);
+  assert.deepEqual(atelier.matches.map(match => match.course.id), ['atelier']);
+  await assert.rejects(rememberStudentAccess(atelier.matches[0]), /bestaande login/);
+  assert.deepEqual((await findStudentCourses('incorrect-password', readJson)).matches, []);
+  assert.deepEqual((await findStudentCourses(passwords.online[0], readJson)).matches, [], 'Admin password cannot open student access');
+  assert.deepEqual((await findStudentCourses(passwords.extra[1], readJson)).matches.map(match => match.course.id), ['gateway-next']);
+  const unavailable = async path => { if (path.includes('gateway-online')) throw new Error('Network error'); return readJson(path); };
+  const stillAtelier = await findStudentCourses(passwords.atelier[1], unavailable);
+  assert.equal(stillAtelier.incomplete, true); assert.deepEqual(stillAtelier.matches.map(match => match.course.id), ['atelier']);
+  // If a later password change creates a duplicate, require an explicit choice.
+  await seedCourse(repo, 'cursus/cursussen/gateway-next', [passwords.extra[0], passwords.online[1]]);
+  const ambiguous = await findStudentCourses(passwords.online[1], readJson);
+  assert.deepEqual(ambiguous.matches.map(match => match.course.id), ['gateway-online', 'gateway-next']);
+  for (const [path, content] of before) {
+    if (!path.startsWith('cursus/cursussen/gateway-next/')) assert.equal(repo.files.get(path), content);
+  }
+  assert.equal(repo.writes.length, 0, 'Shared login only reads repository data');
+});
+
 test('Existing course HTML without ssr still mounts the online administrator', async () => {
   // This is the loader contract: without ssr, the deployed client silently returns.
   const attrs = new Map();
@@ -237,11 +288,44 @@ test('Existing course HTML without ssr still mounts the online administrator', a
   assert.match(adminHtml('Volgende cursus'), /<div id="admin-gate" ssr>/, 'Future courses include the loader marker');
 });
 
+test('Shared entrance delegates atelier submissions and handles remembered sessions', async () => {
+  const source = readFileSync(new URL('student-gateway.js', import.meta.url), 'utf8').replace("import { findStudentCourses, rememberStudentAccess } from './student-access.js';", '');
+  const run = new (Object.getPrototypeOf(async function () {}).constructor)('document', 'location', 'findStudentCourses', 'rememberStudentAccess', source);
+  async function mount(match, legacyListener) {
+    const input = new EventTarget(); input.value = 'test-student-password'; input.focus = () => {};
+    const submit = { disabled: false };
+    const status = { textContent: '' };
+    const form = new EventTarget();
+    form.querySelector = selector => selector.startsWith('input') ? input : selector.startsWith('button') ? submit : { textContent: '' };
+    form.after = () => {};
+    const node = () => ({ classList: { add() {}, remove() {} }, replaceChildren() {}, append() {}, prepend() {}, addEventListener() {} });
+    const panel = node();
+    const document = { createElement: node, querySelector: () => ({ textContent: '' }), getElementById: id => id === 'student-login-form' ? form : id === 'login-message' ? status : panel };
+    const navigation = []; const persisted = []; let delegated = 0;
+    await run(document, { assign: path => navigation.push(path) }, async () => ({ matches: match ? [match] : [], incomplete: false }), async value => { persisted.push(value); return '/cursus/cursussen/online/'; });
+    if (legacyListener) form.addEventListener('submit', event => { event.preventDefault(); delegated++; });
+    form.dispatchEvent(new Event('submit', { cancelable: true }));
+    await new Promise(resolve => setImmediate(resolve));
+    return { navigation, persisted, delegated, input, submit, status };
+  }
+  const atelier = { course: { id: 'atelier', legacy: true } };
+  const normal = await mount(atelier, true);
+  assert.equal(normal.delegated, 1); assert.deepEqual(normal.navigation, []); assert.deepEqual(normal.persisted, []);
+  const remembered = await mount(atelier, false);
+  assert.deepEqual(remembered.navigation, ['/cursus/']); assert.deepEqual(remembered.persisted, []);
+  const online = { course: { id: 'online', legacy: false } };
+  const routed = await mount(online, true);
+  assert.equal(routed.delegated, 0); assert.deepEqual(routed.navigation, ['/cursus/cursussen/online/']); assert.deepEqual(routed.persisted, [online]); assert.equal(routed.input.value, '');
+  const wrong = await mount(null, true);
+  assert.equal(wrong.delegated, 0); assert.equal(wrong.submit.disabled, false); assert.match(wrong.status.textContent, /niet juist/);
+});
+
 test('Atelier restore preserves new subsystem while retaining original lesson entries', async () => {
   const repo = mockRepo();
-  for (const path of ['cursus/index.html', 'cursus/content/security.json', 'cursus/media/old.webp', 'cursus/beheer/index.html', 'cursus/cursussen/online/index.html', 'cursus/multi-course/admin.js', 'cursus/content/courses.json']) repo.files.set(path, `DATA ${path}`);
+  for (const path of ['cursus/index.html', 'cursus/test-les/index.html', 'cursus/content/security.json', 'cursus/media/old.webp', 'cursus/beheer/index.html', 'cursus/cursussen/online/index.html', 'cursus/multi-course/admin.js', 'cursus/content/courses.json']) repo.files.set(path, `DATA ${path}`);
   const old = repo.snapshot();
   repo.files.set('cursus/index.html', 'NEW ATELIER CONTENT');
+  repo.files.set('cursus/test-les/index.html', 'NEW ATELIER LESSON');
   repo.files.set('cursus/cursussen/online/index.html', 'NEW ONLINE CONTENT');
   repo.files.set('cursus/cursussen/online/content/protected/new.enc.json', 'NEW ONLINE ENVELOPE');
   repo.files.set('cursus/multi-course/admin.js', 'NEW SHARED RUNTIME');
@@ -252,13 +336,13 @@ test('Atelier restore preserves new subsystem while retaining original lesson en
   const treeSha = repo.commits.get(old).tree.sha;
   const response = await fetch(`https://api.github.com/repos/test-owner/test-repo/git/trees/${treeSha}?recursive=1`, { headers: { Authorization: 'Bearer test-token' } });
   const tree = await response.json();
-  assert.deepEqual(tree.tree.map(file => file.path).sort(), ['cursus/content/security.json', 'cursus/index.html', 'cursus/media/old.webp']);
+  assert.deepEqual(tree.tree.map(file => file.path).sort(), ['cursus/content/security.json', 'cursus/media/old.webp', 'cursus/test-les/index.html']);
   await assert.rejects(fetch('https://api.github.com/repos/test-owner/test-repo/git/trees', { method: 'POST', headers: { Authorization: 'Bearer test-token' }, body: JSON.stringify({ tree: [{ path: 'cursus/cursussen/online/index.html', content: 'bad' }] }) }), /andere cursus/);
   assert.deepEqual(repo.files, newer);
   const original = await originalAtelier(); await original.restore(settings, old);
-  assert.equal(repo.files.get('cursus/index.html'), 'DATA cursus/index.html');
+  assert.equal(repo.files.get('cursus/test-les/index.html'), 'DATA cursus/test-les/index.html');
   for (const [path, content] of newer) {
-    if (path.startsWith('cursus/cursussen/') || path.startsWith('cursus/multi-course/') || ['cursus/content/courses.json', 'cursus/beheer/index.html'].includes(path)) assert.equal(repo.files.get(path), content, `New subsystem survives atelier restore: ${path}`);
+    if (isNewSystemPath(path)) assert.equal(repo.files.get(path), content, `New subsystem survives atelier restore: ${path}`);
   }
   globalThis.fetch = repo.fetch;
 });

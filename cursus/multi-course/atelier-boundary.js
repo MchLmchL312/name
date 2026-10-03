@@ -2,7 +2,7 @@
 // the new subsystem from its tree inventory; keep every atelier entry intact.
 const newPaths = ['cursus/cursussen/', 'cursus/multi-course/'];
 export function isNewSystemPath(path) {
-  return path === 'cursus/content/courses.json' || path === 'cursus/beheer/index.html' || newPaths.some(prefix => path.startsWith(prefix));
+  return path === 'cursus/content/courses.json' || path === 'cursus/beheer/index.html' || path === 'cursus/index.html' || newPaths.some(prefix => path.startsWith(prefix));
 }
 export function installAtelierBoundary() {
   const originalFetch = globalThis.fetch;

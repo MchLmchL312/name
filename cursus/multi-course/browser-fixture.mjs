@@ -11,6 +11,13 @@ const auth = { ...freshSecurity(), createdAt: new Date().toISOString() };
 auth.verifier = await derive('editor-test-admin', auth, 'machiel-beheer:', true);
 files.set(`${base}/content/admin-auth.json`, JSON.stringify(auth));
 files.set(`${base}/content/admin-drafts.enc.json`, JSON.stringify(await encrypt({ version: 1, pages: [], updatedAt: new Date().toISOString() }, await derive('editor-test-admin', auth, 'machiel-beheer-inhoud:'))));
+// Public, encrypted fixture data for testing the shared student entrance.
+files.set('cursus/content/courses.json', JSON.stringify({ version: 1, courses: [{ id: 'editor-test', name: 'Editorcontrole', configured: true }] }));
+for (const [courseBase, password] of [['cursus', 'atelier-test-student'], [base, 'editor-test-student']]) {
+  const security = freshSecurity();
+  files.set(`${courseBase}/content/security.json`, JSON.stringify(security));
+  files.set(`${courseBase}/content/protected/index.enc.json`, JSON.stringify(await encrypt([], await derive(password, security))));
+}
 const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json', '.css': 'text/css; charset=utf-8' };
 createServer(async (request, response) => {
   try {

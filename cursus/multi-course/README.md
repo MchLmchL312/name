@@ -1,9 +1,21 @@
 # Afzonderlijke cursussen
 
-De atelierlogin blijft `/cursus/`. De bestaande versleutelde inhoud, sleutels,
-wachtwoordrecords, assets, lesadressen en browseropslag worden niet gemigreerd.
-Alleen `/cursus/beheer/` krijgt een cursuskeuze; `?cursus=atelier` laadt de
-oorspronkelijke, ongewijzigde beheerbundle.
+`/cursus/` is de gezamenlijke cursisteningang. Een dunne adapter controleert het
+ingevulde wachtwoord lokaal tegen de versleutelde lessenlijst van iedere
+ingerichte cursus. Voor atelier geeft hij de invoer door aan de oorspronkelijke
+login; voor andere cursussen bewaart hij alleen de eigen decryptiesleutel en
+stuurt hij de browser naar de betreffende cursus. Het wachtwoord komt niet in
+een URL, een netwerkverzoek of browseropslag terecht. Nieuwe cursussen worden
+automatisch uit `content/courses.json` meegenomen. Een dubbel wachtwoord geeft
+een keuze tussen de bijbehorende cursussen; een netwerkfout wordt niet als een
+onjuist wachtwoord gemeld. Bestaande onthouden atelierlogins blijven werken, met
+een knop **Andere cursus openen** voor gedeelde apparaten.
+
+De bestaande versleutelde atelierinhoud, sleutels, wachtwoordrecords, assets,
+lesadressen, browseropslag en cursistenruntime worden niet gemigreerd of
+gewijzigd. De enige aanpassing aan de bestaande cursistenpagina is het laden van
+deze nieuwe adapter. `/cursus/beheer/` heeft een cursuskeuze; `?cursus=atelier`
+laadt de oorspronkelijke, ongewijzigde beheerbundle.
 
 De tweede cursistenlogin staat op `/cursus/cursussen/online/` en het beheer op
 `/cursus/cursussen/online/beheer/`. De online cursus heeft nog geen wachtwoorden:
@@ -24,7 +36,7 @@ Koppeling van GitHub gebeurt daarna per cursus via **Instellingen**.
 Alle schrijfacties van de nieuwe editor worden vóór de GitHub-mutatie op de
 cursusmap begrensd. Dit geldt ook voor verwijderen, wachtwoordwijziging,
 reset en herstel. De atelieradapter sluit alleen de toegevoegde cursusmappen,
-nieuwe runtime, cursuslijst en het keuzescherm uit van de historische
+nieuwe runtime, cursuslijst, gezamenlijke ingang en het keuzescherm uit van de historische
 atelier-herstelactie. Zo herstelt die nog steeds de oorspronkelijke
 atelierbestanden, zonder de toevoeging te verwijderen. De oorspronkelijke
 beheerbundle blijft byte voor byte intact.
@@ -57,3 +69,6 @@ en **Voorbeeld**. Er worden geen echte cursusbestanden of GitHub-gegevens geschr
 Ook beheerpagina's zonder het oorspronkelijke `ssr`-kenmerk worden ondersteund:
 `admin-entry.js` voegt dit vóór het mounten toe, zodat eerder aangemaakte cursussen
 werken zonder nieuwe wachtwoordinstelling of wijziging aan de cursusinhoud.
+Test de gezamenlijke ingang op `http://127.0.0.1:8124/cursus/` met de tijdelijke
+wachtwoorden `atelier-test-student` en `editor-test-student`. Het eerste blijft
+op de atelierlessenlijst; het tweede opent direct de eigen cursuslessenlijst.
