@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "courses": [
+    { "id": "online", "name": "Online cursus", "configured": false }
+  ]
+}

@@ -1,0 +1,18 @@
+.course-switch { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 1rem 2rem; background: #fff; border-bottom: 1px solid #ddd; }
+.course-switch a { color: #564439; }
+.course-selector { max-width: 960px; margin: 4rem auto; padding: 0 1.5rem; }
+.course-selector h1 { font-size: clamp(2rem, 5vw, 3rem); }
+.course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; margin: 2rem 0; }
+.course-card { padding: 1.6rem; border: 1px solid #d7cdc2; border-radius: 12px; background: white; }
+.course-card h2 { margin-top: 0; }
+.course-card a { display: inline-block; margin: .5rem .8rem .5rem 0; }
+.course-card small { display: block; color: #685b50; }
+.course-create { max-width: 700px; padding: 2rem; background: white; border-radius: 12px; border: 1px solid #d7cdc2; }
+.course-create fieldset { border: 0; padding: 0; margin: 1.5rem 0; }
+.course-create legend { font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem; }
+.course-create label { display: block; margin: 1rem 0; }
+.course-create input { display: block; width: 100%; box-sizing: border-box; padding: .75rem; margin-top: .4rem; }
+.course-create small { display: block; margin-top: .4rem; }
+.course-create button { cursor: pointer; }
+.setup-card { margin: 4rem auto; }
+[hidden] { display: none !important; }
