@@ -275,6 +275,11 @@ const artists = [
         title: "Neuropa"
       },
       {
+        src: "assets/artists/machiel-van-soest/IMG_2414_rechtgezet.jpg",
+        alt: "Donker figuratief schilderij met drie menselijke gestalten in aardetinten",
+        title: "Zonder titel"
+      },
+      {
         src: "assets/artists/machiel-van-soest/IMG_1877.jpg",
         alt: "Geschilderd portret van Han van Meegeren in roodbruine tinten",
         label: "Han van Meegeren"
@@ -283,6 +288,7 @@ const artists = [
     description: [
       { title: "Vrije Kunst logo", artist: "Machiel van Soest", year: "2026", technique: "Viltstift op papier", size: "33 × 33 cm" },
       { title: "Neuropa", artist: "Machiel van Soest", year: "2026", technique: "Olieverf op doek", size: "100 × 100 cm" },
+      { title: "Zonder titel", artist: "Machiel van Soest", year: "2026" },
       { title: "Han van Meegeren", artist: "Machiel van Soest", year: "2026", technique: "Aquarelinkt op aquarelpapier", size: "42 × 59,4 cm" }
     ],
     text: []
@@ -341,7 +347,7 @@ function renderWorkDetails(container, works) {
       ["Jaar", work.year],
       ["Techniek", work.technique],
       ["Formaat", work.size]
-    ].forEach(([label, value]) => {
+    ].filter(([, value]) => value).forEach(([label, value]) => {
       const term = document.createElement("dt");
       term.textContent = label;
       const description = document.createElement("dd");

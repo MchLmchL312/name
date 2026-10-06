@@ -553,6 +553,17 @@
       display:block;
     }
 
+    .preview-image-wrap[href]:focus-visible{
+      outline:2px solid #ffe45c;
+      outline-offset:-4px;
+    }
+
+    .about-copy a,
+    .preview-meta a{
+      color:#ffe45c;
+      text-underline-offset:4px;
+    }
+
     .preview-meta{
       padding:14px 16px 16px;
       display:grid;
@@ -635,6 +646,17 @@
     .s7{ left:var(--x1); top:var(--y3); }
     .s8{ left:var(--x2); top:var(--y3); }
     .s9{ left:var(--x3); top:var(--y3); }
+
+    .qr-spot img{
+      display:block;
+      width:100%;
+      height:100%;
+      background:#fff;
+    }
+
+    .qr-spot::after{
+      bottom:-10px;
+    }
 
     @media (max-width: 900px){
       :root{
@@ -768,7 +790,7 @@
         <a class="spot c s6" href="./6/index.html" data-label="Noise" aria-label="Werk 6: Noise"></a>
         <a class="spot c s7" href="./7/index.html" data-label="PTP" aria-label="Werk 7: PTP"></a>
         <a class="spot c s8" href="./8/index.html" data-label="Object" aria-label="Werk 8: Object"></a>
-        <a class="spot c s9" href="./9/index.html" data-label="Outside" aria-label="Werk 9: Outside"></a>
+        <a class="spot c s9 qr-spot" href="../boards/index-links.html" data-label="QR" aria-label="Werk 9: QR — open de + pagina met multimediaprojecten"><img src="qr-plus.svg" alt="QR-code naar de + pagina" /></a>
       </div>
     </div>
 
@@ -808,7 +830,7 @@
         <aside class="grid-note" aria-label="PTP grid uitleg">
           <div class="axis-card">
             <h2>PTP / UNE diagram</h2>
-            <p>UNE loopt horizontaal van links naar rechts; PTP loopt verticaal van boven naar beneden. Klik op een positie voor een beeld uit de betreffende serie.</p>
+            <p>UNE loopt horizontaal van links naar rechts; PTP loopt verticaal van boven naar beneden. Klik op een positie voor een beeld uit de betreffende serie. QR toont de code naar de + pagina met audio, visuele en tekstuele projecten op internet.</p>
             <div class="axis-summaries">
               <p><strong>PTP</strong> — Pressure, Temperature, Pain: huidzintuigen die tegelijk lichamelijk, psychologisch en politiek gelezen worden.</p>
               <p><strong>UNE</strong> — Unborn, Now, Entropy: het leven als beweging van potentie naar verschijnen en van verschijnen naar ontbinding.</p>
@@ -859,20 +881,21 @@
               <button class="cell" type="button" data-series="Object" data-number="8" data-axis="Pain / Now" data-folder="8" data-pattern="image ({n}).jpg" data-max="4">
                 <span>8 / Pain / Now</span><strong>Object</strong><em>object, werkelijkheid</em>
               </button>
-              <button class="cell" type="button" data-series="Outside" data-number="9" data-axis="Pain / Entropy" data-folder="9" data-pattern="image ({n}).jpg" data-max="12">
-                <span>9 / Pain / Entropy</span><strong>Outside</strong><em>straat, afval, toeval</em>
+              <button class="cell" type="button" data-series="QR" data-number="9" data-axis="Pain / Entropy" data-image="qr-plus.svg" data-link="../boards/index-links.html">
+                <span>9 / Pain / Entropy</span><strong>QR</strong><em>audio, beeld, tekst op internet</em>
               </button>
             </div>
           </div>
 
           <div class="preview-card" aria-live="polite">
-            <div class="preview-image-wrap">
+            <a id="previewLink" class="preview-image-wrap">
               <img id="seriesPreview" src="5/image_1.jpg" alt="Voorbeeld uit de serie Skin" />
-            </div>
+            </a>
             <div class="preview-meta">
               <span id="previewAxis">5 / Temperature / Now</span>
               <strong id="previewTitle">Skin</strong>
-              <p id="previewText">Klik op een cel in het grid om een willekeurig beeld uit die serie te tonen.</p>
+              <p id="previewText">Klik op een cel in het grid om een beeld uit die serie of de QR-code te tonen.</p>
+              <a id="previewPlusLink" href="../boards/index-links.html" hidden>Open de + pagina</a>
             </div>
           </div>
         </aside>
@@ -881,10 +904,13 @@
   </main>
   <script>
     const previewImage = document.getElementById('seriesPreview');
+    const previewLink = document.getElementById('previewLink');
+    const previewPlusLink = document.getElementById('previewPlusLink');
     const previewAxis = document.getElementById('previewAxis');
     const previewTitle = document.getElementById('previewTitle');
     const previewText = document.getElementById('previewText');
     const cells = Array.from(document.querySelectorAll('.matrix .cell'));
+    let previewRequest = 0;
 
     function imagePath(cell, n){
       const file = cell.dataset.pattern.replace('{n}', n);
@@ -917,13 +943,24 @@
     }
 
     async function showSeries(cell){
-      const src = await chooseRandomImage(cell);
+      const request = ++previewRequest;
       cells.forEach((item) => item.classList.toggle('is-active', item === cell));
+      const src = cell.dataset.image || await chooseRandomImage(cell);
+      if (request !== previewRequest) return;
       previewImage.src = encodeURI(src);
-      previewImage.alt = `Voorbeeld uit de serie ${cell.dataset.series}`;
+      const isQr = Boolean(cell.dataset.link);
+      previewImage.alt = isQr ? 'QR-code naar de + pagina met audio, visuele en tekstuele projecten' : `Voorbeeld uit de serie ${cell.dataset.series}`;
+      if (isQr){
+        previewLink.href = cell.dataset.link;
+        previewLink.setAttribute('aria-label', 'Open de + pagina met multimediaprojecten');
+      } else {
+        previewLink.removeAttribute('href');
+        previewLink.removeAttribute('aria-label');
+      }
+      previewPlusLink.hidden = !isQr;
       previewAxis.textContent = `${cell.dataset.number} / ${cell.dataset.axis}`;
       previewTitle.textContent = cell.dataset.series;
-      previewText.textContent = 'Willekeurig beeld uit de map van deze serie.';
+      previewText.textContent = isQr ? 'Scan of klik op de QR-code. Audio, visuele en tekstuele projecten op internet komen samen en worden gedocumenteerd op de + pagina.' : 'Willekeurig beeld uit de map van deze serie.';
     }
 
     cells.forEach((cell) => {
