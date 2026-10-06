@@ -1,0 +1,44 @@
+[hidden] { display: none !important; }
+.about-body > .about-copy { order: -2; }
+
+.text-access {
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  padding-top: 20px;
+}
+
+.text-access h2 { margin: 0 0 14px; }
+.text-access label { display: block; margin: 16px 0 6px; }
+.text-login-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.text-access input,
+.text-access button,
+.text-downloads a {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 14px;
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+}
+
+.text-access input {
+  background: rgba(0, 0, 0, .25);
+  min-width: 0;
+  flex: 1 1 200px;
+}
+
+.text-access button {
+  background: rgba(255, 228, 92, .12);
+  border-color: rgba(255, 228, 92, .5);
+  cursor: pointer;
+}
+
+.text-access button:hover { background: rgba(255, 228, 92, .22); }
+.text-access button:disabled { cursor: wait; opacity: .6; }
+.text-access :focus-visible { outline: 2px solid #ffe45c; outline-offset: 4px; }
+.text-access input[aria-invalid="true"] { border-color: #ffb4ab; }
+.text-login-status { min-height: 1.7em; margin-top: 10px !important; font-size: 15px; }
+.text-downloads { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0 22px; }
+.text-downloads a { background: var(--card); text-decoration: none; }
+.private-text-content { margin-top: 24px; }
