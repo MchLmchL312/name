@@ -277,7 +277,7 @@ const artists = [
       {
         src: "assets/artists/machiel-van-soest/IMG_2414_rechtgezet.jpg",
         alt: "Donker figuratief schilderij met drie menselijke gestalten in aardetinten",
-        title: "Zonder titel"
+        title: "Neuropa (versie 2)"
       },
       {
         src: "assets/artists/machiel-van-soest/IMG_1877.jpg",
@@ -288,7 +288,7 @@ const artists = [
     description: [
       { title: "Vrije Kunst logo", artist: "Machiel van Soest", year: "2026", technique: "Viltstift op papier", size: "33 × 33 cm" },
       { title: "Neuropa", artist: "Machiel van Soest", year: "2026", technique: "Olieverf op doek", size: "100 × 100 cm" },
-      { title: "Zonder titel", artist: "Machiel van Soest", year: "2026" },
+      { title: "Neuropa (versie 2)", artist: "Machiel van Soest", year: "2026" },
       { title: "Han van Meegeren", artist: "Machiel van Soest", year: "2026", technique: "Aquarelinkt op aquarelpapier", size: "42 × 59,4 cm" }
     ],
     text: []
