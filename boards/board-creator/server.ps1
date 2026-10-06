@@ -109,6 +109,9 @@ function Assert-BoardImage {
       if ($image.Width -ne $BoardWidth -or $image.Height -ne $BoardHeight) {
         throw "Afbeelding is $($image.Width)x$($image.Height), verwacht ${BoardWidth}x${BoardHeight}."
       }
+      if ($image.RawFormat.Guid -ne [System.Drawing.Imaging.ImageFormat]::Jpeg.Guid) {
+        throw "Afbeelding moet een JPG zijn."
+      }
     }
     finally {
       $image.Dispose()
@@ -128,23 +131,41 @@ function Save-Board {
     $next = Get-NextBoardInfo
     try {
       $stream = [System.IO.File]::Open($next.path, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
-      try {
-        $stream.Write($Bytes, 0, $Bytes.Length)
-      }
-      finally {
-        $stream.Dispose()
-      }
-
-      return [pscustomobject]@{
-        ok = $true
-        number = $next.number
-        name = $next.name
-        path = $next.path
-        bytes = $Bytes.Length
-      }
     }
     catch [System.IO.IOException] {
-      continue
+      if ([System.IO.File]::Exists($next.path)) {
+        continue
+      }
+      throw
+    }
+
+    try {
+      $stream.Write($Bytes, 0, $Bytes.Length)
+    }
+    catch {
+      $stream.Dispose()
+      [System.IO.File]::Delete($next.path)
+      throw
+    }
+    finally {
+      $stream.Dispose()
+    }
+
+    $warning = $null
+    try {
+      & (Join-Path $AppRoot "update-board-list.ps1") -BoardsDir $BoardsDir
+    }
+    catch {
+      $warning = "Board opgeslagen, maar de galerijlijst kon niet worden bijgewerkt. Start de app opnieuw."
+    }
+
+    return [pscustomobject]@{
+      ok = $true
+      number = $next.number
+      name = $next.name
+      path = $next.path
+      bytes = $Bytes.Length
+      warning = $warning
     }
   }
 
@@ -184,7 +205,13 @@ function Handle-Save {
     $reader.Dispose()
   }
 
-  $payload = $body | ConvertFrom-Json
+  try {
+    $payload = $body | ConvertFrom-Json
+  }
+  catch {
+    Send-TextError -Response $Response -StatusCode 400 -Message "Ongeldige aanvraag."
+    return
+  }
   $dataUrl = [string]$payload.image
   $prefix = "data:image/jpeg;base64,"
 
@@ -194,7 +221,14 @@ function Handle-Save {
   }
 
   $base64 = $dataUrl.Substring($prefix.Length)
-  $bytes = [System.Convert]::FromBase64String($base64)
+  try {
+    $bytes = [System.Convert]::FromBase64String($base64)
+    Assert-BoardImage -Bytes $bytes
+  }
+  catch {
+    Send-TextError -Response $Response -StatusCode 400 -Message "Ongeldige JPG. Verwacht een board van ${BoardWidth}x${BoardHeight}."
+    return
+  }
   $result = Save-Board -Bytes $bytes
   $next = Get-NextBoardInfo
 
@@ -234,6 +268,7 @@ function Handle-Static {
 }
 
 function Start-BoardCreatorServer {
+  & (Join-Path $AppRoot "update-board-list.ps1") -BoardsDir $BoardsDir
   $listener = $null
   $baseUrl = $null
 

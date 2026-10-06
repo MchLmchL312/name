@@ -34,7 +34,8 @@ input {
 }
 
 .app-shell {
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   display: grid;
   grid-template-rows: auto 1fr;
 }
@@ -223,7 +224,7 @@ input {
   color: var(--muted);
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: .08em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -329,6 +330,10 @@ input {
 }
 
 @media (max-width: 900px) {
+  .app-shell {
+    height: auto;
+    min-height: 100dvh;
+  }
   body {
     overflow: auto;
   }

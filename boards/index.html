@@ -16,7 +16,7 @@
   <meta property="og:title" content="Boards | Machiel van Soest">
   <meta property="og:description" content="Open beeldarchief met boards, installaties, projecten en visueel onderzoek van Machiel van Soest.">
   <meta property="og:url" content="https://www.machielvansoest.nl/boards/">
-  <meta property="og:image" content="https://www.machielvansoest.nl/boards/board1.jpg">
+  <meta property="og:image" content="https://www.machielvansoest.nl/boards/boards/board1.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <script type="application/ld+json">
     {
@@ -329,21 +329,11 @@
   <div class="gallery" id="gallery"></div>
 
   <div class="overlay" id="overlay">
-    <img src="" alt="Grote weergave van board" id="fullscreenImg">
+    <img alt="Grote weergave van board" id="fullscreenImg">
   </div>
 
   <script>
-    // Sneller dynamisch laden: we laden in kleine batches parallel en stoppen bij het eerste ontbrekende nummer.
-    // Verwacht: /boards/board1.jpg, board2.jpg, board3.jpg, ... (opvolgend).
     const BOARDS_DIR = 'boards';
-    const PREFIX = 'board';
-    const EXT = '.jpg';
-
-    // Veiligheidslimiet
-    const MAX_SCAN = 500;
-
-    // Hoeveel tegelijk laden (parallel) voor snelheid
-    const BATCH_SIZE = 8;
 
     // Optioneel: voeg ?nocache toe aan de URL als je bestaande bestanden hebt vervangen
     // (bijv. http://localhost/index.html?nocache)
@@ -352,21 +342,6 @@
 
     function randInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    function boardUrl(n) {
-      return `${BOARDS_DIR}/${PREFIX}${n}${EXT}${BUST}`;
-    }
-
-    function loadImage(n) {
-      const url = boardUrl(n);
-      return new Promise(resolve => {
-        const img = new Image();
-        img.alt = `Board ${n} van Machiel van Soest`;
-        img.onload = () => resolve({ n, ok: true, img });
-        img.onerror = () => resolve({ n, ok: false, img: null });
-        img.src = url;
-      });
     }
 
     function shuffle(array) {
@@ -387,49 +362,38 @@
       const loadingMsg = document.createElement('div');
       loadingMsg.style.color = '#fff';
       loadingMsg.style.padding = '20px';
-      loadingMsg.textContent = 'Boards laden…';
       loadingMsg.textContent = 'Boards laden...';
       gallery.appendChild(loadingMsg);
 
-      let foundAny = false;
-      let n = 1;
-      let stop = false;
-      const images = [];
-
-      while (n <= MAX_SCAN && !stop) {
-        const batchNums = Array.from({ length: BATCH_SIZE }, (_, i) => n + i);
-        const results = await Promise.all(batchNums.map(loadImage));
-        results.sort((a, b) => a.n - b.n);
-
-        for (const r of results) {
-          if (!r.ok) {
-            stop = true;
-            break;
-          }
-
-          if (!foundAny) {
-            // verwijder laadbericht zodra de eerste binnen is
-            gallery.innerHTML = '';
-            foundAny = true;
-          }
-          images.push(r.img);
-        }
-
-        n += BATCH_SIZE;
-      }
-
-      if (!foundAny) {
-        gallery.innerHTML = '';
-        const msg = document.createElement('div');
-        msg.style.color = '#fff';
-        msg.style.padding = '20px';
-        msg.textContent = 'Geen boards gevonden in /boards (verwacht: board1.jpg, board2.jpg, …).';
-        msg.textContent = 'Geen boards gevonden in /boards (verwacht: board1.jpg, board2.jpg, ...).';
-        gallery.appendChild(msg);
+      let files;
+      try {
+        const response = await fetch(`${BOARDS_DIR}/boards.json${BUST}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error('Boardlijst niet beschikbaar');
+        const data = await response.json();
+        if (!Array.isArray(data.boards)) throw new Error('Ongeldige boardlijst');
+        files = [...new Set(data.boards.filter(name =>
+          typeof name === 'string' && /^board[1-9][0-9]*\.jpg$/.test(name)
+        ))];
+      } catch (error) {
+        loadingMsg.textContent = 'Boards konden niet worden geladen.';
         return;
       }
 
-      shuffle(images).forEach(img => gallery.appendChild(img));
+      if (!files.length) {
+        loadingMsg.textContent = 'Geen boards gevonden.';
+        return;
+      }
+
+      loadingMsg.remove();
+      shuffle(files).forEach(name => {
+        const img = new Image();
+        img.alt = `Board ${name.slice(5, -4)} van Machiel van Soest`;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.onerror = () => img.remove();
+        img.src = `${BOARDS_DIR}/${name}${BUST}`;
+        gallery.appendChild(img);
+      });
 
       // Overlay functionaliteit
       function galleryImages() {
@@ -451,7 +415,7 @@
 
       function closeOverlay() {
         overlay.classList.remove('show');
-        fullscreenImg.src = '';
+        fullscreenImg.removeAttribute('src');
       }
 
       gallery.addEventListener('click', e => {

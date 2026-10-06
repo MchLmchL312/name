@@ -34,6 +34,8 @@
     items: [],
     selectedId: null,
     nextFileName: "",
+    isSaving: false,
+    serverOnline: false,
     interaction: null,
     toastTimer: 0
   };
@@ -63,14 +65,25 @@
     const maxHeight = BOARD_HEIGHT * 0.58;
     const scale = Math.min(maxWidth / image.naturalWidth, maxHeight / image.naturalHeight, 1);
     return {
-      width: Math.max(MIN_ITEM_SIZE, image.naturalWidth * scale),
-      height: Math.max(MIN_ITEM_SIZE, image.naturalHeight * scale)
+      width: image.naturalWidth * scale,
+      height: image.naturalHeight * scale
+    };
+  }
+
+  function sizeLimits(item) {
+    const aspect = item.naturalHeight / item.naturalWidth;
+    const maxWidth = Math.min(BOARD_WIDTH, BOARD_HEIGHT / aspect);
+    return {
+      aspect,
+      minWidth: Math.min(maxWidth, Math.max(MIN_ITEM_SIZE, MIN_ITEM_SIZE / aspect)),
+      maxWidth
     };
   }
 
   function normalizePosition(item) {
-    item.width = clamp(item.width, MIN_ITEM_SIZE, BOARD_WIDTH);
-    item.height = clamp(item.height, MIN_ITEM_SIZE, BOARD_HEIGHT);
+    const limits = sizeLimits(item);
+    item.width = clamp(item.width, limits.minWidth, limits.maxWidth);
+    item.height = item.width * limits.aspect;
     item.x = clamp(item.x, 0, Math.max(0, BOARD_WIDTH - item.width));
     item.y = clamp(item.y, 0, Math.max(0, BOARD_HEIGHT - item.height));
   }
@@ -128,8 +141,9 @@
   function updateSelectionControls() {
     const item = selectedItem();
     const hasSelection = Boolean(item);
-    forwardButton.disabled = !hasSelection;
-    backwardButton.disabled = !hasSelection;
+    const index = state.items.indexOf(item);
+    forwardButton.disabled = !hasSelection || index === state.items.length - 1;
+    backwardButton.disabled = !hasSelection || index === 0;
     deleteButton.disabled = !hasSelection;
     scaleSlider.disabled = !hasSelection;
 
@@ -140,6 +154,9 @@
     }
 
     const percent = Math.round((item.width / item.baseWidth) * 100);
+    const limits = sizeLimits(item);
+    scaleSlider.min = String(Math.ceil((limits.minWidth / item.baseWidth) * 100));
+    scaleSlider.max = String(Math.floor((limits.maxWidth / item.baseWidth) * 100));
     scaleSlider.value = String(clamp(percent, Number(scaleSlider.min), Number(scaleSlider.max)));
     selectionName.textContent = item.name;
   }
@@ -170,14 +187,15 @@
   function refreshUi() {
     swatches.forEach((button) => {
       button.classList.toggle("is-active", button.dataset.bg === state.background);
+      button.setAttribute("aria-pressed", String(button.dataset.bg === state.background));
     });
-    saveButton.disabled = state.items.length === 0;
+    saveButton.disabled = state.isSaving || !state.serverOnline || state.items.length === 0;
     updateSelectionControls();
     updateLayers();
     draw();
   }
 
-  async function refreshStatus() {
+  async function refreshStatus(updateMessage = true) {
     try {
       const response = await fetch("/api/status", { cache: "no-store" });
       if (!response.ok) {
@@ -185,13 +203,17 @@
       }
 
       const data = await response.json();
+      if (!data.ok || !data.nextName) throw new Error("Status niet beschikbaar");
+      state.serverOnline = true;
       state.nextFileName = data.nextName || "";
       nextName.textContent = state.nextFileName || "board...";
-      setStatus("Klaar voor " + state.nextFileName);
+      if (updateMessage) setStatus("Klaar voor " + state.nextFileName);
     } catch (error) {
+      state.serverOnline = false;
       nextName.textContent = "server offline";
-      setStatus("Start via start-board-creator.cmd");
+      if (updateMessage) setStatus("Start via start-board-creator.cmd");
     }
+    refreshUi();
   }
 
   function loadImageFile(file) {
@@ -234,6 +256,8 @@
           height: size.height
         };
         normalizePosition(item);
+        item.baseWidth = item.width;
+        item.baseHeight = item.height;
         state.items.push(item);
         state.selectedId = item.id;
       } catch (error) {
@@ -265,6 +289,7 @@
   }
 
   function pointerDown(event) {
+    if (!event.isPrimary || event.button !== 0 || state.interaction) return;
     const point = boardPoint(event);
     const current = selectedItem();
     let item = current && hitHandle(current, point) ? current : findHit(point);
@@ -310,14 +335,10 @@
       item.x = interaction.startX + dx;
       item.y = interaction.startY + dy;
     } else {
-      const aspect = interaction.startHeight / interaction.startWidth;
-      const requestedWidth = interaction.startWidth + Math.max(dx, dy / aspect);
-      item.width = clamp(requestedWidth, MIN_ITEM_SIZE, BOARD_WIDTH);
-      item.height = item.width * aspect;
-      if (item.height > BOARD_HEIGHT) {
-        item.height = BOARD_HEIGHT;
-        item.width = item.height / aspect;
-      }
+      const width = interaction.startWidth;
+      const height = interaction.startHeight;
+      const scale = 1 + (dx * width + dy * height) / (width * width + height * height);
+      item.width = width * scale;
     }
 
     normalizePosition(item);
@@ -328,7 +349,9 @@
   function pointerUp(event) {
     if (state.interaction && state.interaction.pointerId === event.pointerId) {
       state.interaction = null;
-      canvas.releasePointerCapture(event.pointerId);
+      if (canvas.hasPointerCapture(event.pointerId)) {
+        canvas.releasePointerCapture(event.pointerId);
+      }
       refreshUi();
     }
   }
@@ -355,6 +378,7 @@
       return;
     }
 
+    if (state.interaction) pointerUp({ pointerId: state.interaction.pointerId });
     state.items.splice(index, 1);
     state.selectedId = state.items.length ? state.items[Math.min(index, state.items.length - 1)].id : null;
     refreshUi();
@@ -370,16 +394,19 @@
     item.width = item.baseWidth * scale;
     item.height = item.baseHeight * scale;
     normalizePosition(item);
+    updateSelectionControls();
     draw();
   }
 
   async function saveBoard() {
+    if (state.isSaving) return;
     if (!state.items.length) {
       showToast("Voeg eerst een afbeelding toe");
       return;
     }
 
-    saveButton.disabled = true;
+    state.isSaving = true;
+    refreshUi();
     saveButton.querySelector("span:last-child").textContent = "Opslaan...";
     setStatus("Opslaan...");
 
@@ -397,17 +424,19 @@
         throw new Error(data.error || "Opslaan mislukt");
       }
 
-      showToast("Opgeslagen als " + data.name);
+      const message = data.warning || "Opgeslagen als " + data.name;
+      showToast(message);
       state.nextFileName = data.nextName || "";
       nextName.textContent = state.nextFileName || "board...";
-      setStatus("Opgeslagen als " + data.name);
+      setStatus(message);
     } catch (error) {
       showToast(error.message || "Opslaan mislukt");
       setStatus(error.message || "Opslaan mislukt");
+      await refreshStatus(false);
     } finally {
+      state.isSaving = false;
       saveButton.querySelector("span:last-child").textContent = "Opslaan";
       refreshUi();
-      refreshStatus();
     }
   }
 
@@ -428,6 +457,7 @@
   canvas.addEventListener("pointermove", pointerMove);
   canvas.addEventListener("pointerup", pointerUp);
   canvas.addEventListener("pointercancel", pointerUp);
+  canvas.addEventListener("lostpointercapture", pointerUp);
 
   dropZone.addEventListener("dragover", (event) => {
     event.preventDefault();
