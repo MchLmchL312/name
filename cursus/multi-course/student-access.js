@@ -38,6 +38,11 @@ async function matchPassword(password, course, readJson) {
 
 export async function findStudentCourses(password, readJson = fetchJson) {
   if (typeof password !== 'string' || password.length < 12) throw new Error('Gebruik het volledige cursuswachtwoord.');
+  if (!globalThis.crypto?.subtle) {
+    throw new Error(globalThis.isSecureContext === false
+      ? 'Open de cursus via HTTPS om te kunnen inloggen.'
+      : 'Deze browser ondersteunt de beveiligde login niet. Gebruik een actuele browser.');
+  }
   let registryUnavailable = false;
   let courses = [atelier];
   try {

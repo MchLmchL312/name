@@ -11,6 +11,12 @@ een keuze tussen de bijbehorende cursussen; een netwerkfout wordt niet als een
 onjuist wachtwoord gemeld. Bestaande onthouden atelierlogins blijven werken, met
 een knop **Andere cursus openen** voor gedeelde apparaten.
 
+De gezamenlijke ingang schakelt op het openbare domein automatisch van HTTP naar
+HTTPS, voordat de login wordt geladen. De wachtwoordcontrole heeft een beveiligde
+verbinding nodig; zonder WebCrypto verschijnt een duidelijke browsermelding in
+plaats van de melding dat cursusbestanden niet geladen konden worden. Lokale
+voorbeelden op localhost blijven via HTTP werken.
+
 De bestaande versleutelde atelierinhoud, sleutels, wachtwoordrecords, assets,
 lesadressen, browseropslag en cursistenruntime worden niet gemigreerd of
 gewijzigd. De enige aanpassing aan de bestaande cursistenpagina is het laden van
@@ -52,6 +58,8 @@ vormgeving, React-runtime en rich-textknoppen worden alleen gelezen.
 `node --test multi-course/tests.mjs` controleert inlogscheiding, versleuteling,
 publiceren, volgorde, offline halen, wachtwoordwijzigingen, reset, herstel,
 cursusaanmaak, gelijktijdige publicatie en behoud van de atelierbestanden.
+`node --test multi-course/secure-entry.test.mjs` controleert HTTPS-doorverwijzing
+en de melding bij een browser zonder WebCrypto.
 
 Dit blijft een statische website met de bestaande client-side versleuteling en
 GitHub-publicatie. Versleutelde bestanden zijn openbaar opvraagbaar; de
