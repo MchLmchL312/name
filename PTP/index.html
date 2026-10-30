@@ -232,364 +232,184 @@
     }
 
     main.content{
-      flex:1;
       width:100%;
-      max-width: var(--maxw);
-      margin: 0 auto;
-      padding: 18px var(--pad) 40px;
-      display:grid;
-      gap: var(--content-gap);
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding:clamp(32px, 5vw, 72px) var(--pad) 64px;
     }
-
-    .wrap-stage{
-      width:100%;
-      display:flex;
+    .project-hero{
+      display:grid;
+      grid-template-columns:minmax(0, .9fr) minmax(0, 1.1fr);
+      gap:clamp(32px, 5vw, 72px);
       align-items:center;
-      justify-content:center;
+      padding-bottom:clamp(48px, 7vw, 88px);
     }
-
-    .stage{
-      position:relative;
-      width:min(100%, calc(var(--stage-fit-h) * var(--imgW) / var(--imgH)));
-      aspect-ratio: var(--imgW) / var(--imgH);
-      max-height: var(--stage-fit-h);
-      border-radius: 18px;
-      overflow:hidden;
-      box-shadow: 0 18px 50px rgba(0,0,0,.35);
-      background:#000;
-    }
-
-    .stage-image{
-      display:block;
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      background:#000;
-    }
-
-    .about{
-      border:1px solid var(--border);
-      border-radius:18px;
-      background: var(--card);
-      box-shadow: 0 18px 50px rgba(0,0,0,.28);
-      overflow:visible;
-    }
-
-    .about-head{
-      padding: clamp(22px, 4vw, 42px) clamp(18px, 4vw, 44px) 18px;
-      border-bottom:1px solid var(--border);
-      background: rgba(12,12,15,.28);
-    }
-
+    .project-intro{ min-width:0; }
     .about-kicker{
-      margin:0 0 10px;
-      color: var(--muted);
-      font-size: 13px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .about h1{
-      margin:0;
-      max-width: 14ch;
-      font-size: clamp(34px, 6vw, 72px);
-      line-height:.98;
-      font-weight:680;
-    }
-
-    .about-body{
-      display:grid;
-      gap: clamp(22px, 4vw, 48px);
-      padding: clamp(22px, 4vw, 44px);
-      align-items:start;
-    }
-
-    .about-copy{
-      display:grid;
-      gap: 18px;
-      max-width: 900px;
-      color: rgba(255,255,255,.82);
-      font-size: clamp(16px, 1.8vw, 19px);
-      line-height: 1.72;
-    }
-
-    .about-copy p{
-      margin:0;
-    }
-
-    .about-copy h2{
-      margin: 18px 0 0;
-      color: var(--text);
-      font-size: clamp(22px, 3vw, 34px);
-      line-height: 1.12;
-      font-weight: 680;
-    }
-
-    .about-copy h3{
-      margin: 10px 0 -6px;
-      color: var(--text);
-      font-size: clamp(17px, 2vw, 21px);
-      line-height: 1.2;
-      font-weight: 650;
-    }
-
-    .about-copy strong{
-      color: var(--text);
-      font-weight:650;
-    }
-
-    .grid-note{
-      display:grid;
-      gap:12px;
-      align-content:start;
-      grid-template-columns: minmax(0, 1.12fr) minmax(340px, .88fr);
-      order:-1;
-    }
-
-    .grid-note > .axis-card:first-child{
-      grid-column: 1 / -1;
-    }
-
-    .axis-card,
-    .matrix{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:14px;
-      background: rgba(0,0,0,.24);
-    }
-
-    .matrix-panel{
-      display:grid;
-      grid-template-columns:76px minmax(0, 1fr);
-      grid-template-rows:auto minmax(0, 1fr);
-      gap:8px;
-      grid-column:1;
-      grid-row:2;
-      align-content:start;
-    }
-
-    .axis-card{
-      padding:12px;
-    }
-
-    .axis-card h2{
-      margin:0 0 6px;
-      font-size:15px;
-      font-weight:650;
-    }
-
-    .axis-card p{
-      margin:0;
-      color: var(--muted);
-      line-height:1.45;
-      font-size:13px;
-    }
-
-    .axis-summaries{
-      display:grid;
-      grid-template-columns:repeat(2, minmax(0, 1fr));
-      gap:12px 20px;
-      margin-top:10px;
-      padding-top:10px;
-      border-top:1px solid rgba(255,255,255,.08);
-    }
-
-    .axis-summaries p{
-      font-size:12px;
-    }
-
-    .axis-summaries strong{
-      color:var(--text);
-      font-weight:650;
-    }
-
-    .axis-horizontal,
-    .axis-vertical{
+      margin:0 0 22px;
       color:var(--muted);
-      font-size:11px;
-      letter-spacing:.06em;
+      font-size:12px;
+      font-weight:600;
+      letter-spacing:.16em;
       text-transform:uppercase;
     }
-
-    .axis-horizontal{
-      grid-column:2;
-      display:grid;
-      grid-template-columns:1fr;
-      gap:2px;
-      padding:0 10px 2px;
+    .project-intro h1{
+      margin:0;
+      font-size:clamp(42px, 5.1vw, 68px);
+      line-height:1.03;
+      letter-spacing:-.045em;
+      font-weight:650;
     }
-
-    .axis-label{
+    .project-intro h1 span{ display:block; }
+    .project-lead{
+      max-width:42ch;
+      margin:28px 0 0;
+      color:rgba(255,255,255,.72);
+      font-size:clamp(16px, 1.4vw, 18px);
+      line-height:1.75;
+    }
+    .project-actions{ display:flex; flex-wrap:wrap; align-items:center; gap:14px 24px; margin-top:30px; }
+    .project-actions a{
+      display:inline-flex;
+      align-items:center;
+      gap:12px;
+      min-height:46px;
       color:var(--text);
-      font-weight:700;
-      white-space:nowrap;
+      text-decoration:none;
+      font-size:14px;
+      border-bottom:1px solid rgba(255,255,255,.3);
     }
-
-    .axis-label span{
+    .project-actions .primary-action{
+      padding:0 18px;
+      color:#17150b;
+      background:#ffe45c;
+      border:1px solid #ffe45c;
+      border-radius:6px;
+      font-weight:650;
+    }
+    .project-actions a:hover{ color:#ffe45c; }
+    .project-actions .primary-action:hover{ color:#17150b; background:#ffed94; }
+    .wrap-stage{ margin:0; min-width:0; }
+    .stage{
+      position:relative;
+      width:100%;
+      aspect-ratio:var(--imgW) / var(--imgH);
+      overflow:hidden;
+      background:#fff;
+      border:1px solid rgba(255,255,255,.2);
+      border-radius:6px;
+    }
+    .stage-image{ display:block; width:100%; height:100%; object-fit:contain; }
+    .wrap-stage figcaption{
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      margin-top:12px;
       color:var(--muted);
-      font-weight:500;
+      font-size:12px;
+      line-height:1.5;
     }
-
-    .axis-values{
+    .wrap-stage figcaption span:first-child{ color:var(--text); }
+    #about, #diagram{ scroll-margin-top:140px; }
+    .grid-note{
       display:grid;
-      grid-template-columns:repeat(3, minmax(0, 1fr));
-      gap:8px;
+      grid-template-columns:minmax(0, 1.25fr) minmax(0, .85fr);
+      align-items:start;
+      gap:28px 44px;
+      padding:40px 0 56px;
+      border-top:1px solid var(--border);
     }
-
-    .axis-values span{
+    .axis-card{ grid-column:1 / -1; display:grid; grid-template-columns:1fr 1fr; gap:14px 44px; }
+    .axis-card h2, .about h2{
+      margin:0;
+      color:var(--text);
+      font-size:clamp(25px, 3vw, 34px);
+      line-height:1.15;
+      letter-spacing:-.025em;
+      font-weight:600;
+    }
+    .axis-card > p{ grid-column:1; margin:0; color:var(--muted); font-size:14px; line-height:1.7; }
+    .axis-summaries{ grid-column:2; grid-row:1 / 3; display:grid; gap:12px; align-content:start; }
+    .axis-summaries p{ margin:0; color:var(--muted); font-size:13px; line-height:1.65; }
+    .axis-summaries strong{ color:var(--text); }
+    .matrix-panel{
+      display:grid;
+      grid-template-columns:100px minmax(0, 1fr);
+      grid-template-rows:auto minmax(0, 1fr);
+      gap:12px;
       min-width:0;
     }
-
+    .axis-horizontal, .axis-vertical{ color:var(--muted); font-size:11px; }
+    .axis-horizontal{ grid-column:2; display:grid; gap:12px; }
+    .axis-label{ color:var(--text); font-size:11px; font-weight:650; letter-spacing:.06em; }
+    .axis-label span{ color:var(--muted); font-weight:400; }
+    .axis-values{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; }
+    .axis-horizontal .axis-values{ text-align:center; }
     .axis-vertical{
       grid-column:1;
-      grid-row:2;
+      grid-row:1 / 3;
       display:grid;
-      grid-template-rows:auto repeat(3, minmax(0, 1fr));
-      align-items:center;
-      gap:0;
-      padding:8px 0;
+      grid-template-rows:40px minmax(0, 1fr);
+      gap:10px;
     }
-
-    .axis-vertical .axis-label{
-      padding-bottom:8px;
-    }
-
-    .axis-vertical .axis-values{
-      grid-column:1;
-      display:contents;
-    }
-
-    .axis-vertical .axis-values span{
-      align-self:center;
-      padding-right:8px;
-      text-align:right;
-    }
-
+    .axis-vertical .axis-label{ align-self:start; }
+    .axis-vertical .axis-values{ grid-template-columns:1fr; grid-template-rows:repeat(3, 1fr); gap:0; }
+    .axis-vertical .axis-values span{ align-self:center; }
     .matrix{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      overflow:hidden;
       grid-column:2;
       grid-row:2;
-      background:#282828;
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:6px;
+      min-width:0;
     }
-
     .cell{
       appearance:none;
-      border:0;
-      color:inherit;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:10px;
+      min-width:0;
+      min-height:116px;
+      padding:14px 12px;
+      color:var(--text);
+      background:rgba(255,255,255,.025);
+      border:1px solid var(--border);
+      border-radius:5px;
       font:inherit;
       text-align:left;
       cursor:pointer;
-      min-height:88px;
-      padding:10px;
-      border-right:1px solid rgba(255,255,255,.08);
-      border-bottom:1px solid rgba(255,255,255,.08);
-      background:#282828;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      gap:6px;
-      transition: background 140ms ease, box-shadow 140ms ease;
+      transition:background 140ms ease, border-color 140ms ease;
     }
-
-    .cell:hover,
-    .cell:focus-visible,
-    .cell.is-active{
-      background:#353535;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
-      outline:none;
-    }
-
-    .cell:nth-child(3n){
-      border-right:0;
-    }
-
-    .cell:nth-last-child(-n+3){
-      border-bottom:0;
-    }
-
-    .cell span{
-      color: var(--muted);
-      font-size:11px;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-    }
-
-    .cell strong{
-      color: var(--text);
-      font-size:16px;
-      font-weight:650;
-    }
-
-    .cell em{
-      color: rgba(255,255,255,.42);
-      font-style:normal;
-      font-size:12px;
-    }
-
-    .preview-card{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:14px;
-      background: rgba(0,0,0,.24);
-      overflow:hidden;
-      grid-column: 2;
-      grid-row:2;
-      align-self:start;
+    .cell:hover{ background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.35); }
+    .cell.is-active{ border-color:rgba(255,228,92,.7); background:rgba(255,228,92,.075); }
+    .cell span{ color:var(--muted); font-size:11px; }
+    .cell strong{ font-size:17px; line-height:1.2; font-weight:600; }
+    .cell em{ margin-top:auto; color:var(--muted); font-size:11px; line-height:1.5; font-style:normal; }
+    .preview-card{ min-width:0; overflow:hidden; border:1px solid var(--border); border-radius:6px; background:rgba(0,0,0,.15); }
+    .preview-image-wrap{ display:grid; place-items:center; aspect-ratio:1 / 1; background:#0b0b0b; }
+    .preview-image-wrap img{ display:block; width:100%; height:100%; min-height:0; object-fit:contain; }
+    .preview-meta{ display:grid; gap:8px; padding:20px; }
+    .preview-meta span{ color:var(--muted); font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
+    .preview-meta strong{ font-size:22px; font-weight:600; }
+    .preview-meta p{ margin:0; color:var(--muted); font-size:13px; line-height:1.6; }
+    .preview-meta a, .about-copy a{ color:#ffe45c; text-underline-offset:4px; }
+    .about{
       display:grid;
-      grid-template-rows: minmax(0, 1fr) auto;
+      grid-template-columns:minmax(0, .65fr) minmax(0, 1fr);
+      gap:28px 64px;
+      padding-top:40px;
+      border-top:1px solid var(--border);
     }
-
-    .preview-image-wrap{
-      min-height: clamp(320px, 34vw, 480px);
-      background:#000;
-      display:grid;
-      place-items:center;
-    }
-
-    .preview-image-wrap img{
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      display:block;
-    }
-
-    .preview-image-wrap[href]:focus-visible{
-      outline:2px solid #ffe45c;
-      outline-offset:-4px;
-    }
-
-    .about-copy a,
-    .preview-meta a{
-      color:#ffe45c;
-      text-underline-offset:4px;
-    }
-
-    .preview-meta{
-      padding:14px 16px 16px;
-      display:grid;
-      gap:4px;
-    }
-
-    .preview-meta span{
-      color: var(--muted);
-      font-size:12px;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-    }
-
-    .preview-meta strong{
-      color: var(--text);
-      font-size:18px;
-      font-weight:650;
-    }
-
-    .preview-meta p{
-      margin:0;
-      color: var(--muted);
-      font-size:14px;
-      line-height:1.5;
-    }
-
+    .about-head .about-kicker{ margin-bottom:14px; }
+    .about-body{ min-width:0; }
+    .about-copy{ display:grid; gap:20px; max-width:66ch; color:rgba(255,255,255,.76); font-size:17px; line-height:1.8; }
+    .about-copy p{ margin:0; }
+    .about-copy h2{ margin:20px 0 0; font-size:26px; }
+    .about-copy h3{ margin:14px 0 0; color:var(--text); font-size:20px; line-height:1.3; }
+    .about-copy strong{ color:var(--text); }
+    .text-access{ margin-top:16px; }
+    main a:focus-visible, .cell:focus-visible{ outline:2px solid #ffe45c; outline-offset:4px; }
     .spot{
       position:absolute;
       width:18%;
@@ -664,91 +484,51 @@
       bottom:-10px;
     }
 
-    @media (max-width: 900px){
-      :root{
-        --stage-fit-h: calc(100svh - 150px - (2 * var(--content-gap)));
-      }
 
-      .about-body{
-        grid-template-columns: 1fr;
-      }
-
-      .grid-note{
-        grid-template-columns: 1fr;
-      }
-
-      .preview-card{
-        grid-column:auto;
-        grid-row:auto;
-      }
-
-      .preview-image-wrap{
-        min-height: clamp(260px, 62vw, 520px);
-      }
+    @media (max-width: 960px){
+      .project-hero{ gap:32px; }
+      .project-intro h1{ font-size:clamp(38px, 5.2vw, 50px); }
+      .grid-note{ grid-template-columns:minmax(0, 1fr) minmax(0, .7fr); gap:24px; }
+      .matrix-panel{ grid-template-columns:80px minmax(0, 1fr); gap:8px; }
+      .cell{ padding:12px 9px; }
+      .cell strong{ font-size:15px; }
+      .about{ grid-template-columns:minmax(0, .6fr) minmax(0, 1fr); gap:32px; }
     }
-
     @media (max-width: 720px){
-      .topbar{
-        align-items:flex-start;
-        gap: 10px;
-      }
-
-      nav{
-        justify-content:flex-start;
-      }
-
-      .contact-card{
-        right:auto;
-        left:0;
-      }
-
-      .spot::after{
-        bottom:6px;
-        padding:4px 6px;
-      }
-
-      .about h1{
-        max-width: 10ch;
-      }
-
-      .matrix{
-        grid-template-columns: 1fr;
-      }
-
-      .cell,
-      .cell:nth-child(3n),
-      .cell:nth-last-child(-n+3){
-        border-right:0;
-        border-bottom:1px solid rgba(255,255,255,.08);
-      }
-
-      .cell:last-child{
-        border-bottom:0;
-      }
-
-      .matrix-panel{
-        grid-template-columns:58px minmax(0, 1fr);
-      }
-
-      .axis-horizontal{
-        grid-template-columns:1fr;
-        gap:2px;
-      }
-
-      .axis-vertical{
-        font-size:10px;
-      }
-
-      .axis-summaries{
-        grid-template-columns:1fr;
-        gap:8px;
-      }
+      .topbar{ align-items:flex-start; gap:10px; }
+      nav{ justify-content:flex-start; }
+      .contact-card{ right:auto; left:0; }
+      .project-hero, .grid-note, .axis-card, .about{ grid-template-columns:minmax(0, 1fr); }
+      .project-hero{ gap:32px; padding-bottom:40px; }
+      .project-intro h1{ font-size:clamp(44px, 9vw, 64px); }
+      .project-lead{ max-width:52ch; margin-top:22px; }
+      .project-actions{ margin-top:24px; }
+      .wrap-stage{ width:100%; max-width:520px; justify-self:center; }
+      .wrap-stage figcaption{ flex-wrap:wrap; gap:4px 16px; }
+      .grid-note{ padding:32px 0 40px; }
+      .axis-card{ gap:14px; }
+      .axis-summaries{ grid-column:1; grid-row:auto; }
+      .matrix-panel{ grid-template-columns:72px minmax(0, 1fr); gap:8px; }
+      .axis-vertical{ font-size:10px; }
+      .axis-vertical .axis-label span{ display:block; margin-top:4px; letter-spacing:0; }
+      .cell{ min-height:112px; padding:12px 8px; gap:8px; }
+      .cell strong{ font-size:14px; }
+      .cell em{ font-size:10px; }
+      .preview-card{ width:100%; max-width:520px; justify-self:center; }
+      .about{ gap:24px; padding-top:32px; }
+      .about-copy{ font-size:16px; }
+      .spot::after{ bottom:6px; padding:4px 6px; }
     }
     @media (max-width: 360px){
-      .brand,
-      nav{
-        flex-basis:100%;
-      }
+      .brand, nav{ flex-basis:100%; }
+      .matrix-panel{ grid-template-columns:62px minmax(0, 1fr); gap:6px; }
+      .axis-vertical{ font-size:9px; }
+      .matrix{ gap:4px; }
+      .cell{ padding:10px 6px; }
+      .cell strong{ font-size:12px; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      main *, main *::after{ transition:none !important; }
     }
   </style>
 </head>
@@ -786,9 +566,19 @@
   </header>
 
   <main class="content">
-    <div id="overzicht" class="wrap-stage">
+    <section class="project-hero" aria-labelledby="about-title">
+      <div class="project-intro">
+        <p class="about-kicker">PTP / Totaalproject</p>
+        <h1 id="about-title"><span>Pressure</span> <span>Temperature</span> <span>Pain</span></h1>
+        <p class="project-lead">Pressure Temperature Pain (PTP) verbindt negen series schilderijen, objecten, teksten en foto’s in een 3 × 3-grid. De huidschilderijen vormen het centrum: de huid is de kwetsbare grens waar lichaam en wereld elkaar raken.</p>
+        <div class="project-actions">
+          <a class="primary-action" href="#diagram">PTP / UNE diagram <span aria-hidden="true">↓</span></a>
+          <a href="#about">Over het project <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    <figure id="overzicht" class="wrap-stage">
       <div class="stage" aria-label="PTP achtergrond met 9 hotspots">
-        <img class="stage-image" src="PTP.png" alt="PTP overzicht" />
+        <img class="stage-image" src="PTP.png" alt="PTP-installatieschema: negen series op de assen Pressure, Temperature, Pain en Unborn, Now, Entropy" width="1242" height="1266" fetchpriority="high" />
         <a class="spot c s1" href="./1/index.html" data-label="Symbol" aria-label="Werk 1: Symbol"></a>
         <a class="spot c s2" href="./2/index.html" data-label="Flag" aria-label="Werk 2: Flag"></a>
         <a class="spot c s3" href="./3/index.html" data-label="Text" aria-label="Werk 3: Text"></a>
@@ -799,44 +589,13 @@
         <a class="spot c s8" href="./8/index.html" data-label="Object" aria-label="Werk 8: Object"></a>
         <a class="spot c s9 qr-spot" href="../boards/index-links.html" data-label="QR" aria-label="Werk 9: QR — open de + pagina met multimediaprojecten"><img src="qr-plus.svg" alt="QR-code naar de + pagina" /></a>
       </div>
-    </div>
+      <figcaption><span>PTP — negen series, één totaalproject</span><span>Klik op een werk om de serie te openen.</span></figcaption>
+    </figure>
+    </section>
 
-    <section id="about" class="about" aria-labelledby="about-title">
-      <div class="about-head">
-        <p class="about-kicker">About PTP</p>
-        <h1 id="about-title">Pressure Temperature Pain</h1>
-      </div>
-
-      <div class="about-body">
-        <div class="about-copy">
-          <h2>PTP — Totaalproject</h2>
-          <p>Pressure Temperature Pain (PTP) verbindt negen series schilderijen, objecten, teksten en foto’s in een 3 × 3-grid. De huidschilderijen vormen het centrum: de huid is de kwetsbare grens waar lichaam en wereld elkaar raken.</p>
-          <p>Pressure, Temperature en Pain beschrijven lichamelijke, psychische en politieke invloeden. De tweede as, Unborn, Now en Entropy, volgt de beweging van potentie naar aanwezigheid en ontbinding.</p>
-          <p>Betekenis ontstaat zowel in de afzonderlijke werken als in hun onderlinge relaties. Door werken opnieuw te combineren, ontstaan nieuwe beelden en verbanden. PTP is zo een open installatie en denkmodel waarin de mens verschijnt als een lichaam onder invloed.</p>
-
-          <section class="text-access" aria-labelledby="text-access-title">
-            <h2 id="text-access-title">Volledige tekst</h2>
-            <form id="text-login">
-              <p>Log in met je wachtwoord om de volledige tekst te lezen.</p>
-              <label for="text-password">Wachtwoord</label>
-              <div class="text-login-controls">
-                <input id="text-password" type="password" autocomplete="current-password" required aria-describedby="text-login-status" />
-                <button type="submit">Inloggen</button>
-              </div>
-              <p id="text-login-status" class="text-login-status" role="status" aria-live="polite"></p>
-              <noscript><p>Schakel JavaScript in om de volledige tekst te openen.</p></noscript>
-            </form>
-            <div id="private-text" hidden>
-              <button id="text-logout" type="button">Uitloggen</button>
-              <div id="private-text-downloads" class="text-downloads" aria-label="Tekst downloaden"></div>
-              <div id="private-text-content" class="about-copy private-text-content" tabindex="-1"></div>
-            </div>
-          </section>
-        </div>
-
-        <aside class="grid-note" aria-label="PTP grid uitleg">
+        <section id="diagram" class="grid-note" aria-labelledby="diagram-title">
           <div class="axis-card">
-            <h2>PTP / UNE diagram</h2>
+            <h2 id="diagram-title">PTP / UNE diagram</h2>
             <p>UNE loopt horizontaal van links naar rechts; PTP loopt verticaal van boven naar beneden. Klik op een positie voor een beeld uit de betreffende serie. QR toont de code naar de + pagina met audio, visuele en tekstuele projecten op internet.</p>
             <div class="axis-summaries">
               <p><strong>PTP</strong> — Pressure, Temperature, Pain: huidzintuigen die tegelijk lichamelijk, psychologisch en politiek gelezen worden.</p>
@@ -864,39 +623,39 @@
             </div>
 
             <div class="matrix" aria-label="Negen series in het PTP raster">
-              <button class="cell" type="button" data-series="Symbol" data-number="1" data-axis="Pressure / Unborn" data-folder="1" data-pattern="image ({n}).jpg" data-max="31">
-                <span>1 / Pressure / Unborn</span><strong>Symbol</strong><em>teken, skelet, oorsprong</em>
+              <button class="cell" type="button" data-series="Symbol" data-number="1" data-axis="Pressure / Unborn" aria-label="1 / Pressure / Unborn: Symbol" aria-pressed="false" data-folder="1" data-pattern="image ({n}).jpg" data-max="31">
+                <span aria-hidden="true">01</span><strong>Symbol</strong><em>teken, skelet, oorsprong</em>
               </button>
-              <button class="cell" type="button" data-series="Flag" data-number="2" data-axis="Pressure / Now" data-folder="2" data-pattern="image ({n}).jpg" data-max="20">
-                <span>2 / Pressure / Now</span><strong>Flag</strong><em>landlichaam, identiteit</em>
+              <button class="cell" type="button" data-series="Flag" data-number="2" data-axis="Pressure / Now" aria-label="2 / Pressure / Now: Flag" aria-pressed="false" data-folder="2" data-pattern="image ({n}).jpg" data-max="20">
+                <span aria-hidden="true">02</span><strong>Flag</strong><em>landlichaam, identiteit</em>
               </button>
-              <button class="cell" type="button" data-series="Text" data-number="3" data-axis="Pressure / Entropy" data-folder="3" data-pattern="image ({n}).jpg" data-max="8">
-                <span>3 / Pressure / Entropy</span><strong>Text</strong><em>taal, wet, ruis</em>
+              <button class="cell" type="button" data-series="Text" data-number="3" data-axis="Pressure / Entropy" aria-label="3 / Pressure / Entropy: Text" aria-pressed="false" data-folder="3" data-pattern="image ({n}).jpg" data-max="8">
+                <span aria-hidden="true">03</span><strong>Text</strong><em>taal, wet, ruis</em>
               </button>
-              <button class="cell" type="button" data-series="Visceral" data-number="4" data-axis="Temperature / Unborn" data-folder="4" data-pattern="image ({n}).jpg" data-max="33">
-                <span>4 / Temperature / Unborn</span><strong>Visceral</strong><em>vliezen, binnenlichaam</em>
+              <button class="cell" type="button" data-series="Visceral" data-number="4" data-axis="Temperature / Unborn" aria-label="4 / Temperature / Unborn: Visceral" aria-pressed="false" data-folder="4" data-pattern="image ({n}).jpg" data-max="33">
+                <span aria-hidden="true">04</span><strong>Visceral</strong><em>vliezen, binnenlichaam</em>
               </button>
-              <button class="cell" type="button" data-series="Skin" data-number="5" data-axis="Temperature / Now" data-folder="5" data-pattern="image_{n}.jpg" data-max="55">
-                <span>5 / Temperature / Now</span><strong>Skin</strong><em>huid, centrum, mens</em>
+              <button class="cell is-active" type="button" data-series="Skin" data-number="5" data-axis="Temperature / Now" aria-label="5 / Temperature / Now: Skin" aria-pressed="true" data-folder="5" data-pattern="image_{n}.jpg" data-max="55">
+                <span aria-hidden="true">05</span><strong>Skin</strong><em>huid, centrum, mens</em>
               </button>
-              <button class="cell" type="button" data-series="Noise" data-number="6" data-axis="Temperature / Entropy" data-folder="6" data-pattern="image ({n}).jpg" data-max="6">
-                <span>6 / Temperature / Entropy</span><strong>Noise</strong><em>energie, massa, ontbinding</em>
+              <button class="cell" type="button" data-series="Noise" data-number="6" data-axis="Temperature / Entropy" aria-label="6 / Temperature / Entropy: Noise" aria-pressed="false" data-folder="6" data-pattern="image ({n}).jpg" data-max="6">
+                <span aria-hidden="true">06</span><strong>Noise</strong><em>energie, massa, ontbinding</em>
               </button>
-              <button class="cell" type="button" data-series="PTP" data-number="7" data-axis="Pain / Unborn" data-folder="7" data-pattern="image ({n}).jpg" data-max="11">
-                <span>7 / Pain / Unborn</span><strong>PTP</strong><em>samenstelling, concept</em>
+              <button class="cell" type="button" data-series="PTP" data-number="7" data-axis="Pain / Unborn" aria-label="7 / Pain / Unborn: PTP" aria-pressed="false" data-folder="7" data-pattern="image ({n}).jpg" data-max="11">
+                <span aria-hidden="true">07</span><strong>PTP</strong><em>samenstelling, concept</em>
               </button>
-              <button class="cell" type="button" data-series="Object" data-number="8" data-axis="Pain / Now" data-folder="8" data-pattern="image ({n}).jpg" data-max="4">
-                <span>8 / Pain / Now</span><strong>Object</strong><em>object, werkelijkheid</em>
+              <button class="cell" type="button" data-series="Object" data-number="8" data-axis="Pain / Now" aria-label="8 / Pain / Now: Object" aria-pressed="false" data-folder="8" data-pattern="image ({n}).jpg" data-max="4">
+                <span aria-hidden="true">08</span><strong>Object</strong><em>object, werkelijkheid</em>
               </button>
-              <button class="cell" type="button" data-series="QR" data-number="9" data-axis="Pain / Entropy" data-image="qr-plus.svg" data-link="../boards/index-links.html">
-                <span>9 / Pain / Entropy</span><strong>QR</strong><em>audio, beeld, tekst op internet</em>
+              <button class="cell" type="button" data-series="QR" data-number="9" data-axis="Pain / Entropy" aria-label="9 / Pain / Entropy: QR" aria-pressed="false" data-image="qr-plus.svg" data-link="../boards/index-links.html">
+                <span aria-hidden="true">09</span><strong>QR</strong><em>audio, beeld, tekst op internet</em>
               </button>
             </div>
           </div>
 
           <div class="preview-card" aria-live="polite">
             <a id="previewLink" class="preview-image-wrap">
-              <img id="seriesPreview" src="5/image_1.jpg" alt="Voorbeeld uit de serie Skin" />
+              <img id="seriesPreview" src="5/image_1.jpg" loading="lazy" alt="Voorbeeld uit de serie Skin" />
             </a>
             <div class="preview-meta">
               <span id="previewAxis">5 / Temperature / Now</span>
@@ -905,7 +664,37 @@
               <a id="previewPlusLink" href="../boards/index-links.html" hidden>Open de + pagina</a>
             </div>
           </div>
-        </aside>
+        </section>
+
+    <section id="about" class="about" aria-labelledby="project-title">
+      <div class="about-head">
+        <p class="about-kicker">Over het project</p>
+        <h2 id="project-title">PTP — Totaalproject</h2>
+      </div>
+      <div class="about-body">
+        <div class="about-copy">
+          <p>Pressure, Temperature en Pain beschrijven lichamelijke, psychische en politieke invloeden. De tweede as, Unborn, Now en Entropy, volgt de beweging van potentie naar aanwezigheid en ontbinding.</p>
+          <p>Betekenis ontstaat zowel in de afzonderlijke werken als in hun onderlinge relaties. Door werken opnieuw te combineren, ontstaan nieuwe beelden en verbanden. PTP is zo een open installatie en denkmodel waarin de mens verschijnt als een lichaam onder invloed.</p>
+
+          <section class="text-access" aria-labelledby="text-access-title">
+            <h2 id="text-access-title">Volledige tekst</h2>
+            <form id="text-login">
+              <p>Log in met je wachtwoord om de volledige tekst te lezen.</p>
+              <label for="text-password">Wachtwoord</label>
+              <div class="text-login-controls">
+                <input id="text-password" type="password" autocomplete="current-password" required aria-describedby="text-login-status" />
+                <button type="submit">Inloggen</button>
+              </div>
+              <p id="text-login-status" class="text-login-status" role="status" aria-live="polite"></p>
+              <noscript><p>Schakel JavaScript in om de volledige tekst te openen.</p></noscript>
+            </form>
+            <div id="private-text" hidden>
+              <button id="text-logout" type="button">Uitloggen</button>
+              <div id="private-text-downloads" class="text-downloads" aria-label="Tekst downloaden"></div>
+              <div id="private-text-content" class="about-copy private-text-content" tabindex="-1"></div>
+            </div>
+          </section>
+        </div>
       </div>
     </section>
   </main>
@@ -951,7 +740,10 @@
 
     async function showSeries(cell){
       const request = ++previewRequest;
-      cells.forEach((item) => item.classList.toggle('is-active', item === cell));
+      cells.forEach((item) => {
+        item.classList.toggle('is-active', item === cell);
+        item.setAttribute('aria-pressed', String(item === cell));
+      });
       const src = cell.dataset.image || await chooseRandomImage(cell);
       if (request !== previewRequest) return;
       previewImage.src = encodeURI(src);
