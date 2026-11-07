@@ -176,35 +176,34 @@
       .btn{ min-width: 160px; }
     }
   </style>
+  <link rel="stylesheet" href="../series-navigation.css">
 </head>
 
 <body>
   <header>
     <div class="wrap">
       <div class="topbar">
+        <a class="series-back" href="../index.html#overzicht"><span aria-hidden="true">←</span> Terug naar serieoverzicht</a>
         <div class="brand">
           <div class="name">Machiel van Soest</div>
           <div class="sub">PTP</div>
         </div>
-
-        <nav aria-label="Hoofdnavigatie">
-          <a href="../index.html">PTP</a>
-        </nav>
       </div>
     </div>
   </header>
 
   <main>
     <div class="wrap">
-      <section class="card" aria-label="Landing">
+      <section class="card" aria-labelledby="series-title">
         <div class="center">
+          <h1 id="series-title" class="series-title">PTP</h1>
           <div class="preview">
             <img src="image%20(1).jpg" width="2667" height="1963" alt="PTP preview" decoding="async" fetchpriority="high" />
           </div>
           <div class="actions" aria-label="Keuze">
-            <a class="btn primary" href="index1.html" aria-label="Ga naar werk">Werk</a>
-            <a class="btn" href="nl.html" aria-label="Lees Nederlandse tekst">NL</a>
-            <a class="btn" href="eng.html" aria-label="Read English text">EN</a>
+            <a class="btn primary" href="index1.html">Bekijk het werk</a>
+            <a class="btn" href="nl.html">Lees de tekst (NL)</a>
+            <a class="btn" href="eng.html" lang="en">Read the text (EN)</a>
           </div>
         </div>
       </section>

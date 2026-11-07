@@ -1,0 +1,48 @@
+.topbar {
+  flex-wrap: wrap;
+}
+
+.topbar .brand {
+  margin-right: auto;
+}
+
+.series-back {
+  display: inline-flex;
+  align-items: center;
+  gap: .45em;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 228, 92, .38);
+  border-radius: 8px;
+  background: rgba(255, 228, 92, .08);
+  color: #ffe45c;
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.series-back:hover,
+.series-back:focus-visible {
+  background: #ffe45c;
+  color: #17150b;
+}
+
+.series-title {
+  margin: 0;
+  font-size: clamp(24px, 4vw, 36px);
+  line-height: 1.15;
+}
+
+@media (max-width: 720px) {
+  .center:has(.series-title) {
+    padding-block: 28px 36px;
+  }
+
+  .series-title + .preview {
+    height: auto;
+  }
+
+  .series-title + .preview img {
+    max-height: 42svh;
+  }
+}
