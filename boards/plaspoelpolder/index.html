@@ -25,20 +25,23 @@
       display: grid;
       place-content: center;
       justify-items: center;
-      gap: 12px;
       outline: none;
     }
 
-    .playlist iframe {
+    .playlist iframe,
+    .playlist img {
       width: min(90vw, 135vh);
+    }
+
+    .playlist iframe {
       aspect-ratio: 16 / 9;
       min-height: 200px;
       border: 0;
     }
 
-    .playlist a {
-      color: #ccc;
-      font: 14px system-ui, sans-serif;
+    .playlist img {
+      max-height: 90vh;
+      object-fit: contain;
     }
 
     .overview:not([hidden]) {
@@ -94,7 +97,7 @@
     <iframe title="PTP Prop op YouTube"
       data-src="https://www.youtube.com/embed?listType=playlist&amp;list=PLidK2zBv6eFztFiyVYsgMUf7mD4pBHCUO"
       referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-    <a href="https://www.youtube.com/playlist?list=PLidK2zBv6eFztFiyVYsgMUf7mD4pBHCUO" target="_blank" rel="noopener">Open op YouTube</a>
+    <img src="PTP%20PROP.png" alt="PTP PROP" draggable="false" hidden>
   </section>
   <section class="overview" aria-label="Overzicht van de dia’s" tabindex="-1" hidden>
     <div class="overview-grid">
@@ -129,6 +132,7 @@
 
     // A local file cannot send the referrer that the YouTube player requires.
     player.hidden = location.protocol === 'file:';
+    playlist.querySelector('img').hidden = !player.hidden;
 
     function showSlide(index) {
       const previous = slides[current];
@@ -151,7 +155,6 @@
     });
 
     document.addEventListener('click', (event) => {
-      if (event.target.closest('a')) return;
       const tile = event.target.closest('.overview button');
       if (tile) {
         showSlide(slides.findIndex(slide => slide.id === tile.dataset.target));
