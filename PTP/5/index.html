@@ -6,7 +6,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Machiel van Soest — Skin-paintings</title>
-  <link rel="stylesheet" href="../series-navigation.css?v=2b87dee">
+  <link rel="stylesheet" href="../series-navigation.css?v=lightbox-1">
+  <script type="module" src="../series-lightbox.js"></script>
 </head>
 
 <body>
@@ -28,8 +29,10 @@
   <main class="series-wrap series-gallery" aria-label="Afbeeldingen">
     <div class="thumbs" id="thumbs"></div>
     <dialog class="lightbox" id="lightbox" aria-label="Grote weergave">
-      <button class="lightbox-close" id="lightboxClose" type="button" autofocus>Sluiten <span aria-hidden="true">×</span></button>
+      <button class="lightbox-control lightbox-close" id="lightboxClose" type="button" aria-label="Sluiten" aria-keyshortcuts="Escape" autofocus>×</button>
+      <button class="lightbox-control lightbox-prev" id="lightboxPrev" type="button" aria-label="Vorige afbeelding" aria-keyshortcuts="ArrowLeft">←</button>
       <img id="lightboxImg" alt="" />
+      <button class="lightbox-control lightbox-next" id="lightboxNext" type="button" aria-label="Volgende afbeelding" aria-keyshortcuts="ArrowRight">→</button>
     </dialog>
   </main>
 
@@ -39,19 +42,6 @@
     const images = Array.from({ length: IMAGE_COUNT }, (_, i) => `image_${i + 1}.jpg`);
 
     const thumbs = document.getElementById('thumbs');
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
-
-    function openLightbox(src, i){
-      lightboxImg.src = src;
-      lightboxImg.alt = `Skin-paintings ${i + 1}`;
-      lightbox.showModal();
-    }
-
-    function closeLightbox(){
-      lightbox.close();
-    }
-
     // Thumbnails
     images.forEach((src, i) => {
       const item = document.createElement('button');
@@ -65,17 +55,7 @@
       im.loading = "lazy";
       item.appendChild(im);
 
-      const open = () => openLightbox(src, i);
-      item.addEventListener('click', open);
-
       thumbs.appendChild(item);
-    });
-
-    // Klik op groot beeld -> sluiten
-    lightboxImg.addEventListener('click', closeLightbox);
-    document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) closeLightbox();
     });
   </script>
 </body>
