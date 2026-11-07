@@ -11,7 +11,7 @@
       cursor: pointer;
     }
 
-    img {
+    body > img {
       position: fixed;
       inset: 0;
       width: 100%;
@@ -40,40 +40,110 @@
       color: #ccc;
       font: 14px system-ui, sans-serif;
     }
+
+    .overview:not([hidden]) {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      outline: none;
+    }
+
+    .overview-grid {
+      --gap: clamp(8px, 2vw, 20px);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--gap);
+      width: min(100%, 105vh, 1000px);
+    }
+
+    .overview button {
+      display: grid;
+      grid-template: minmax(0, 1fr) auto / minmax(0, 1fr);
+      width: calc((100% - 2 * var(--gap)) / 3);
+      aspect-ratio: 4 / 5;
+      border: 0;
+      padding: 0;
+      background: #111;
+      color: #ddd;
+      font: clamp(9px, 2.5vw, 14px) system-ui, sans-serif;
+      cursor: pointer;
+    }
+
+    .overview img {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      object-fit: contain;
+    }
+
+    .overview button span {
+      padding: 5px 2px;
+      overflow-wrap: anywhere;
+    }
   </style>
 </head>
 <body>
-  <img src="PLASPOELPOLDER.png" alt="Plaspoelpolder" draggable="false">
-  <img src="ANIMUS.png" alt="Animus" draggable="false" hidden>
-  <img src="PTP.png" alt="PTP" draggable="false" hidden>
-  <img src="UNE.png" alt="Une" draggable="false" hidden>
-  <section class="playlist" aria-label="PTP Prop-afspeellijst" tabindex="-1" hidden>
+  <img id="plaspoelpolder" src="PLASPOELPOLDER.png" alt="Plaspoelpolder" draggable="false">
+  <img id="animus" src="ANIMUS.png" alt="Animus" draggable="false" hidden>
+  <img id="ptp" src="PTP.png" alt="PTP" draggable="false" hidden>
+  <img id="une" src="UNE.png" alt="Une" draggable="false" hidden>
+  <section id="ptp-prop" class="playlist" aria-label="PTP Prop-afspeellijst" tabindex="-1" hidden>
     <iframe title="PTP Prop op YouTube"
       data-src="https://www.youtube.com/embed?listType=playlist&amp;list=PLidK2zBv6eFztFiyVYsgMUf7mD4pBHCUO"
       referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
     <a href="https://www.youtube.com/playlist?list=PLidK2zBv6eFztFiyVYsgMUf7mD4pBHCUO" target="_blank" rel="noopener">Open op YouTube</a>
   </section>
+  <section class="overview" aria-label="Overzicht van de dia’s" tabindex="-1" hidden>
+    <div class="overview-grid">
+      <button type="button" data-target="plaspoelpolder">
+        <img src="PLASPOELPOLDER.png" alt="" draggable="false">
+        <span>PLASPOELPOLDER</span>
+      </button>
+      <button type="button" data-target="animus">
+        <img src="ANIMUS.png" alt="" draggable="false">
+        <span>ANIMUS</span>
+      </button>
+      <button type="button" data-target="ptp">
+        <img src="PTP.png" alt="" draggable="false">
+        <span>PTP</span>
+      </button>
+      <button type="button" data-target="une">
+        <img src="UNE.png" alt="" draggable="false">
+        <span>UNE</span>
+      </button>
+      <button type="button" data-target="ptp-prop" aria-label="PTP PROP op YouTube">
+        <img src="PTP%20PROP.png" alt="" draggable="false">
+        <span>PTP PROP</span>
+      </button>
+    </div>
+  </section>
   <script>
-    const slides = document.querySelectorAll('img, .playlist');
+    const slides = Array.from(document.querySelectorAll('body > img, .playlist, .overview'));
     const playlist = document.querySelector('.playlist');
+    const overview = document.querySelector('.overview');
     const player = playlist.querySelector('iframe');
     let current = 0;
 
     // A local file cannot send the referrer that the YouTube player requires.
     player.hidden = location.protocol === 'file:';
 
-    function changeSlide(step) {
+    function showSlide(index) {
       const previous = slides[current];
       previous.hidden = true;
       if (previous === playlist) player.removeAttribute('src');
 
-      current = (current + step + slides.length) % slides.length;
+      current = index;
       const next = slides[current];
       next.hidden = false;
-      if (next === playlist) {
-        if (!player.hidden) player.src = player.dataset.src;
-        playlist.focus({ preventScroll: true });
-      }
+      if (next === playlist && !player.hidden) player.src = player.dataset.src;
+      if (next === playlist || next === overview) next.focus({ preventScroll: true });
+    }
+
+    function changeSlide(step) {
+      showSlide((current + step + slides.length) % slides.length);
     }
 
     player.addEventListener('pointerleave', () => {
@@ -82,7 +152,12 @@
 
     document.addEventListener('click', (event) => {
       if (event.target.closest('a')) return;
-      changeSlide(1);
+      const tile = event.target.closest('.overview button');
+      if (tile) {
+        showSlide(slides.findIndex(slide => slide.id === tile.dataset.target));
+      } else {
+        changeSlide(1);
+      }
 
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen?.().catch(() => {});
