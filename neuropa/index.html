@@ -424,6 +424,27 @@
             .video-embeds { grid-template-columns: 1fr; }
         }
 
+        .installation-photo {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto;
+            border-radius: 6px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .installation-photo-pair {
+            display: grid;
+            grid-template-columns: minmax(0, 3fr) minmax(0, 4.06fr);
+            align-items: start;
+            gap: clamp(0.5rem, 2vw, 1.5rem);
+            margin-top: 1.5rem;
+        }
+
+        .installation-photo-pair .installation-photo {
+            width: 100%;
+        }
+
 /* UN (BORN) Section */
         .europa-section {
             margin: 4rem 0;
@@ -1066,7 +1087,7 @@
 <p>Elk kwadrant kent een eigen regime van zichtbaarheid: een monochroom huidschilderij; een met zwart plastic afgelegd doek; een geschilderd reliëf met twee klassieke figuren en (zichtbare) ingewanden; kruis en een tekst. </p>
             </div>
             <div class="installation-image">
-                <img src="Neuropa_installatie.jpg" alt="Neuropa Installatie">
+                <img src="installatie.png" alt="NEUROPA met vlaggen en zwart kruis" width="3024" height="3024">
             </div>
         </section>
 
@@ -1183,8 +1204,11 @@
         <section id="installatie" style="margin: 4rem 0; animation: fadeInUp 0.8s ease-out 0.85s backwards;">
             <div style="background: var(--card-bg); padding: 2.5rem; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: 2px solid var(--accent); text-align: center;">
                 <h3 class="section-title-with-icon" style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--primary); margin-bottom: 1.5rem;"><img src="PtP_logoW.png" alt="PtP logo" class="section-title-icon"><span>Installatie</span></h3>
-                <img src="installatie.jpg" alt="Installatie" style="max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); display: block; margin: 0 auto;">
-                <img src="installatie2.JPG" alt="Installatie detail" style="max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); display: block; margin: 1.5rem auto 0;">
+                <img src="installatie.png" alt="NEUROPA met vlaggen en zwart kruis" class="installation-photo" width="3024" height="3024">
+                <div class="installation-photo-pair">
+                    <img src="installatie2.JPG" alt="NEUROPA met drie werken in een driehoek, schuin gefotografeerd" class="installation-photo" width="3024" height="4032">
+                    <img src="installatie3.png" alt="NEUROPA met drie werken in een driehoek en een roodbruin schilderij onderaan" class="installation-photo" width="614" height="605">
+                </div>
             </div>
         </section>
 
@@ -1223,7 +1247,7 @@
             </div>
 
             <div class="shop-category">
-                <h4>Paintings</h4>
+                <h4>Paintings en sticker</h4>
                 <div class="posters-grid">
                     <div class="poster-item" onclick="openLightbox('N_painting (1).jpg')">
                         <img src="N_painting (1).jpg" alt="Neuropa Painting 1">
@@ -1237,16 +1261,6 @@
                         <img src="N_painting (3).jpg" alt="Neuropa Painting 3">
                         <div class="item-filename">N_painting (3)</div>
                     </div>
-                    <div class="poster-item" onclick="openLightbox('N_painting (4).jpg')">
-                        <img src="N_painting (4).jpg" alt="Neuropa Painting 4">
-                        <div class="item-filename">N_painting (4)</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="shop-category">
-                <h4>Sticker</h4>
-                <div class="posters-grid">
                     <div class="poster-item" onclick="openLightbox('N_sticker (1).jpg')">
                         <img src="N_sticker (1).jpg" alt="Neuropa Sticker 1">
                         <div class="item-filename">N_sticker (1)</div>
