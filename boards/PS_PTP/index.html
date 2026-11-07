@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#171717">
+  <title>Tentoonstellingsvoorstel</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171717;font-family:Inter,system-ui,sans-serif}canvas{display:block}
+    #stage{width:100%;height:100%}.overlay{position:fixed;inset:0;display:grid;place-items:center;background:rgba(18,18,18,.68);color:white;z-index:4;transition:.3s}.overlay.hidden{opacity:0;pointer-events:none}
+    .card{max-width:520px;margin:20px;padding:32px;border-radius:22px;background:rgba(31,31,29,.92);box-shadow:0 24px 80px #0008;text-align:center}.card h1{font:500 clamp(28px,5vw,48px)/1.05 Georgia,serif;margin:0 0 14px}.card p{color:#d8d3ca;line-height:1.55}.card button{border:0;border-radius:999px;background:#ed6a3c;color:white;padding:14px 24px;font-weight:700;font-size:16px;cursor:pointer}
+    #info{position:fixed;right:20px;bottom:20px;width:min(360px,calc(100% - 40px));padding:20px;border-radius:16px;background:#fff;color:#20201e;box-shadow:0 16px 60px #0005;z-index:3;display:none}#info.open{display:block}#info button{float:right;border:0;background:transparent;font-size:22px;cursor:pointer}#info h2{margin:4px 28px 8px 0;font:500 24px Georgia,serif}#info p{margin:4px 0;color:#5c5a55}
+    #hint{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#171717cc;color:#fff;padding:9px 14px;border-radius:999px;font-size:13px;z-index:2;white-space:nowrap}.viewer-actions{position:fixed;right:16px;top:16px;z-index:3}.viewer-actions button{border:1px solid #ffffff40;border-radius:999px;background:#171717bb;color:#fff;padding:9px 14px;font-weight:700;cursor:pointer}.touch{display:none;position:fixed;left:18px;bottom:18px;z-index:2;grid-template-columns:48px 48px 48px;gap:5px}.touch button{height:48px;border:0;border-radius:14px;background:#171717bb;color:white;font-size:20px}.touch .up{grid-column:2}.touch .left{grid-column:1}.touch .down{grid-column:2}.touch .right{grid-column:3}@media(pointer:coarse){.touch{display:grid}#hint{top:12px;bottom:auto}}
+  </style>
+</head>
+<body>
+  <div id="stage"></div>
+  <div class="viewer-actions"><button id="fullscreen">Fullscreen</button></div>
+  <div id="welcome" class="overlay"><div class="card"><h1 id="title">Tentoonstellingsvoorstel</h1><p>Gebruik ↑ en ↓ om vooruit of achteruit te lopen en ← en → om te draaien. Met WASD of de muis kun je verder rondkijken. Klik op een werk voor informatie.</p><button id="enter">Betreed de ruimte</button></div></div>
+  <div id="info"><button id="close-info" aria-label="Sluiten">×</button><h2 id="info-title"></h2><p id="info-artist"></p><p id="info-details"></p></div>
+  <div id="hint">↑/↓ lopen · ←/→ draaien · WASD en muis kijken</div>
+  <div class="touch"><button class="up" data-key="arrowup">↑</button><button class="left" data-key="arrowleft">←</button><button class="down" data-key="arrowdown">↓</button><button class="right" data-key="arrowright">→</button></div>
+  <script type="module" src="./viewer-app.js"></script>
+</body>
+</html>

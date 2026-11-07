@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "id": "e0010364-bca0-40cc-b81e-2e982dceaaae",
+  "name": "PS PTP",
+  "room": {
+    "length": 5.7,
+    "width": 4.4,
+    "height": 4.48,
+    "floorSource": "./assets/vloer.jpg",
+    "floorName": "Houten vloer",
+    "floorScale": 2,
+    "floorRotation": 0,
+    "ceilingSource": "./assets/plafond.jpg",
+    "ceilingName": "Plafondstructuur",
+    "ceilingScale": 2,
+    "ceilingRotation": 0,
+    "lightIntensity": 1,
+    "wallCoverings": {
+      "right": {
+        "source": "./assets/wand-right.jpg",
+        "fileName": "c.jpg",
+        "sourceRatio": 0.9821428571428571
+      },
+      "back": {
+        "source": "./assets/wand-back.jpg",
+        "fileName": "d.jpg",
+        "sourceRatio": 1.2723214285714286
+      },
+      "left": {
+        "source": "./assets/wand-left.jpg",
+        "fileName": "a.jpg",
+        "sourceRatio": 0.9821428571428571
+      },
+      "front": {
+        "source": "./assets/wand-front.jpg",
+        "fileName": "b.jpg",
+        "sourceRatio": 1.2723214285714286
+      }
+    }
+  },
+  "doors": [
+    {
+      "id": "734d9226-5d4c-4cac-9bae-51ce1bdd8bba",
+      "wall": "front",
+      "widthM": 1.12,
+      "heightM": 2.32,
+      "offsetM": 3.4
+    }
+  ],
+  "artworks": [
+    {
+      "id": "5756b982-9c99-40e1-a270-0a0e279c631c",
+      "kind": "video",
+      "source": "./assets/01-clip.mp4",
+      "fileName": "clip.mp4",
+      "sourceRatio": 1.7777777777777777,
+      "title": "clip",
+      "artist": "",
+      "year": "",
+      "medium": "",
+      "widthCm": 100,
+      "heightCm": 56.3,
+      "wall": "front",
+      "offsetM": 0.9515481666515598,
+      "bottomM": 1.2185000000000001
+    },
+    {
+      "id": "5da2a527-2f6c-47a4-8623-f532f937d850",
+      "kind": "image",
+      "source": "./assets/02-ptpps.jpg",
+      "fileName": "ptpps.jpg",
+      "sourceRatio": 1.2101010101010101,
+      "title": "ptpps",
+      "artist": "",
+      "year": "",
+      "medium": "",
+      "widthCm": 80,
+      "heightCm": 60,
+      "wall": "front",
+      "offsetM": 3.5386269573414104,
+      "bottomM": 2.5593015800452763
+    },
+    {
+      "id": "36b491be-5f15-4603-a2b2-c17ba960911e",
+      "kind": "image",
+      "source": "./assets/03-ptp-transparant.png",
+      "fileName": "PTP-transparant.png",
+      "sourceRatio": 0.9773622047244095,
+      "title": "PTP-transparant",
+      "artist": "",
+      "year": "",
+      "medium": "",
+      "widthCm": 300,
+      "heightCm": 300,
+      "wall": "back",
+      "offsetM": 1.35,
+      "bottomM": 0.5533798665729288
+    },
+    {
+      "id": "0a713236-db2b-4096-ad8b-f8dc21495f76",
+      "kind": "image",
+      "source": "./assets/04-installatie3-transparant.png",
+      "fileName": "installatie3-transparant.png",
+      "sourceRatio": 1.0148760330578512,
+      "title": "installatie3-transparant",
+      "artist": "",
+      "year": "",
+      "medium": "",
+      "widthCm": 180,
+      "heightCm": 180,
+      "wall": "right",
+      "offsetM": 1.3000000000000003,
+      "bottomM": 1.1103143850619066
+    }
+  ],
+  "startView": {
+    "x": 0,
+    "z": 0.8,
+    "yaw": 3.141592653589793,
+    "eyeHeight": 1.65
+  },
+  "updatedAt": "2026-11-07T17:43:56.010Z"
+}

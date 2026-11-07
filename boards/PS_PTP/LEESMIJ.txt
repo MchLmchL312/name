@@ -1,0 +1,1 @@
+Upload alle bestanden en de map assets naar een GitHub-repository. Activeer daarna GitHub Pages voor de hoofdmap. Open index.html altijd via een webserver of GitHub Pages.
