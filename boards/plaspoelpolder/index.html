@@ -18,6 +18,28 @@
       height: 100%;
       object-fit: contain;
     }
+
+    .playlist:not([hidden]) {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-content: center;
+      justify-items: center;
+      gap: 12px;
+      outline: none;
+    }
+
+    .playlist iframe {
+      width: min(90vw, 135vh);
+      aspect-ratio: 16 / 9;
+      min-height: 200px;
+      border: 0;
+    }
+
+    .playlist a {
+      color: #ccc;
+      font: 14px system-ui, sans-serif;
+    }
   </style>
 </head>
 <body>
@@ -25,18 +47,42 @@
   <img src="ANIMUS.png" alt="Animus" draggable="false" hidden>
   <img src="PTP.png" alt="PTP" draggable="false" hidden>
   <img src="UNE.png" alt="Une" draggable="false" hidden>
+  <section class="playlist" aria-label="PTP Prop-afspeellijst" tabindex="-1" hidden>
+    <iframe title="PTP Prop op YouTube"
+      data-src="https://www.youtube.com/embed?listType=playlist&amp;list=PLidK2zBv6eFztFiyVYsgMUf7mD4pBHCUO"
+      referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <a href="https://www.youtube.com/playlist?list=PLidK2zBv6eFztFiyVYsgMUf7mD4pBHCUO" target="_blank" rel="noopener">Open op YouTube</a>
+  </section>
   <script>
-    const photos = document.querySelectorAll('img');
+    const slides = document.querySelectorAll('img, .playlist');
+    const playlist = document.querySelector('.playlist');
+    const player = playlist.querySelector('iframe');
     let current = 0;
 
-    function changePhoto(step) {
-      photos[current].hidden = true;
-      current = (current + step + photos.length) % photos.length;
-      photos[current].hidden = false;
+    // A local file cannot send the referrer that the YouTube player requires.
+    player.hidden = location.protocol === 'file:';
+
+    function changeSlide(step) {
+      const previous = slides[current];
+      previous.hidden = true;
+      if (previous === playlist) player.removeAttribute('src');
+
+      current = (current + step + slides.length) % slides.length;
+      const next = slides[current];
+      next.hidden = false;
+      if (next === playlist) {
+        if (!player.hidden) player.src = player.dataset.src;
+        playlist.focus({ preventScroll: true });
+      }
     }
 
-    document.addEventListener('click', () => {
-      changePhoto(1);
+    player.addEventListener('pointerleave', () => {
+      if (document.activeElement === player) playlist.focus({ preventScroll: true });
+    });
+
+    document.addEventListener('click', (event) => {
+      if (event.target.closest('a')) return;
+      changeSlide(1);
 
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen?.().catch(() => {});
@@ -46,7 +92,7 @@
     document.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
         event.preventDefault();
-        changePhoto(event.key === 'ArrowLeft' ? -1 : 1);
+        changeSlide(event.key === 'ArrowLeft' ? -1 : 1);
       }
     });
   </script>
