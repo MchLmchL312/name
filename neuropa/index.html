@@ -433,16 +433,9 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
-        .installation-photo-pair {
-            display: grid;
-            grid-template-columns: minmax(0, 3fr) minmax(0, 4.06fr);
-            align-items: start;
-            gap: clamp(0.5rem, 2vw, 1.5rem);
-            margin-top: 1.5rem;
-        }
-
-        .installation-photo-pair .installation-photo {
+        .installation-photo + .installation-photo {
             width: 100%;
+            margin-top: 1.5rem;
         }
 
 /* UN (BORN) Section */
@@ -1205,10 +1198,7 @@
             <div style="background: var(--card-bg); padding: 2.5rem; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: 2px solid var(--accent); text-align: center;">
                 <h3 class="section-title-with-icon" style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--primary); margin-bottom: 1.5rem;"><img src="PtP_logoW.png" alt="PtP logo" class="section-title-icon"><span>Installatie</span></h3>
                 <img src="installatie.png" alt="NEUROPA met vlaggen en zwart kruis" class="installation-photo" width="3024" height="3024">
-                <div class="installation-photo-pair">
-                    <img src="installatie2.JPG" alt="NEUROPA met drie werken in een driehoek, schuin gefotografeerd" class="installation-photo" width="3024" height="4032">
-                    <img src="installatie3.png" alt="NEUROPA met drie werken in een driehoek en een roodbruin schilderij onderaan" class="installation-photo" width="614" height="605">
-                </div>
+                <img src="installatie2.JPG" alt="NEUROPA met drie werken in een driehoek, schuin gefotografeerd" class="installation-photo" width="3024" height="4032">
             </div>
         </section>
 
