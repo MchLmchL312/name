@@ -54,11 +54,11 @@
       --stage-fit-h: calc(100svh - 110px - (2 * var(--content-gap)));
 
       /* dit bepaalt het totale 3×3 blok */
-      --x1: 28%;
-      --x2: 50%;
-      --x3: 72%;
-      --y1: 28%;
-      --y2: 50%;
+      --x1: 31%;
+      --x2: 53%;
+      --x3: 75%;
+      --y1: 26%;
+      --y2: 49%;
       --y3: 72%;
     }
 
@@ -289,7 +289,7 @@
     }
     .project-actions a:hover{ color:#ffe45c; }
     .project-actions .primary-action:hover{ color:#17150b; background:#ffed94; }
-    .wrap-stage{ margin:0; min-width:0; }
+    .wrap-stage{ align-self:start; margin:0; min-width:0; }
     .stage{
       position:relative;
       width:100%;
@@ -300,17 +300,10 @@
       border-radius:6px;
     }
     .stage-image{ display:block; width:100%; height:100%; object-fit:contain; }
-    .wrap-stage figcaption{
-      display:flex;
-      justify-content:space-between;
-      gap:16px;
-      margin-top:12px;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.5;
-    }
-    .wrap-stage figcaption span:first-child{ color:var(--text); }
-    #about, #diagram{ scroll-margin-top:140px; }
+    .wrap-stage figcaption{ margin-bottom:14px; }
+    .wrap-stage h2{ margin:0 0 4px; font-size:clamp(22px, 2.5vw, 28px); }
+    .wrap-stage figcaption p{ margin:0; color:var(--muted); font-size:14px; line-height:1.5; }
+    #overzicht, #about, #diagram{ scroll-margin-top:140px; }
     .grid-note{
       display:grid;
       grid-template-columns:minmax(0, 1.25fr) minmax(0, .85fr);
@@ -412,48 +405,43 @@
     main a:focus-visible, .cell:focus-visible{ outline:2px solid #ffe45c; outline-offset:4px; }
     .spot{
       position:absolute;
-      width:18%;
-      aspect-ratio: 1 / 1;
+      width:22%;
+      height:23%;
       display:block;
       border-radius:14px;
-      outline:none;
-      background:rgba(255,255,255,0);
+      cursor:pointer;
       -webkit-tap-highlight-color: rgba(255,255,255,.18);
     }
 
     .spot::after{
-      content: attr(data-label);
+      content: attr(data-label) " →";
       position:absolute;
       left:50%;
       bottom:8px;
       transform:translateX(-50%);
-      max-width:calc(100% - 12px);
-      padding:5px 7px;
+      max-width:100%;
+      padding:5px 8px;
       border:1px solid rgba(255,255,255,.16);
       border-radius:999px;
-      background:rgba(12,12,15,.58);
-      color:rgba(255,255,255,.72);
+      background:#171719;
+      color:#fff;
+      font-weight:650;
       font-size:clamp(10px, 1.3vw, 12px);
       line-height:1;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      opacity:.72;
-      transition:opacity 140ms ease, background 140ms ease, color 140ms ease;
+      transition:background 140ms ease, color 140ms ease;
     }
 
-    .spot:hover,
-    .spot:focus-visible{
-      background:rgba(255,255,255,.08);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
-      cursor:pointer;
-    }
+    .spot:hover{ box-shadow:inset 0 0 0 1px #171719; }
+
+    .spot:focus-visible{ outline:2px solid #171719; outline-offset:-2px; }
 
     .spot:hover::after,
     .spot:focus-visible::after{
-      opacity:1;
-      background:rgba(12,12,15,.78);
-      color:rgba(255,255,255,.95);
+      background:#ffe45c;
+      color:#17150b;
     }
 
     .c{ transform: translate(-50%, -50%); }
@@ -470,18 +458,17 @@
     .qr-spot{
       display:grid;
       place-items:center;
-      left:75%;
     }
 
     .qr-spot img{
       display:block;
-      width:83%;
-      height:83%;
+      width:68%;
+      height:auto;
       background:#fff;
     }
 
     .spot.qr-spot::after{
-      bottom:-10px;
+      bottom:0;
     }
 
 
@@ -504,7 +491,6 @@
       .project-lead{ max-width:52ch; margin-top:22px; }
       .project-actions{ margin-top:24px; }
       .wrap-stage{ width:100%; max-width:520px; justify-self:center; }
-      .wrap-stage figcaption{ flex-wrap:wrap; gap:4px 16px; }
       .grid-note{ padding:32px 0 40px; }
       .axis-card{ gap:14px; }
       .axis-summaries{ grid-column:1; grid-row:auto; }
@@ -571,28 +557,32 @@
         <p class="about-kicker">PTP / Totaalproject</p>
         <h1 id="about-title"><span>Pressure</span> <span>Temperature</span> <span>Pain</span></h1>
         <p class="project-lead">Pressure Temperature Pain (PTP) verbindt negen series schilderijen, objecten, teksten en foto’s in een 3 × 3-grid. De huidschilderijen vormen het centrum: de huid is de kwetsbare grens waar lichaam en wereld elkaar raken.</p>
-        <p class="project-lead">Pressure, Temperature en Pain beschrijven lichamelijke, psychische en politieke invloeden. De tweede as, Unborn, Now en Entropy, volgt de beweging van potentie naar aanwezigheid en ontbinding.</p>
-        <p class="project-lead">Betekenis ontstaat zowel in de afzonderlijke werken als in hun onderlinge relaties. Door werken opnieuw te combineren, ontstaan nieuwe beelden en verbanden. PTP is zo een open installatie en denkmodel waarin de mens verschijnt als een lichaam onder invloed.</p>
         <div class="project-actions">
-          <a class="primary-action" href="#diagram">PTP / UNE diagram <span aria-hidden="true">↓</span></a>
+          <a class="primary-action" href="#overzicht">Bekijk de series <span aria-hidden="true">↓</span></a>
+          <a href="#diagram">PTP / UNE diagram <span aria-hidden="true">↓</span></a>
           <a href="#about">Over het project <span aria-hidden="true">↗</span></a>
         </div>
+        <p class="project-lead">Pressure, Temperature en Pain beschrijven lichamelijke, psychische en politieke invloeden. De tweede as, Unborn, Now en Entropy, volgt de beweging van potentie naar aanwezigheid en ontbinding.</p>
+        <p class="project-lead">Betekenis ontstaat zowel in de afzonderlijke werken als in hun onderlinge relaties. Door werken opnieuw te combineren, ontstaan nieuwe beelden en verbanden. PTP is zo een open installatie en denkmodel waarin de mens verschijnt als een lichaam onder invloed.</p>
       </div>
-    <figure id="overzicht" class="wrap-stage">
-      <div class="stage" aria-label="PTP achtergrond met 9 hotspots">
-        <img class="stage-image" src="PTP.png" alt="PTP-installatieschema: negen series op de assen Pressure, Temperature, Pain en Unborn, Now, Entropy" width="1242" height="1266" fetchpriority="high" />
-        <a class="spot c s1" href="./1/index.html" data-label="Symbol" aria-label="Werk 1: Symbol"></a>
-        <a class="spot c s2" href="./2/index.html" data-label="Flag" aria-label="Werk 2: Flag"></a>
-        <a class="spot c s3" href="./3/index.html" data-label="Text" aria-label="Werk 3: Text"></a>
-        <a class="spot c s4" href="./4/index.html" data-label="Visceral" aria-label="Werk 4: Visceral"></a>
-        <a class="spot c s5" href="./5/index.html" data-label="Skin" aria-label="Werk 5: Skin-paintings"></a>
-        <a class="spot c s6" href="./6/index.html" data-label="Noise" aria-label="Werk 6: Noise"></a>
-        <a class="spot c s7" href="./7/index.html" data-label="PTP" aria-label="Werk 7: PTP"></a>
-        <a class="spot c s8" href="./8/index.html" data-label="Object" aria-label="Werk 8: Object"></a>
-        <a class="spot c s9 qr-spot" href="../boards/index-links.html" data-label="QR" aria-label="Werk 9: QR — open de + pagina met multimediaprojecten"><img src="qr-plus.svg" alt="QR-code naar de + pagina" /></a>
-      </div>
-      <figcaption><span>PTP — negen series, één totaalproject</span><span>Klik op een werk om de serie te openen.</span></figcaption>
-    </figure>
+      <figure id="overzicht" class="wrap-stage" aria-labelledby="series-overview-title">
+        <figcaption>
+          <h2 id="series-overview-title">Kies een serie</h2>
+          <p>Klik op een werk om de beelden en teksten van die serie te bekijken.</p>
+        </figcaption>
+        <div class="stage">
+          <img class="stage-image" src="PTP.png" alt="PTP-installatieschema: negen series op de assen Pressure, Temperature, Pain en Unborn, Now, Entropy" width="1242" height="1266" fetchpriority="high" />
+          <a class="spot c s1" href="./1/index.html" data-label="Symbol" aria-label="Bekijk de serie Symbol"></a>
+          <a class="spot c s2" href="./2/index.html" data-label="Flag" aria-label="Bekijk de serie Flag"></a>
+          <a class="spot c s3" href="./3/index.html" data-label="Text" aria-label="Bekijk de serie Text"></a>
+          <a class="spot c s4" href="./4/index.html" data-label="Visceral" aria-label="Bekijk de serie Visceral"></a>
+          <a class="spot c s5" href="./5/index.html" data-label="Skin" aria-label="Bekijk de serie Skin-paintings"></a>
+          <a class="spot c s6" href="./6/index.html" data-label="Noise" aria-label="Bekijk de serie Noise"></a>
+          <a class="spot c s7" href="./7/index.html" data-label="PTP" aria-label="Bekijk de serie PTP"></a>
+          <a class="spot c s8" href="./8/index.html" data-label="Object" aria-label="Bekijk de serie Object"></a>
+          <a class="spot c s9 qr-spot" href="../boards/index-links.html" data-label="QR / +" aria-label="QR / +: open de pagina met multimediaprojecten"><img src="qr-plus.svg" alt="QR-code naar de + pagina" /></a>
+        </div>
+      </figure>
     </section>
 
         <section id="diagram" class="grid-note" aria-labelledby="diagram-title">
