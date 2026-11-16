@@ -1,0 +1,49 @@
+json()
+        if args.command == "materialize":
+            transfer = require_object(payload, "transfer")
+            with reporter.observe(transfer):
+                materializer.materialize(LibraryFileTransfer.parse(transfer), args.destination)
+            print(args.destination)
+        else:
+            transfer = require_object(payload, "transfer") if isinstance(payload, dict) else {}
+            with reporter.observe(transfer):
+                if transfer:
+                    workspace_path = Path(
+                        require_string(transfer.get("workspace_path"), "workspace_path")
+                    )
+                    if (
+                        not workspace_path.is_absolute()
+                        or workspace_path.resolve() != args.path.resolve()
+                    ):
+                        raise LibraryFileTransferError(
+                            "workspace_path does not match the destination"
+                        )
+                    library_file_id_value = transfer.get("library_file_id")
+                    library_file_id = (
+                        require_string(library_file_id_value, "library_file_id")
+                        if library_file_id_value is not None
+                        else None
+                    )
+                    if args.library_file_id is not None and args.library_file_id != library_file_id:
+                        raise LibraryFileTransferError(
+                            "library_file_id does not match the transfer"
+                        )
+                    xattrs_value = transfer.get("xattrs")
+                    xattrs = parse_xattrs([] if xattrs_value is None else xattrs_value)
+                else:
+                    library_file_id = require_string(args.library_file_id, "library_file_id")
+                    xattrs = parse_xattrs(payload)
+                materializer.apply_xattrs(
+                    include_library_file_id_xattr(xattrs, library_file_id), args.path
+                )
+            print(args.path)
+    except (LibraryFileTransferError, OSError) as exc:
+        print(f"library file transfer failed: {exc}", file=sys.stderr)
+        return 1
+    finally:
+        reporter.flush()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))

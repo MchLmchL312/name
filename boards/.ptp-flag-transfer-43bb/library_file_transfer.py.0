@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+# ruff: noqa: TID251
+import argparse
+import errno
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import urllib.error
+import urllib.parse
+import urllib.request
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager
+from dataclasses import dataclass
+from pathlib import Path
+from threading import Thread
+from time import monotonic
+from typing import TYPE_CHECKING, Literal, TypedDict
+
+if TYPE_CHECKING:
+    from library_hosted_apps import HostedAppsClient
+
+LIBRARY_FILE_ID_XATTR_NAME = "user.library-file-id"
+_COMPLETION_REPORT_BUDGET_SECONDS = 2.0
+_COMPLETION_REPORT_BATCH_SIZE = 20
+
+
+class _MaterializeCompletion(TypedDict):
+    completion_token: str
+    outcome: Literal["success", "failure"]
+
+
+class DownloadCompletionReporter:
+    def __init__(self, source_client: "HostedAppsClient | None" = None) -> None:
+        self.source_client = source_client
+        self.items: list[_MaterializeCompletion] = []
+
+    @contextmanager
+    def observe(
+        self, transfer: Mapping[str, object], *, defer_success: bool = False
+    ) -> Iterator[None]:
+        token = transfer.get("completion_token")
+        if not isinstance(token, str) or not 0 < len(token) <= 128:
+            yield
+            return
+        outcome: Literal["success", "failure"] = "failure"
+        try:
+            yield
+            outcome = "success"
+        finally:
+            if outcome == "failure" or not defer_success:
+                self.items.append({"completion_token": token, "outcome": outcome})
+
+    def flush(self) -> None:
+        if not self.items:
+            return
+        items, self.items = self.items, []
+        deadline = monotonic() + _COMPLETION_REPORT_BUDGET_SECONDS
+
+        def report() -> None:
+            try:
+                script_directory = str(Path(__file__).resolve().parent)
+                if script_directory not in sys.path:
+                    sys.path.insert(0, script_directory)
+                # Old standalone copies may omit this optional reporting companion.
+                from library_hosted_apps import HostedAppsClient
+
+                client = (self.source_client or HostedAppsClient()).fork_for_tool(
+                    "connector_openai_library", "report_materialize_completion"
+                )
+                for offset in range(0, len(items), _COMPLETION_REPORT_BATCH_SIZE):
+                    remaining = deadline - monotonic()
+                    if remaining <= 0:
+                        return
+                    client.call_tool(
+                        "connector_openai_library",
+                        "report_materialize_completion",
+                        {"items": items[offset : offset + _COMPLETION_REPORT_BATCH_SIZE]},
+                        timeout_seconds=remaining,
+                    )
+            except Exception:
+                # Missing or failed telemetry leaves completion unknown server-side.
+                return
+
+        try:
+            # Socket timeouts alone do not bound DNS resolution or a trickling response.
+            worker = Thread(target=report, daemon=True)
+            worker.start()
+            worker.join(timeout=max(0, deadline - monotonic()))
+        except Exception:
+            return
+
+
+class LibraryFileTransferError(Exception):
+    pass
+
+
+def require_object(value: object, label: str) -> dict[str, object]:
+    if not isinstance(value, dict):
+        raise LibraryFileTransferError(f"{label} must be a JSON

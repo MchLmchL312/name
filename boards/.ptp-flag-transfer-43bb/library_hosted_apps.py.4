@@ -1,0 +1,47 @@
+          ca_bundle = os.environ.get(environment_name)
+            if ca_bundle:
+                return ssl.create_default_context(cafile=ca_bundle)
+        default_ca_bundle = Path("/etc/ssl/certs/ca-certificates.crt")
+        if default_ca_bundle.exists():
+            return ssl.create_default_context(cafile=default_ca_bundle)
+        return ssl.create_default_context()
+
+    @classmethod
+    def _decode_response(
+        cls,
+        body: str,
+        content_type: str,
+    ) -> dict[str, object]:
+        if "text/event-stream" not in content_type.lower():
+            try:
+                value: object = json.loads(body)
+            except json.JSONDecodeError as exc:
+                raise HostedAppsError("hosted apps returned invalid JSON") from exc
+            return _require_object(value, "hosted apps response")
+
+        last_event: dict[str, object] | None = None
+        data_lines: list[str] = []
+        for line in (*body.splitlines(), ""):
+            if not line:
+                event = cls._decode_event(data_lines)
+                if event is not None:
+                    last_event = event
+                data_lines = []
+            elif line.startswith("data:"):
+                data_lines.append(line.removeprefix("data:").lstrip())
+        if last_event is None:
+            raise HostedAppsError("hosted apps returned an empty event stream")
+        return last_event
+
+    @staticmethod
+    def _decode_event(data_lines: list[str]) -> dict[str, object] | None:
+        if not data_lines:
+            return None
+        candidate = "\n".join(data_lines)
+        if candidate.strip() == "[DONE]":
+            return None
+        try:
+            value: object = json.loads(candidate)
+        except json.JSONDecodeError:
+            return None
+        return value if isinstance(value, dict) else None

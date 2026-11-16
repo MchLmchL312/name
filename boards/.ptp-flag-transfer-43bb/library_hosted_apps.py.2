@@ -1,0 +1,97 @@
+r_id, tool_name)
+            if matched_tool is not None:
+                return matched_tool
+            next_cursor = result.get("nextCursor", result.get("next_cursor"))
+            if not isinstance(next_cursor, str) or not next_cursor:
+                break
+            if next_cursor in seen_cursors:
+                raise HostedAppsError("hosted apps tools/list cursor repeated")
+            seen_cursors.add(next_cursor)
+            cursor = next_cursor
+        raise HostedAppsError(f"Library {tool_name} is not available")
+
+    @staticmethod
+    def _is_tool(
+        tool: HostedAppTool,
+        connector_id: str,
+        tool_name: str,
+    ) -> bool:
+        discovered_connector_id = next(
+            (
+                tool.meta.get(key)
+                for key in ("connector_id", "connectorId", "app_id", "appId")
+                if tool.meta.get(key) is not None
+            ),
+            None,
+        )
+        return discovered_connector_id == connector_id and (
+            tool.name == tool_name
+            or tool.name.endswith(f"_{tool_name}")
+            or tool.name.endswith(f".{tool_name}")
+        )
+
+    def _rpc(
+        self,
+        method: str,
+        params: dict[str, object],
+        *,
+        deadline: float | None = None,
+    ) -> dict[str, object]:
+        with self._request_id_lock:
+            self._request_id += 1
+            request_id = self._request_id
+        body = json.dumps(
+            {
+                "jsonrpc": "2.0",
+                "id": request_id,
+                "method": method,
+                "params": params,
+            },
+            separators=(",", ":"),
+        ).encode()
+        request = urllib.request.Request(
+            self.endpoint,
+            data=body,
+            headers={
+                "Accept": "application/json, text/event-stream",
+                "Content-Type": "application/json",
+                **self._auth_headers(),
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(
+                request,
+                timeout=self._request_timeout(deadline),
+                context=self._ssl_context(),
+            ) as response:
+                response_body = response.read().decode()
+                content_type = response.headers.get("content-type", "")
+        except urllib.error.HTTPError as exc:
+            raise HostedAppsError(
+                f"hosted apps {method} request failed with HTTP status {exc.code}"
+            ) from exc
+        except urllib.error.URLError as exc:
+            raise HostedAppsError(
+                f"hosted apps {method} request failed: {_url_error_category(exc.reason)}"
+            ) from exc
+        payload = self._decode_response(response_body, content_type)
+        if payload.get("error") is not None:
+            raise HostedAppsError(f"hosted apps {method} RPC failed")
+        return _require_object(payload.get("result"), "hosted apps RPC result")
+
+    @staticmethod
+    def _request_timeout(deadline: float | None) -> float:
+        if deadline is None:
+            return 90
+        remaining = deadline - monotonic()
+        if remaining <= 0:
+            raise HostedAppsError("hosted apps request deadline expired")
+        return min(90, remaining)
+
+    @staticmethod
+    def _request_meta(tool_meta: dict[str, object]) -> dict[str, object]:
+        request_meta = dict(tool_meta)
+        thread_id = os.environ.get("CODEX_THREAD_ID", "").strip()
+        if thread_id:
+            requ

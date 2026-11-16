@@ -1,0 +1,79 @@
+est_meta["threadId"] = thread_id
+        session_id = os.environ.get("CODEX_SESSION_ID", "").strip()
+        if thread_id and session_id and session_id != thread_id:
+            existing_turn_metadata = request_meta.get("x-codex-turn-metadata")
+            turn_metadata = (
+                dict(existing_turn_metadata) if isinstance(existing_turn_metadata, dict) else {}
+            )
+            turn_metadata["session_id"] = session_id
+            turn_metadata["thread_id"] = thread_id
+            # The gateway reads the outer IDs for request correlation. It only
+            # forwards declared first-party action metadata from mcp_request_meta.
+            existing_action_meta = turn_metadata.get("mcp_request_meta")
+            action_meta = (
+                dict(existing_action_meta) if isinstance(existing_action_meta, dict) else {}
+            )
+            action_meta["x-codex-turn-metadata"] = {
+                "session_id": session_id,
+                "thread_id": thread_id,
+            }
+            turn_metadata["mcp_request_meta"] = action_meta
+            request_meta["x-codex-turn-metadata"] = turn_metadata
+        return request_meta
+
+    def _auth_headers(self) -> dict[str, str]:
+        account_id = os.environ.get("CODEX_APPS_CHATGPT_ACCOUNT_ID", "").strip() or None
+        authorization = os.environ.get("CODEX_APPS_AUTHORIZATION", "").strip()
+        if authorization:
+            return self._with_account_id(authorization, account_id)
+        connector_token = os.environ.get("CODEX_CONNECTORS_TOKEN", "").strip()
+        if connector_token:
+            return self._with_account_id(f"Bearer {connector_token}", account_id)
+        token, auth_account_id = self._auth_file_tokens()
+        return self._with_account_id(
+            f"Bearer {token}",
+            account_id or auth_account_id,
+        )
+
+    @staticmethod
+    def _with_account_id(
+        authorization: str,
+        account_id: str | None,
+    ) -> dict[str, str]:
+        headers = {"Authorization": authorization}
+        if account_id is not None:
+            headers["ChatGPT-Account-ID"] = account_id
+        return headers
+
+    @staticmethod
+    def _auth_file_tokens() -> tuple[str, str | None]:
+        configured_path = os.environ.get("CODEX_AUTH_PATH")
+        if configured_path:
+            auth_path = Path(configured_path).expanduser()
+        elif os.environ.get("CODEX_HOME"):
+            auth_path = Path(os.environ["CODEX_HOME"]).expanduser() / "auth.json"
+        else:
+            auth_path = Path.home() / ".codex" / "auth.json"
+        try:
+            payload: object = json.loads(auth_path.read_text(encoding="utf-8"))
+            auth = _require_object(payload, "Codex auth")
+            tokens = _require_object(auth.get("tokens"), "Codex auth tokens")
+            token = _require_string(tokens.get("access_token"), "Codex access token")
+            account_value = tokens.get("account_id")
+            account_id = (
+                _require_string(account_value, "Codex account id")
+                if account_value is not None
+                else None
+            )
+        except (OSError, json.JSONDecodeError, HostedAppsError) as exc:
+            raise HostedAppsError(f"could not read Codex auth from {auth_path}") from exc
+        return token, account_id
+
+    @staticmethod
+    def _ssl_context() -> ssl.SSLContext:
+        for environment_name in (
+            "SSL_CERT_FILE",
+            "REQUESTS_CA_BUNDLE",
+            "CURL_CA_BUNDLE",
+        ):
+  

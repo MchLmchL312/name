@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+# ruff: noqa: TID251
+import json
+import os
+import socket
+import ssl
+import urllib.error
+import urllib.request
+from copy import deepcopy
+from dataclasses import dataclass
+from pathlib import Path
+from threading import Lock
+from time import monotonic
+
+
+class HostedAppsError(Exception):
+    pass
+
+
+class HostedAppsToolError(HostedAppsError):
+    def __init__(self, message: str, result: dict[str, object]) -> None:
+        super().__init__(message)
+        self.result = result
+
+
+_MAX_TOOL_LIST_PAGES = 100
+
+
+def _url_error_category(reason: object) -> str:
+    if isinstance(reason, TimeoutError):
+        return "timeout"
+    if isinstance(reason, socket.gaierror):
+        return "DNS"
+    if isinstance(reason, ssl.SSLError):
+        return "TLS"
+    if isinstance(reason, ConnectionError):
+        return "connection"
+    return "network"
+
+
+def _require_object(value: object, label: str) -> dict[str, object]:
+    if not isinstance(value, dict):
+        raise HostedAppsError(f"{label} must be a JSON object")
+    if not all(isinstance(key, str) for key in value):
+        raise HostedAppsError(f"{label} keys must be strings")
+    return value
+
+
+def _require_string(value: object, label: str) -> str:
+    if not isinstance(value, str) or not value:
+        raise HostedAppsError(f"{label} must be a non-empty string")
+    return value
+
+
+@dataclass(frozen=True)
+class HostedAppTool:
+    name: str
+    meta: dict[str, object]
+
+
+class HostedAppsClient:
+    """Call authenticated hosted-app tools from the active Codex session."""
+
+    def __init__(self) -> None:
+        self.endpoint = os.environ.get(
+            "CODEX_APPS_MCP_URL",
+            "https://chatgpt.com/backend-api/wham/apps",
+        )
+        self._request_id = 0
+        self._request_id_lock = Lock()
+        self._tools: list[HostedAppTool] = []
+        self._tool_lock = Lock()
+
+    def fork_for_tool(self, connector_id: str, tool_name: str) -> "HostedAppsClient":
+        client = HostedAppsClient()
+        client.endpoint = self.endpoint
+        if (
+            connector_id == "connector_openai_library"
+            and tool_name == "report_materialize_completion"
+        ):
+            for origin in ("https://chatgpt.com", "https://chatgpt-staging.com"):
+                if self.endpoint in (
+                    f"{origin}/backend-api/wham/apps",
+                    f"{origin}/backend-api/codex/apps",
+                    f"{origin}/backend-api/ps/mcp",
+                ):
+                    # This app-only callback is absent from public tool discovery.
+                    # Its explicit binding also avoids discovery within the reporting budget.
+                    client.endpoint = f"{origin}/backend-api/ps/mcp"
+                    client._tools = [
+                        HostedAppTool(
+                            "library.report_materialize_completion",
+                            {
+                                "connector_id": connector_id,
+                                "_codex_apps": {
+                                    "resource_uri": (
+                                        "/connector_openai_library/"
+                                        "implicit_link::connector_openai_library/"
+                                        "report_materialize_completion"
+                                    ),
+                                    "contains_mcp_source": False,
+                                },
+                            },
+                        )
+             

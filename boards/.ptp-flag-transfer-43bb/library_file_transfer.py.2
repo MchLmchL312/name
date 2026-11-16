@@ -1,0 +1,86 @@
+(download_url: str) -> bool:
+    download = urllib.parse.urlsplit(download_url)
+    hosted_apps = urllib.parse.urlsplit(
+        os.environ.get("CODEX_APPS_MCP_URL", "https://chatgpt.com/backend-api/wham/apps")
+    )
+    try:
+        same_origin = (download.hostname, 443 if download.port is None else download.port) == (
+            hosted_apps.hostname,
+            443 if hosted_apps.port is None else hosted_apps.port,
+        )
+    except ValueError:
+        return False
+    prefix = "/backend-api/estuary/public_content/enc/"
+    return (
+        download.scheme == hosted_apps.scheme == "https"
+        and same_origin
+        and download.username is None
+        and download.password is None
+        and download.path.startswith(prefix)
+        and re.fullmatch(r"[A-Za-z0-9_-]+={0,2}", download.path[len(prefix) :]) is not None
+        and not download.query
+        and not download.fragment
+    )
+
+
+def _estuary_auth_headers(download_url: str) -> dict[str, str]:
+    if not _is_trusted_estuary_download(download_url):
+        return {}
+    authorization = os.environ.get("CODEX_APPS_AUTHORIZATION", "").strip()
+    account_id = os.environ.get("CODEX_APPS_CHATGPT_ACCOUNT_ID", "").strip()
+    if not authorization:
+        token = os.environ.get("CODEX_CONNECTORS_TOKEN", "").strip()
+        if not token:
+            auth_path = Path(
+                os.environ.get("CODEX_AUTH_PATH")
+                or Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")) / "auth.json"
+            ).expanduser()
+            try:
+                payload = require_object(json.loads(auth_path.read_text()), "Codex auth")
+                tokens = require_object(payload.get("tokens"), "Codex auth tokens")
+                token = require_string(tokens.get("access_token"), "Codex access token")
+                if token == "access_token":
+                    return {}
+                account_id = account_id or str(tokens.get("account_id") or "")
+            except (OSError, json.JSONDecodeError, LibraryFileTransferError):
+                return {}
+        authorization = f"Bearer {token}"
+    headers = {"Authorization": authorization}
+    if account_id:
+        headers["ChatGPT-Account-ID"] = account_id
+    return headers
+
+
+class _NoAuthenticatedRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *_args: object) -> None:
+        return None
+
+
+@dataclass(frozen=True)
+class LibraryFileTransfer:
+    download_url: str
+    headers: dict[str, str]
+    library_file_id: str | None
+    xattrs: tuple[ExtendedAttribute, ...]
+
+    @classmethod
+    def parse(cls, value: object) -> "LibraryFileTransfer":
+        payload = require_object(value, "transfer")
+        raw_headers = require_object(payload.get("headers", {}), "transfer.headers")
+        headers = {
+            name: require_string(header_value, f"transfer.headers[{name!r}]")
+            for name, header_value in raw_headers.items()
+        }
+        return cls(
+            download_url=require_string(payload.get("download_url"), "transfer.download_url"),
+            headers=headers,
+            library_file_id=(
+                require_string(payload["library_file_id"], "transfer.library_file_id")
+                if payload.get("library_file_id") is not None
+                else None
+            ),
+            xattrs=parse_xattrs([] if payload.get("xattrs") is None else payload["xattrs"]),
+        )
+
+    def write_to(self, destination: Path) -> None:
+        headers = {} if _is_trusted_estuary_

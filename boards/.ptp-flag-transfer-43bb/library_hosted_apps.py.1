@@ -1,0 +1,88 @@
+       ]
+                    return client
+        if not self._tool_lock.acquire(blocking=False):
+            return client
+        try:
+            tool = self._find_tool(connector_id, tool_name)
+            if tool is not None:
+                client._tools = [HostedAppTool(tool.name, deepcopy(tool.meta))]
+        finally:
+            self._tool_lock.release()
+        return client
+
+    def call_tool(
+        self,
+        connector_id: str,
+        tool_name: str,
+        arguments: dict[str, object],
+        *,
+        timeout_seconds: float | None = None,
+    ) -> dict[str, object]:
+        if connector_id != "connector_openai_library":
+            raise HostedAppsError(
+                "This Python helper only supports Library. Call other apps through "
+                "the runtime's tools, directly or through code mode."
+            )
+        deadline = None if timeout_seconds is None else monotonic() + timeout_seconds
+        tool = self._tool(connector_id, tool_name, deadline=deadline)
+        params: dict[str, object] = {
+            "name": tool.name,
+            "arguments": arguments,
+        }
+        request_meta = self._request_meta(tool.meta)
+        if request_meta:
+            params["_meta"] = request_meta
+        result = self._rpc("tools/call", params, deadline=deadline)
+        if result.get("isError") is True:
+            raise HostedAppsToolError(f"{tool_name} failed", result)
+        return result
+
+    def _tool(self, connector_id: str, tool_name: str, *, deadline: float | None) -> HostedAppTool:
+        if deadline is None:
+            self._tool_lock.acquire()
+        elif not self._tool_lock.acquire(timeout=self._request_timeout(deadline)):
+            raise HostedAppsError("hosted apps request deadline expired")
+        try:
+            tool = self._find_tool(connector_id, tool_name)
+            return tool or self._load_tool(connector_id, tool_name, deadline=deadline)
+        finally:
+            self._tool_lock.release()
+
+    def _find_tool(
+        self,
+        connector_id: str,
+        tool_name: str,
+    ) -> HostedAppTool | None:
+        return next(
+            (tool for tool in self._tools if self._is_tool(tool, connector_id, tool_name)),
+            None,
+        )
+
+    def _load_tool(
+        self, connector_id: str, tool_name: str, *, deadline: float | None
+    ) -> HostedAppTool:
+        cursor: str | None = None
+        seen_cursors: set[str] = set()
+        for _ in range(_MAX_TOOL_LIST_PAGES):
+            params: dict[str, object] = {}
+            if cursor is not None:
+                params["cursor"] = cursor
+            result = self._rpc("tools/list", params, deadline=deadline)
+            tools = result.get("tools")
+            if not isinstance(tools, list):
+                raise HostedAppsError("hosted apps tools/list did not return a tools array")
+            discovered: list[HostedAppTool] = []
+            for index, tool_value in enumerate(tools):
+                tool = _require_object(tool_value, f"tools[{index}]")
+                name = tool.get("name")
+                meta = tool.get("_meta")
+                if not isinstance(name, str) or not name or not isinstance(meta, dict):
+                    continue
+                discovered.append(
+                    HostedAppTool(
+                        name=name,
+                        meta=meta,
+                    )
+                )
+            self._tools.extend(discovered)
+            matched_tool = self._find_tool(connecto

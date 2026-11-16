@@ -1,0 +1,92 @@
+download(self.download_url) else self.headers
+        request = urllib.request.Request(self.download_url, headers=headers, method="GET")
+        auth_headers = _estuary_auth_headers(self.download_url)
+        for name, value in auth_headers.items():
+            request.add_unredirected_header(name, value)
+        urlopen = (
+            urllib.request.build_opener(_NoAuthenticatedRedirect()).open
+            if auth_headers
+            else urllib.request.urlopen
+        )
+        try:
+            with (
+                urlopen(request, timeout=300) as response,
+                destination.open("wb") as output,
+            ):
+                shutil.copyfileobj(response, output)
+        except urllib.error.HTTPError as exc:
+            raise LibraryFileTransferError(f"download failed with HTTP status {exc.code}") from exc
+        except urllib.error.URLError as exc:
+            raise LibraryFileTransferError("download failed") from exc
+
+
+class LibraryFileMaterializer:
+    def materialize(self, transfer: LibraryFileTransfer, destination: Path) -> None:
+        self._require_absolute_path(destination)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        file_descriptor, temporary_name = tempfile.mkstemp(
+            dir=destination.parent,
+            prefix=f".{destination.name}.",
+        )
+        os.close(file_descriptor)
+        temporary_path = Path(temporary_name)
+        try:
+            transfer.write_to(temporary_path)
+            self.apply_xattrs(
+                include_library_file_id_xattr(
+                    transfer.xattrs,
+                    transfer.library_file_id,
+                ),
+                temporary_path,
+            )
+            os.replace(temporary_path, destination)
+        finally:
+            temporary_path.unlink(missing_ok=True)
+
+    def apply_xattrs(
+        self,
+        xattrs: tuple[ExtendedAttribute, ...],
+        path: Path | int,
+    ) -> None:
+        if not isinstance(path, int):
+            self._require_absolute_path(path)
+            if not path.is_file():
+                raise LibraryFileTransferError(f"file does not exist: {path}")
+        for xattr in xattrs:
+            xattr.apply(path)
+
+    @staticmethod
+    def _require_absolute_path(path: Path) -> None:
+        if not path.is_absolute():
+            raise LibraryFileTransferError("file path must be absolute")
+
+
+def load_stdin_json() -> object:
+    if sys.stdin.isatty():
+        raise LibraryFileTransferError("stdin must be closed after one complete JSON request")
+    try:
+        value: object = json.load(sys.stdin)
+    except json.JSONDecodeError as exc:
+        raise LibraryFileTransferError("stdin must contain valid JSON") from exc
+    return value
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Materialize a ChatGPT Library transfer and preserve its extended attributes.",
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    materialize_parser = subparsers.add_parser("materialize")
+    materialize_parser.add_argument("destination", type=Path)
+    apply_parser = subparsers.add_parser("apply-xattrs")
+    apply_parser.add_argument("path", type=Path)
+    apply_parser.add_argument("library_file_id", nargs="?")
+    return parser
+
+
+def main(argv: list[str]) -> int:
+    args = build_parser().parse_args(argv)
+    materializer = LibraryFileMaterializer()
+    reporter = DownloadCompletionReporter()
+    try:
+        payload = load_stdin_
